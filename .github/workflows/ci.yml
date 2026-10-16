@@ -18,6 +18,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm typecheck
+      # 테스트가 템플릿 미리보기(생성물, gitignore)를 연다
+      - run: pnpm build:previews
       - run: pnpm test
       - run: pnpm build
 

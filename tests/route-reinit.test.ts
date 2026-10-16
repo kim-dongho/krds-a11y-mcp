@@ -79,6 +79,8 @@ async function spa(mode: Mode, changes: number): Promise<Record<string, string>>
       };</script></body></html>`,
   );
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  // 음성 엔진이 없는 환경(CI)에서는 읽기가 즉시 끝나 킷이 aria-pressed를 false로 되돌린다 — 읽는 중 상태로 고정
+  await page.addInitScript(() => { window.speechSynthesis.speak = () => {}; });
   await page.goto(pathToFileURL(file).href, { waitUntil: "load" });
   await page.waitForTimeout(300);
   for (let i = 0; i < changes; i++) await page.evaluate((m) => (window as unknown as { routeChange(m: string): void }).routeChange(m), mode);
