@@ -9,6 +9,8 @@ KRDS(범정부 UI/UX 디자인 시스템) 컴포넌트를 KWCAG 2.2 접근성 �
 
 > An MCP server that supplies KRDS (Korea Government Design System) components with KWCAG 2.2 accessibility built in, and keeps AI agents from finishing while accessibility violations remain.
 
+> 설치는 `npm i`가 아니라 프로젝트 루트에서 `npx -y krds-a11y-mcp init` 한 줄이다. MCP 등록·훅·지시문을 한 번에 설정한다.
+
 - **공급** — 접근성 조건을 갖춘 KRDS 부품·템플릿을 준다. 레이블·대체 텍스트 같은 필수 입력을 안 채우면 마크업을 주지 않는다
 - **검사** — 렌더된 페이지를 axe와 자체 실측(명도 대비, 키보드, 화면에 안 그려진 요소)으로 검사해 KWCAG 번호로 보고한다
 - **강제** — Claude Code·Codex 훅이 위반이 남은 채 작업을 끝내지 못하게 막는다
