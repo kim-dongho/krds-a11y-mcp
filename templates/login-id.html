@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 37건 · 클래스: conts-area, h-tit, helper-box, helper-desc-wrap, helper-tit, krds-info-list, link-group, login-form, login-form-area, login-info-wrap, page-title-wrap, small-txt */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+.page-title-wrap .h-tit .small-txt {
+  display: flex;
+  margin-bottom: var(--krds-pc-gap-layout-title-body-small);
+  font-size: var(--krds-pc-font-size-heading-xxsmall);
+  color: var(--krds-light-color-text-subtle);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+  .page-title-wrap .h-tit .small-txt {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-small);
+    font-size: var(--krds-mobile-font-size-heading-xxsmall);
+  }
+}
+.conts-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+  width: 100%;
+}
+[data-krds-mode=high-contrast] .page-title-wrap .h-tit .small-txt {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-title-wrap .h-tit .small-txt {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+.krds-info-list li .helper-box {
+  margin-top: var(--krds-pc-gap-layout-title-body-medium);
+}
+.krds-info-list + .helper-box {
+  margin-top: var(--krds-gap-7);
+}
+.helper-box {
+  --helper-color-background: var(--krds-light-color-surface-secondary-subtler);
+  --helper-color-border: var(--krds-light-color-border-secondary-light);
+  --helper-color-text: var(--krds-light-color-text-secondary);
+  --helper-width-border: var(--krds-light-border-width-variable-regular);
+  --helper-icon-size: var(--krds-size-height-3);
+  --helper-gap-tit-icon: var(--krds-gap-3);
+  --helper-desc-wrap-margin-top: var(--krds-gap-4);
+  --helper-desc-wrap-margin-left: calc(var(--krds-size-height-3) + var(--krds-gap-3));
+  width: 100%;
+  padding: var(--krds-pc-padding-card-xsmall);
+  border-radius: var(--krds-radius-xlarge2);
+  background-color: var(--helper-color-background);
+  border: var(--helper-width-border) solid var(--helper-color-border);
+}
+.helper-box .helper-tit {
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--helper-color-text);
+  font-weight: var(--krds-font-weight-bold);
+}
+.helper-box .helper-tit::before {
+  margin-right: var(--helper-gap-tit-icon);
+  content: "";
+  display: inline-flex;
+  width: var(--helper-icon-size);
+  height: var(--helper-icon-size);
+  background-color: var(--krds-light-color-text-basic);
+  background-color: transparent !important;
+  forced-color-adjust: none;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iOCIgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgMiAxOCkiIGZpbGw9IiMwMDM2NzUiLz4KPHJlY3QgeD0iOS4xNjc5NyIgeT0iOS4xNjYwMiIgd2lkdGg9IjEuNjY2NjciIGhlaWdodD0iNSIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iOC4zMzIwMyIgeT0iOS4xNjYwMiIgd2lkdGg9IjEuNjY2NjciIGhlaWdodD0iMC44MzMzMzMiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjguMzMyMDMiIHk9IjEzLjMzNCIgd2lkdGg9IjMuMzMzMzMiIGhlaWdodD0iMC44MzMzMzMiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjkuNzkxNjciIGN5PSI2Ljg3NTY1IiByPSIxLjA0MTY3IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K);
+  background-size: contain;
+}
+.helper-box .helper-desc-wrap {
+  margin-top: var(--helper-desc-wrap-margin-top);
+  margin-left: var(--helper-desc-wrap-margin-left);
+}
+@media (max-width: 767px) {
+  .conts-area {
+    gap: var(--krds-gap-8);
+    /* 신청하기 : 상단 타이틀 간격 */
+  }
+  .krds-info-list li .helper-box {
+    margin-top: var(--krds-mobile-gap-layout-title-body-medium);
+  }
+  .helper-box {
+    padding: var(--krds-mobile-padding-card-xsmall);
+  }
+  .helper-box .helper-desc-wrap {
+    margin-top: var(--krds-gap-3);
+  }
+}
+[data-krds-mode=high-contrast] .helper-box {
+  --helper-color-background: var(--krds-high-contrast-color-surface-secondary-subtler);
+  --helper-color-border: var(--krds-high-contrast-color-border-secondary-light);
+  --helper-color-text: var(--krds-high-contrast-color-text-secondary);
+  --helper-width-border: var(--krds-high-contrast-border-width-variable-regular);
+}
+[data-krds-mode=high-contrast] .helper-box .helper-tit::before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2LjY2NjciIGhlaWdodD0iMTYuNjY2NyIgcng9IjguMzMzMzMiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDEuNjY2MDIgMTguMzMyKSIgZmlsbD0iI0FCRDhFMyIvPgo8cGF0aCBkPSJNOS45MTQ3MSA3Ljg2NzE5QzEwLjQ2NyA3Ljg2NzE5IDEwLjkxNDcgNy40MTk0NyAxMC45MTQ3IDYuODY3MTlDMTAuOTE0NyA2LjMxNDkgMTAuNDY3IDUuODY3MTkgOS45MTQ3MSA1Ljg2NzE5QzkuMzYyNDMgNS44NjcxOSA4LjkxNDcxIDYuMzE0OSA4LjkxNDcxIDYuODY3MTlDOC45MTQ3MSA3LjQxOTQ3IDkuMzYyNDMgNy44NjcxOSA5LjkxNDcxIDcuODY3MTlaIiBmaWxsPSIjMUUyMTI0Ii8+CjxwYXRoIGQ9Ik04LjY5ODA1IDguNjkyM0M4LjU4NzU5IDguNjkyMyA4LjQ5ODA1IDguNzgxODQgOC40OTgwNSA4Ljg5MjNWOS40OTIzQzguNDk4MDUgOS42MDI3NiA4LjU4NzU5IDkuNjkyMyA4LjY5ODA1IDkuNjkyM0g5LjIxNjAyQzkuMzI2NDcgOS42OTIzIDkuNDE2MDIgOS43ODE4NCA5LjQxNjAyIDkuODkyM1YxMi45OTQ1SDguNTMyMDNDOC40MjE1NyAxMi45OTQ1IDguMzMyMDMgMTMuMDg0IDguMzMyMDMgMTMuMTk0NVYxMy43OTQ1QzguMzMyMDMgMTMuOTA0OSA4LjQyMTU3IDEzLjk5NDUgOC41MzIwMyAxMy45OTQ1SDExLjQ2NTRDMTEuNTc1OCAxMy45OTQ1IDExLjY2NTQgMTMuOTA0OSAxMS42NjU0IDEzLjc5NDVWMTMuMTk0NUMxMS42NjU0IDEzLjA4NCAxMS41NzU4IDEyLjk5NDUgMTEuNDY1NCAxMi45OTQ1SDEwLjkxNlY4Ljg5MjNDMTAuOTE2IDguNzgxODQgMTAuODI2NSA4LjY5MjMgMTAuNzE2IDguNjkyM0g4LjY5ODA1WiIgZmlsbD0iIzFFMjEyNCIvPgo8L3N2Zz4K);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .helper-box {
+    --helper-color-background: var(--krds-high-contrast-color-surface-secondary-subtler);
+    --helper-color-border: var(--krds-high-contrast-color-border-secondary-light);
+    --helper-color-text: var(--krds-high-contrast-color-text-secondary);
+    --helper-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  }
+  [data-krds-mode=theme] .helper-box .helper-tit::before {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2LjY2NjciIGhlaWdodD0iMTYuNjY2NyIgcng9IjguMzMzMzMiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDEuNjY2MDIgMTguMzMyKSIgZmlsbD0iI0FCRDhFMyIvPgo8cGF0aCBkPSJNOS45MTQ3MSA3Ljg2NzE5QzEwLjQ2NyA3Ljg2NzE5IDEwLjkxNDcgNy40MTk0NyAxMC45MTQ3IDYuODY3MTlDMTAuOTE0NyA2LjMxNDkgMTAuNDY3IDUuODY3MTkgOS45MTQ3MSA1Ljg2NzE5QzkuMzYyNDMgNS44NjcxOSA4LjkxNDcxIDYuMzE0OSA4LjkxNDcxIDYuODY3MTlDOC45MTQ3MSA3LjQxOTQ3IDkuMzYyNDMgNy44NjcxOSA5LjkxNDcxIDcuODY3MTlaIiBmaWxsPSIjMUUyMTI0Ii8+CjxwYXRoIGQ9Ik04LjY5ODA1IDguNjkyM0M4LjU4NzU5IDguNjkyMyA4LjQ5ODA1IDguNzgxODQgOC40OTgwNSA4Ljg5MjNWOS40OTIzQzguNDk4MDUgOS42MDI3NiA4LjU4NzU5IDkuNjkyMyA4LjY5ODA1IDkuNjkyM0g5LjIxNjAyQzkuMzI2NDcgOS42OTIzIDkuNDE2MDIgOS43ODE4NCA5LjQxNjAyIDkuODkyM1YxMi45OTQ1SDguNTMyMDNDOC40MjE1NyAxMi45OTQ1IDguMzMyMDMgMTMuMDg0IDguMzMyMDMgMTMuMTk0NVYxMy43OTQ1QzguMzMyMDMgMTMuOTA0OSA4LjQyMTU3IDEzLjk5NDUgOC41MzIwMyAxMy45OTQ1SDExLjQ2NTRDMTEuNTc1OCAxMy45OTQ1IDExLjY2NTQgMTMuOTA0OSAxMS42NjU0IDEzLjc5NDVWMTMuMTk0NUMxMS42NjU0IDEzLjA4NCAxMS41NzU4IDEyLjk5NDUgMTEuNDY1NCAxMi45OTQ1SDEwLjkxNlY4Ljg5MjNDMTAuOTE2IDguNzgxODQgMTAuODI2NSA4LjY5MjMgMTAuNzE2IDguNjkyM0g4LjY5ODA1WiIgZmlsbD0iIzFFMjEyNCIvPgo8L3N2Zz4K);
+  }
+}
+.conts-area.login-form {
+  --login-type-color-tooltip: var(--krds-light-color-icon-gray);
+}
+.login-form-area {
+  --login-form-color-border: var(--krds-light-color-divider-gray);
+  --login-form-width-border: var(--krds-light-border-width-variable-regular);
+  display: flex;
+  position: relative;
+  padding: var(--krds-padding-10);
+  gap: var(--krds-gap-12);
+  width: 100%;
+  border-top: var(--login-form-width-border) solid var(--login-form-color-border);
+  border-bottom: var(--login-form-width-border) solid var(--login-form-color-border);
+}
+.login-form-area::after {
+  content: "";
+  position: absolute;
+  top: var(--krds-gap-9);
+  left: calc(50% - var(--login-form-width-border));
+  width: var(--login-form-width-border);
+  height: calc(100% - var(--krds-gap-12));
+  background-color: var(--login-form-color-border);
+}
+.login-form-area > div {
+  flex: 1;
+}
+.link-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+.link-group > li + li::before {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 var(--krds-gap-3);
+  content: "";
+  width: var(--krds-number-1);
+  height: var(--krds-size-height-2);
+  background-color: var(--login-form-color-border);
+}
+.login-form-area .login-info-wrap {
+  padding: var(--krds-padding-8) 0;
+}
+@media (max-width: 1023px) {
+  .login-form-area {
+    flex-direction: column;
+    padding: var(--krds-padding-8) 0;
+    gap: var(--krds-gap-8);
+  }
+  .login-form-area::after {
+    display: none;
+  }
+  .login-form-area .login-info-wrap {
+    padding-bottom: 0;
+    border-top: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-divider-gray);
+  }
+}
+@media (max-width: 767px) {
+  .conts-area[class*=login-] {
+    gap: var(--krds-gap-7);
+  }
+}
+[data-krds-mode=high-contrast] .login-form-area {
+  --login-form-color-border: var(--krds-high-contrast-color-divider-gray);
+  --login-form-width-border: var(--krds-high-contrast-border-width-variable-regular);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .login-form-area {
+    --login-form-color-border: var(--krds-high-contrast-color-divider-gray);
+    --login-form-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 프라이머리 파랑(#256ef4)은 회색 배경 위에서 대비 4.16:1로 미달(4.5:1 필요)
+     — 킷 토큰 내 진한 단계로 교체 */
+  .helper-box a.krds-btn.link { color: var(--krds-color-light-primary-70); }
+  .helper-box a.krds-btn.link .underline { color: inherit; }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그 — url(../../img/img/…)로 img가
+     중복돼 206곳이 404로 깨진다 — 오류 표시 없이 아이콘만 사라진다 (사이트 배포판 CSS에는 없는 npm 패키징 결함).
+     이 페이지에 보이는 3곳만 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  .krds-form-check input[type=checkbox] ~ label:after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_checkbox_checked.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_checkbox_checked.svg);
+  }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="login-id">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+  <div class="inner">
+
+    <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+    <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+      <ol class="breadcrumb">
+        <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+        <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+      </ol>
+    </nav>
+
+    <!-- 페이지 타이틀 — KRDS 로그인 패턴(service_03_05) 구조 -->
+    <div class="page-title-wrap">
+      <h1 class="h-tit"><span class="small-txt">{{serviceName}}</span>{{pageTitle}}</h1>
+    </div>
+
+    <div class="conts-area login-form">
+      <div class="login-form-area">
+        <div class="login-wrap">
+          <form method="post" action="{{loginAction}}">
+            <fieldset>
+              <legend>아이디와 비밀번호로 로그인</legend>
+              <div class="fieldset">
+
+                <!-- 패턴 지침 순서: 레이블 → 입력 → 상태 유지 → 찾기 링크 → 도움말 -->
+                <div class="form-group">
+                  <div class="form-tit">
+                    <label for="login-id">아이디</label>
+                  </div>
+                  <div class="form-conts">
+                    <input type="text" id="login-id" name="loginId" class="krds-input"
+                      placeholder="아이디를 입력하세요" autocomplete="username">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-tit">
+                    <label for="login-pw">비밀번호</label>
+                  </div>
+                  <div class="form-conts btn-ico-wrap">
+                    <input type="password" id="login-pw" name="loginPw" class="krds-input"
+                      placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+                    <button type="button" class="krds-btn medium icon">
+                      <span class="sr-only">입력한 비밀번호 보기</span>
+                      <i class="svg-icon ico-pw-visible"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group krds-check-area">
+                  <div class="krds-form-check">
+                    <input type="checkbox" name="keepLogin" id="keep-login">
+                    <label for="keep-login">로그인 상태 유지</label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <button type="submit" class="krds-btn large primary">로그인</button>
+                </div>
+
+                <div class="form-group">
+                  <ul class="link-group">
+                    <li><a href="{{idFindHref}}" class="krds-btn medium text">아이디 찾기</a></li>
+                    <li><a href="{{pwFindHref}}" class="krds-btn medium text">비밀번호 찾기</a></li>
+                    <li><a href="{{joinHref}}" class="krds-btn medium text">회원가입</a></li>
+                  </ul>
+                </div>
+
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <!-- 로그인 안내 — 콘텐츠 자유 영역: 서비스에 맞게 항목을 수정한다 -->
+        <div class="login-info-wrap">
+          <ul class="krds-info-list decimal">
+            <li>아이디와 비밀번호는 타인에게 노출되지 않도록 관리해 주세요.</li>
+            <li>5회 이상 로그인에 실패하면 보안을 위해 계정이 잠깁니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 도움 — 패턴 지침의 '도움말' 요소. 7.2.2: 모든 페이지에서 일관된 위치 유지 -->
+      <div class="helper-box">
+        <p class="helper-tit">로그인에 어려움이 있으신가요?</p>
+        <div class="helper-desc-wrap">
+          <ul class="krds-info-list decimal">
+            <li><a href="{{helpHref}}" class="krds-btn medium link"><span class="underline">로그인 도움말 보기</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

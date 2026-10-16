@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 5건 · 클래스: h-tit, page-title-wrap */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+  /* 교정 부속(같은 사유): 원본 #container 키의 LNB 2단 배치 규칙 승계 */
+  #main-content .in-between {
+    display: flex; align-items: normal; justify-content: flex-start;
+    flex-direction: row; gap: var(--krds-gap-12);
+  }
+  #main-content .in-between .krds-side-navigation {
+    width: 29.6rem;
+    padding: var(--krds-padding-10) var(--krds-padding-10) var(--krds-padding-10) 0;
+    border-right: var(--krds-light-border-width-static-regular) solid var(--krds-light-color-divider-gray-light);
+  }
+  #main-content .in-between .contents { flex: 1; padding-bottom: var(--krds-gap-12); }
+  @media (max-width: 1023px) {
+    #main-content .in-between .krds-side-navigation { display: none; }
+    #main-content .in-between .contents { padding-left: 0; }
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb 2곳만 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+</style>
+</head>
+<body data-krds-pattern="sub-page">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)을 본문 시작점으로 통일 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+  <div class="inner in-between">
+
+    <!-- 좌측 메뉴(LNB) — 콘텐츠 자유 영역: 사이트의 실제 메뉴 구조로 교체.
+         2~4단계 구조와 토글 동작은 킷 side_navigation 정식 마크업 -->
+    <nav class="krds-side-navigation" aria-label="좌측 메뉴">
+      <h2 class="lnb-tit">{{lnbTitle}}</h2>
+      <ul class="lnb-list">
+        <li class="lnb-item">
+          <button type="button" class="lnb-btn lnb-toggle">메뉴 그룹 1</button>
+          <div class="lnb-submenu">
+            <ul>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 1-1</a></li>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 1-2</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="lnb-item">
+          <button type="button" class="lnb-btn lnb-toggle">메뉴 그룹 2</button>
+          <div class="lnb-submenu">
+            <ul>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 2-1</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="contents">
+      <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+      <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+        <ol class="breadcrumb">
+          <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+          <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+        </ol>
+      </nav>
+
+      <!-- 교정: 원본의 모바일 드롭다운 타이틀(data-type=responsive)은 킷 JS 부속이라
+           제거 — h1이 전 화면 폭에서 항상 보인다 -->
+      <div class="page-title-wrap">
+        <h1 class="h-tit">{{pageTitle}}</h1>
+      </div>
+
+      <!-- 본문 — get_component로 받은 컴포넌트를 여기에 조립한다.
+           제목 위계는 h2부터, 수준 건너뛰기 금지 (kwcag:6.4.2) -->
+
+    </div>
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

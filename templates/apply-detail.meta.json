@@ -1,0 +1,126 @@
+{
+  "name": "apply-detail",
+  "title": "서비스 상세 안내",
+  "source": {
+    "docUrl": "https://www.krds.go.kr/html/site/service/service_04_03.html",
+    "sampleUrl": "https://www.krds.go.kr/html/pattern/sample_appl_02.html",
+    "collectedAt": "2026-09-14T01:36:32.509Z",
+    "sha256": "6a5a33efc135dceade1fd7acf4f933ba1341d18ae7f323e818f07747dedf9b62"
+  },
+  "corrections": [
+    {
+      "what": "viewport의 maximum-scale=1.0, user-scalable=no 제거",
+      "why": "화면 확대 차단은 저시력 사용자를 배제한다 (KWCAG 33항목 밖이나 WCAG 1.4.4 위반, 실사용 영향 실재)"
+    },
+    {
+      "what": "건너뛰기 링크 대상을 #breadcrumb → #main-content로, 대상에 tabindex=\"-1\" 부여",
+      "why": "원본 샘플의 #breadcrumb는 문서에 존재하지 않아 링크가 동작하지 않았다 (스냅샷 구조 검증 32/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "본문 컨테이너 div#container → main#main-content",
+      "why": "원본에 main 랜드마크가 없어 스크린리더의 본문 이동이 불가 (33/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "제목 위계 교정 — 섹션 h3→h2, 하위 h4→h3",
+      "why": "원본은 h1 다음 h3로 수준을 건너뛴다 (6.4.2, axe heading-order). 태그 한정 셀렉터(h3.sec-tit) 스타일은 h2.sec-tit 재선언으로 승계",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "what": "페이지 내 목차 nav에 aria-label 부여",
+      "why": "breadcrumb nav와 구분되지 않는 이름 없는 nav 랜드마크 — 랜드마크 탐색에서 어느 영역인지 알 수 없다",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "'온라인 신청하기' 버튼을 button → a 링크로",
+      "why": "원본은 href 없는 button이라 동작하지 않는 데모였다 — 페이지 이동이므로 링크가 의미상 맞고, 주소는 슬롯으로 받는다"
+    },
+    {
+      "what": "Pretendard GOV @font-face 선언 추가",
+      "why": "킷은 폰트 파일만 동봉하고 선언이 없어 미설치 기기에서 시스템 폰트로 대체된다"
+    },
+    {
+      "what": "브레드크럼의 현재 페이지 항목에 aria-current=\"page\" 부여",
+      "why": "원본 샘플은 현재 위치 표시가 없었다 — 매핑표 breadcrumb ? 항목의 교정 방향 적용",
+      "kwcagId": "kwcag:8.2.1"
+    },
+    {
+      "what": "건너뛰기 도착점(#main-content)의 초점 링 억제",
+      "why": "킷 전역 *:focus 스타일이 main에도 적용돼, 건너뛰기 실행 시 본문 전체가 파란 외곽선으로 감싸인다. 도착점은 조작 컨트롤이 아니므로 시각 링만 억제 (초점 유지)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "킷 component.css 아이콘 경로 버그 우회 — breadcrumb 홈·구분자 2곳 재선언",
+      "why": "킷 v1.1.0 npm판 CSS는 url(../../img/img/…)로 img 세그먼트가 중복돼 아이콘 206곳이 404로 깨진다(오류 표시 없이 아이콘만 사라짐) — 이 페이지에 보이는 곳만 올바른 경로로 덮는다"
+    },
+    {
+      "what": "breadcrumb 폭 제한 승계 — 콘텐츠 컨테이너 폭으로 가운데 정렬",
+      "why": "원본은 #container > .krds-breadcrumb-wrap .breadcrumb에 max-width(1248px)·좌우 패딩을 걸어 로고·GNB와 정렬한다(output.css 20848행). #container 키 규칙이라 발췌에 안 걸렸고 container→main 교정으로 셀렉터도 어긋나 breadcrumb이 화면 좌측 끝에 붙었다 — 실사용 테스트에서 발견(2026-09-22)"
+    }
+  ],
+  "layoutCss": {
+    "note": "레이아웃 CSS는 손으로 쓰지 않는다 — scripts/extract-pattern-css.ts가 원본 패턴 CSS에서 이 템플릿이 쓰는 셀렉터만 발췌해 마커 구간에 주입한다. 출처·sha256은 템플릿의 발췌 블록 머리 주석에 기록",
+    "sourceUrl": "https://www.krds.go.kr/resources/css/pattern/output.css"
+  },
+  "visualCompare": [
+    ".krds-in-page-navigation-area",
+    ".conts-wrap.scroll-check",
+    ".def-list-wrap",
+    ".krds-table-wrap",
+    ".page-title-wrap"
+  ],
+  "slots": [
+    {
+      "name": "pageTitle",
+      "required": true,
+      "description": "서비스명 — <title>·h1·목차 제목·브레드크럼에 들어간다",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "name": "summary",
+      "required": true,
+      "description": "제목 아래 서비스 한 줄 소개 (guide-txt)"
+    },
+    {
+      "name": "applyHref",
+      "required": false,
+      "default": "#",
+      "description": "온라인 신청하기 링크 — apply-form 패턴으로 만든 페이지를 연결한다"
+    },
+    {
+      "name": "listHref",
+      "required": false,
+      "default": "#",
+      "description": "브레드크럼의 목록 페이지 링크 (apply-list)"
+    },
+    {
+      "name": "listTitle",
+      "required": false,
+      "default": "서비스 신청",
+      "description": "브레드크럼의 목록 페이지 이름"
+    },
+    {
+      "name": "lang",
+      "required": false,
+      "default": "ko",
+      "description": "주 언어 코드",
+      "kwcagId": "kwcag:7.1.1"
+    },
+    {
+      "name": "assetBase",
+      "required": false,
+      "default": "node_modules/krds-uiux",
+      "description": "킷 자산 경로 (예약 슬롯 — 도구가 주입)"
+    },
+    {
+      "name": "homeHref",
+      "required": false,
+      "default": "/",
+      "description": "브레드크럼 홈 링크"
+    }
+  ],
+  "dietNote": "원본 1,655줄 → 뼈대만 유지: 페이지 내 목차(in-page navigation) + 섹션 4개 데모(개요 정의목록·상세 표/선정기준·절차·문의처). 섹션 7→4, 데모 전용 부속(정보 변경 내역 탭 등) 제거. 섹션 내용은 콘텐츠 자유 영역 — 섹션을 추가·삭제하면 목차 링크도 함께 맞추고, 표에는 caption을 유지",
+  "family": "apply",
+  "whenToUse": "개별 서비스의 상세 안내 화면 — 페이지 내 목차, 개요·상세·절차 섹션, 온라인 신청 진입 버튼. 목록은 apply-list, 신청서 작성은 apply-form, 완료는 apply-complete"
+}

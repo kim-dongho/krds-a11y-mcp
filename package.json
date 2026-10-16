@@ -1,0 +1,65 @@
+{
+  "name": "krds-a11y-mcp",
+  "version": "0.1.0",
+  "description": "KRDS 컴포넌트 공급 + KWCAG 2.2 접근성 자가진단 MCP 서버",
+  "type": "module",
+  "bin": {
+    "krds-a11y-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "!templates/*.preview.html",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "report": "tsx scripts/run-report.ts",
+    "build:mapping": "tsx scripts/build-mapping.ts",
+    "collect:patterns": "tsx scripts/collect-patterns.ts",
+    "build:previews": "tsx scripts/build-previews.ts",
+    "extract:css": "tsx scripts/extract-pattern-css.ts",
+    "verify:visual": "tsx scripts/verify-pattern-visual.ts",
+    "scan:axe": "tsx scripts/scan-template.ts",
+    "prepare": "husky",
+    "verify:a11y": "tsx scripts/verify-a11y.ts",
+    "report:templates": "tsx scripts/run-report.ts --targets templates"
+  },
+  "packageManager": "pnpm@11.6.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "krds-uiux": "^1.1.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@types/node": "^26.5.0",
+    "husky": "^9.1.7",
+    "playwright": "^1.63.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kim-dongho/krds-a11y-mcp.git"
+  },
+  "homepage": "https://github.com/kim-dongho/krds-a11y-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/kim-dongho/krds-a11y-mcp/issues"
+  },
+  "keywords": [
+    "krds",
+    "kwcag",
+    "accessibility",
+    "a11y",
+    "mcp",
+    "axe-core"
+  ]
+}

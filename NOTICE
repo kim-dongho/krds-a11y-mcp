@@ -1,0 +1,20 @@
+krds-a11y-mcp
+Copyright (c) 2026 kim-dongho — MIT License (LICENSE 참고)
+
+이 저장소의 코드는 MIT 라이선스를 따른다. 단 아래 KRDS 유래 자료는 공공누리 제1유형을 따른다.
+
+KRDS 유래 자료
+- templates/*.html — KRDS 공식 패턴 샘플(www.krds.go.kr/html/pattern/)을 접근성 교정한 2차적 저작물,
+  템플릿 안의 발췌 레이아웃 CSS(원본 resources/css/pattern/output.css)와 패턴 이미지 포함
+- docs/mapping/ — 공식 킷(krds-uiux) 마크업·CSS·JS의 인용과 분석
+- 실행 시 공급하는 킷 마크업 — 설치된 krds-uiux 패키지에서 읽는다
+
+출처 표기 (공공누리 제1유형)
+본 저작물은 행정안전부에서 2024년 작성하여 공공누리 제1유형으로 개방한
+'범정부 UI/UX 디자인시스템(KRDS)'을 이용하였으며, 해당 저작물은
+'KRDS 디자인시스템 홈페이지(https://www.krds.go.kr)'에서 무료로 다운받으실 수 있습니다.
+
+제3자 자료
+- krds-uiux (npm, KRDS 이용약관) — 의존성으로 설치되며 이 저장소에 포함되지 않는다.
+  킷 안의 Pretendard GOV 폰트 등은 각자의 라이선스를 따른다
+- axe-core, @axe-core/playwright (MPL-2.0) — 선택 의존성

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 69건 · 클래스: active, border, h-tit, i-date, icon, in, info-body, info-btm, info-top, inner, keyword, krds-btn, krds-form-select-sort, krds-input, m-hide, m-sort-btn, page-title-wrap, point, sch-form-wrap, sch-info, sch-sort, search-list-top, sort-label, tit, total-search-item, total-search-list, total-search-top-box, txt, w-hide, w-sort-btn, xlarge */
+.search-list-top {
+  --search-list-color-text-primary: var(--krds-light-color-text-primary);
+  --search-list-width-border: var(--krds-light-border-width-variable-regular);
+  --search-list-color-border: var(--krds-light-color-divider-gray);
+  --search-list-sort-btn-color-button-hover: var(--krds-light-color-button-text-fill-hover);
+  --search-list-sort-btn-color-button-active: var(--krds-light-color-button-text-fill-pressed);
+  --search-list-sort-btn-color: var(--krds-light-color-text-basic);
+  --search-list-sort-btn-color-background: var(--krds-light-color-button-text-fill);
+  --search-list-sort-btn-border: var(--krds-light-border-width-static-regular) solid var(--krds-light-color-button-text-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: var(--krds-gap-9);
+  margin: var(--krds-pc-gap-layout-h2-h3) 0 var(--krds-gap-7);
+}
+.search-list-top .sch-info {
+  display: inline;
+  font-size: var(--krds-pc-font-size-body-large);
+  font-weight: var(--krds-font-weight-bold);
+}
+.search-list-top .sch-info .point {
+  word-break: break-all;
+  color: var(--search-list-color-text-primary);
+}
+.search-list-top .sch-sort {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+.search-list-top .sch-sort .sort-label {
+  font-weight: var(--krds-font-weight-bold);
+  white-space: nowrap;
+  margin-right: var(--krds-gap-4);
+}
+.search-list-top .sch-sort .krds-form-select-sort {
+  border: var(--search-list-sort-btn-border);
+  border-radius: var(--krds-radius-medium2);
+  background-color: var(--search-list-sort-btn-color-background);
+}
+.search-list-top .sch-sort .w-sort-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: var(--krds-gap-3);
+}
+.search-list-top .sch-sort .w-sort-btn button {
+  transition: var(--krds-transition-base);
+  color: var(--search-list-sort-btn-color);
+  border: var(--search-list-sort-btn-border);
+  border-radius: var(--krds-radius-medium2);
+  background-color: var(--search-list-sort-btn-color-background);
+}
+.search-list-top .sch-sort .w-sort-btn button.active {
+  text-decoration: underline;
+  text-underline-offset: var(--krds-font-underline-offset);
+}
+.search-list-top .sch-sort .w-sort-btn button:hover {
+  border-radius: var(--krds-radius-medium1);
+  background-color: var(--search-list-sort-btn-color-button-hover);
+  transition: 0.4s ease-in-out;
+}
+.search-list-top .sch-sort .w-sort-btn button:active {
+  background-color: var(--search-list-sort-btn-color-button-active);
+  transition: 0.4s ease-in-out;
+}
+.search-list-top .sch-sort .m-sort-btn {
+  display: none;
+}
+.search-list-top .sch-info li,
+.search-list-top .sch-sort li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  position: relative;
+}
+.search-list-top .sch-info li:not(:last-child),
+.search-list-top .sch-sort li:not(:last-child) {
+  padding-right: 1.7rem;
+}
+.search-list-top .sch-info li:not(:last-child)::after,
+.search-list-top .sch-sort li:not(:last-child)::after {
+  content: "";
+  display: inline-flex;
+  width: var(--search-list-width-border);
+  height: var(--krds-size-height-2);
+  background-color: var(--search-list-color-border);
+  position: absolute;
+  bottom: 0.3rem;
+  right: 0.5rem;
+}
+.search-list-top .sch-sort {
+  flex-shrink: 0;
+}
+.search-list-top .sch-info li {
+  display: inline;
+}
+.search-list-top.border {
+  flex-wrap: wrap;
+  padding-bottom: var(--krds-padding-8);
+  margin: 0 0 var(--krds-padding-10);
+  border-bottom: var(--search-list-width-border) solid var(--search-list-color-border);
+}
+@media (max-width: 767px) {
+  .search-list-top {
+    flex-direction: column;
+    gap: var(--krds-gap-7);
+    margin-top: var(--krds-mobile-gap-layout-h2-h3);
+  }
+  .search-list-top .sch-info {
+    order: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--krds-gap-4);
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+  .search-list-top .sch-info {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .search-list-top .sch-sort {
+    order: 1;
+    margin-left: auto;
+  }
+  .search-list-top .sch-sort .w-hide {
+    display: flex !important;
+  }
+  .search-list-top .sch-sort .w-sort-btn {
+    display: none;
+  }
+  .search-list-top .sch-sort .m-sort-btn {
+    display: flex;
+    align-items: center;
+  }
+  .search-list-top.border {
+    margin-bottom: 0;
+  }
+}
+.w-hide {
+  display: none !important;
+}
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .w-hide {
+    display: block !important;
+  }
+  .m-hide {
+    display: none !important;
+  }
+}
+[data-krds-mode=high-contrast] .search-list-top {
+  --search-list-color-text-primary: var(--krds-high-contrast-color-text-primary);
+  --search-list-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  --search-list-color-border: var(--krds-high-contrast-color-divider-gray);
+  --search-list-sort-btn-color-button-hover: var(--krds-high-contrast-color-button-text-fill-hover);
+  --search-list-sort-btn-color-button-active: var(--krds-high-contrast-color-button-text-fill-pressed);
+  --search-list-sort-btn-color: var(--krds-high-contrast-color-text-basic);
+  --search-list-sort-btn-color-background: var(--krds-high-contrast-color-button-text-fill);
+  --search-list-sort-btn-border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-button-text-border);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .search-list-top {
+    --search-list-color-text-primary: var(--krds-high-contrast-color-text-primary);
+    --search-list-width-border: var(--krds-high-contrast-border-width-variable-regular);
+    --search-list-color-border: var(--krds-high-contrast-color-divider-gray);
+    --search-list-sort-btn-color-button-hover: var(--krds-high-contrast-color-button-text-fill-hover);
+    --search-list-sort-btn-color-button-active: var(--krds-high-contrast-color-button-text-fill-pressed);
+    --search-list-sort-btn-color: var(--krds-high-contrast-color-text-basic);
+    --search-list-sort-btn-color-background: var(--krds-high-contrast-color-button-text-fill);
+    --search-list-sort-btn-border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-button-text-border);
+  }
+}
+.total-search-top-box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: row;
+  position: relative;
+  margin-bottom: var(--krds-gap-11);
+}
+.total-search-top-box > .inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  padding: var(--krds-gap-11) 0;
+  max-width: 79.2rem;
+}
+.total-search-top-box > .inner .sch-form-wrap {
+  width: 100%;
+  gap: var(--krds-gap-4);
+}
+.total-search-top-box::after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 0;
+  transform: translateX(-50%);
+  content: "";
+  width: 100vw;
+  height: 100%;
+  background-color: var(--krds-light-color-surface-secondary-subtler);
+}
+.total-search-list {
+  --total-search-color-border: var(--krds-light-color-divider-gray);
+  --total-search-width-border: var(--krds-light-border-width-variable-regular);
+  --total-search-keyword-color: var(--krds-light-color-text-primary);
+  --total-search-keyword-background: var(--krds-light-color-element-primary-lighter);
+  --total-search-info-color: var(--krds-light-color-text-subtle);
+  --total-search-info-body-text-visited:var(--krds-light-color-link-visited);
+  --total-search-info-btm-color:var(--krds-light-color-text-basic);
+}
+.total-search-list .total-search-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  padding: var(--krds-padding-10) 0;
+  border-bottom: var(--total-search-width-border) solid var(--total-search-color-border);
+}
+.total-search-list .total-search-item .keyword {
+  font-weight: var(--krds-font-weight-bold);
+  color: var(--total-search-keyword-color);
+  background-color: var(--total-search-keyword-background);
+}
+.total-search-list .total-search-item:first-child {
+  padding-top: 0;
+}
+.total-search-list .info-top {
+  display: flex;
+  gap: var(--krds-gap-5);
+}
+.total-search-list .info-top .i-date {
+  color: var(--total-search-info-color);
+}
+.total-search-list .info-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.total-search-list .info-body a:hover {
+  text-decoration: underline;
+  text-underline-offset: var(--krds-font-underline-offset);
+}
+.total-search-list .info-body a:visited {
+  color: var(--total-search-info-body-text-visited);
+}
+.total-search-list .info-body .tit {
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+  margin-bottom: var(--krds-gap-4);
+}
+.total-search-list .info-body .txt {
+  color: var(--total-search-info-color);
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.total-search-list .info-body .in {
+  display: flex;
+  gap: var(--krds-gap-7);
+}
+.total-search-list .info-btm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: var(--krds-gap-5);
+}
+@media (max-width: 767px) {
+  .total-search-top-box {
+    margin-bottom: var(--krds-gap-8);
+  }
+  .total-search-top-box > .inner {
+    padding-top: var(--krds-padding-8);
+    padding-bottom: var(--krds-padding-9);
+  }
+  .total-search-top-box .krds-input {
+    height: var(--krds-size-height-9);
+  }
+  .total-search-top-box .krds-btn.icon.xlarge {
+    width: var(--krds-size-height-5);
+    height: var(--krds-size-height-5);
+  }
+  .total-search-list .total-search-item {
+    padding: var(--krds-padding-8) 0;
+    gap: var(--krds-gap-5);
+  }
+  .total-search-list .total-search-item:first-child {
+    padding-top: var(--krds-padding-8);
+  }
+  .total-search-list .info-top {
+    gap: var(--krds-gap-4);
+  }
+  .total-search-list .info-body .in {
+    flex-direction: column;
+    gap: var(--krds-gap-5);
+  }
+  .total-search-list .info-body .tit {
+    margin-bottom: var(--krds-gap-3);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .total-search-list .info-btm {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+}
+[data-krds-mode=high-contrast] .total-search-top-box::after {
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .total-search-top-box::after {
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .total-search-list {
+  --total-search-color-border: var(--krds-high-contrast-color-divider-gray);
+  --total-search-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  --total-search-keyword-color: var(--krds-high-contrast-color-text-primary);
+  --total-search-keyword-background: var(--krds-high-contrast-color-element-primary-lighter);
+  --total-search-info-color: var(--krds-high-contrast-color-text-subtle);
+  --total-search-info-body-text-visited:var(--krds-high-contrast-color-link-visited);
+  --total-search-info-btm-color:var(--krds-high-contrast-color-text-basic);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .total-search-top-box::after {
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .total-search-top-box::after {
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .total-search-list {
+    --total-search-color-border: var(--krds-high-contrast-color-divider-gray);
+    --total-search-width-border: var(--krds-high-contrast-border-width-variable-regular);
+    --total-search-keyword-color: var(--krds-high-contrast-color-text-primary);
+    --total-search-keyword-background: var(--krds-high-contrast-color-element-primary-lighter);
+    --total-search-info-color: var(--krds-high-contrast-color-text-subtle);
+    --total-search-info-body-text-visited:var(--krds-high-contrast-color-link-visited);
+    --total-search-info-btm-color:var(--krds-high-contrast-color-text-basic);
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 곳만 올바른 경로로 재선언 (breadcrumb, 새 창 링크, 페이지네이션) */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after,
+  .krds-pagination .page-navi.prev::before,
+  .krds-pagination .page-navi.next::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  .svg-icon.ico-go {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_go.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_go.svg);
+  }
+  /* 교정: 킷 셀렉트 기본색이 비활성 토큰(#8A949E, 3.08:1)이라 5.4.3 미달 — text-subtle로 (component.css 9616행) */
+  .krds-form-select { color: var(--krds-light-color-text-subtle); }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="search-results">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+
+  <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+  <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+    <ol class="breadcrumb">
+      <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+      <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+    </ol>
+  </nav>
+
+  <div class="inner">
+
+    <div class="page-title-wrap">
+      <h1 class="h-tit">{{pageTitle}}</h1>
+    </div>
+
+    <!-- 검색 입력 — form으로 감싸 전송 주소를 슬롯으로 받는다 -->
+    <div class="total-search-top-box">
+      <div class="inner">
+        <form class="sch-form-wrap vert" method="get" action="{{searchAction}}">
+          <div class="sch-input">
+            <!-- 교정: 원본은 라벨이 없었다 — sr-only label 연결 -->
+            <label for="total-search" class="sr-only">검색어 입력</label>
+            <input type="text" id="total-search" name="query" class="krds-input xlarge" placeholder="검색어 입력">
+            <button type="submit" class="krds-btn xlarge icon ico-search">
+              <span class="sr-only">검색</span>
+              <i class="svg-icon ico-sch"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 결과 상단 — 결과 수는 aria-live로 변경 통지 (원본 유지) -->
+    <div class="search-list-top border">
+      <ul class="sch-info" aria-live="polite">
+        <li>적용된 검색어 ‘<span class="point">검색어</span>’</li>
+        <li>검색 결과 <span class="point">0</span>개</li>
+      </ul>
+      <ul class="sch-sort">
+        <li class="m-hide">
+          <strong class="sort-label"><label for="result-count">목록 표시 개수</label></strong>
+          <select class="krds-form-select-sort" id="result-count">
+            <option>10개</option>
+            <option>30개</option>
+          </select>
+        </li>
+        <li>
+          <strong class="sort-label"><label for="sort-select">정렬기준</label></strong>
+          <div class="w-sort-btn">
+            <!-- 교정: 정렬 선택 상태가 시각(active)뿐이었다 — aria-pressed로 노출 -->
+            <button type="button" class="active" aria-pressed="true">관련도순</button>
+            <button type="button" aria-pressed="false">최신순</button>
+          </div>
+          <div class="m-sort-btn">
+            <select class="krds-form-select-sort" id="sort-select">
+              <option>관련도순</option>
+              <option>최신순</option>
+            </select>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 결과 목록 — 콘텐츠 자유 영역: 실제 검색 결과로 교체.
+         항목 구조(분류 배지·날짜 → 제목·요약 → 출처 링크)와 키워드 강조(.keyword)는 유지 -->
+    <ul class="total-search-list">
+      <li class="total-search-item">
+        <p class="info-top">
+          <span class="krds-badge bg-light-primary">분류</span>
+          <span class="i-date">2026.01.01</span>
+        </p>
+        <div class="info-body">
+          <a href="#">
+            <p class="tit w-hide">결과 제목 예시 — <span class="keyword">검색어</span> 강조</p>
+            <div class="in">
+              <div class="text">
+                <p class="tit m-hide">결과 제목 예시 — <span class="keyword">검색어</span> 강조</p>
+                <p class="txt">결과 요약문이 들어간다. 본문 중 <span class="keyword">검색어</span>는 강조 표시된다.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li class="total-search-item">
+        <p class="info-top">
+          <span class="krds-badge bg-light-primary">분류</span>
+          <span class="i-date">2026.01.01</span>
+        </p>
+        <div class="info-body">
+          <a href="#">
+            <p class="tit w-hide">외부 링크 결과 예시</p>
+            <div class="in">
+              <div class="text">
+                <p class="tit m-hide">외부 링크 결과 예시</p>
+                <p class="txt">외부 사이트로 연결되는 결과에는 출처 링크를 함께 보여준다.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="info-btm">
+          <a href="#" target="_blank" title="새 창 열기" class="krds-btn medium link basic">
+            <span class="underline">https://example.go.kr</span> <i class="svg-icon ico-go"></i>
+          </a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- 페이지네이션 — 교정: nav 랜드마크 + 현재 페이지 aria-current -->
+    <nav class="krds-pagination" aria-label="페이지 탐색">
+      <span class="page-navi prev disabled">이전</span>
+      <div class="page-links">
+        <a class="page-link active" href="#" aria-current="page">1</a>
+        <a class="page-link" href="#">2</a>
+        <a class="page-link" href="#">3</a>
+      </div>
+      <a class="page-navi next" href="#">다음</a>
+    </nav>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

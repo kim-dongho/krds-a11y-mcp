@@ -1,0 +1,375 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`도구 계약 (tools/list) > 도구별 입력 스키마 1`] = `
+[
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {},
+      "type": "object",
+    },
+    "name": "list_components",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "componentId": {
+          "description": "컴포넌트 id — 'krds:button' 또는 'button'",
+          "type": "string",
+        },
+        "inputs": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string",
+              },
+              {
+                "type": "number",
+              },
+              {
+                "type": "boolean",
+              },
+              {
+                "items": {
+                  "type": [
+                    "string",
+                    "number",
+                  ],
+                },
+                "type": "array",
+              },
+              {
+                "items": {
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                    ],
+                  },
+                  "propertyNames": {
+                    "type": "string",
+                  },
+                  "type": "object",
+                },
+                "type": "array",
+              },
+            ],
+          },
+          "description": "필수 입력 값 — 필드명: 값. 배열(헤더 목록 등)은 쉼표로 이어 받는다. 반복 항목은 객체 배열로 줘도 된다 — 예: crumbs: [{crumbLabel, href}, …]. 바깥 키 이름(crumbs·items 등)은 자유이고 항목 안의 키가 필드명이다. 상태 입력: required(필수 표시)·checked(선택된 항목)는 불리언, errorMessage(오류 상태), currentPage(현재 쪽). 확인용 입력(modalPlacement·captionSync 등 구현 의무 확인)은 true를 준다. breadcrumb·pagination·radio_button·checkbox·text_input·select는 값을 넣은 마크업을 만들어 준다. 미제공 시 요건 안내만 반환하고 마크업은 주지 않는다",
+          "propertyNames": {
+            "type": "string",
+          },
+          "type": "object",
+        },
+        "variant": {
+          "description": "변형 이름 — 예: 'icon', 'size'. 킷 파일명 접미사와 같다",
+          "type": "string",
+        },
+      },
+      "required": [
+        "componentId",
+      ],
+      "type": "object",
+    },
+    "name": "get_component",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "assetBase": {
+          "description": "킷 자산 경로 — 기본 "node_modules/krds-uiux". 킷을 복사·CDN으로 서빙하면 그 경로",
+          "type": "string",
+        },
+        "homeHref": {
+          "description": "로고 링크 — 기본 "/"",
+          "type": "string",
+        },
+        "lang": {
+          "description": "주 언어 코드. 기본 "ko" (kwcag:7.1.1)",
+          "type": "string",
+        },
+        "loginHref": {
+          "description": "있으면 헤더에 로그인 링크를 둔다 (siteMenu와 함께)",
+          "type": "string",
+        },
+        "logoSrc": {
+          "description": "기관 로고 이미지 경로 — 킷 로고(CSS 배경)를 바꾸는 CSS를 헤더·푸터에 넣는다. 고대비 모드에도 같은 이미지를 쓴다",
+          "type": "string",
+        },
+        "orgName": {
+          "description": "기관명 — withSiteChrome의 헤더·푸터 로고 대체 텍스트가 된다(로고는 CSS 배경이라 유일한 텍스트). 실제 기관명을 넣어라",
+          "type": "string",
+        },
+        "output": {
+          "description": ""parts"면 조각(head·header·main·footer·scripts)으로 나눠 준다 — 여러 화면이 공통부를 공유할 때(JSP include, 정적 사이트 공통 조각, 레이아웃 컴포넌트) 손으로 떼어 내지 말고 이것을 써라. 기본 "page"",
+          "enum": [
+            "page",
+            "parts",
+          ],
+          "type": "string",
+        },
+        "pageTitle": {
+          "description": "페이지 제목 — <title>과 h1에 들어간다 (kwcag:6.4.2). 비어있으면 안 된다",
+          "minLength": 1,
+          "type": "string",
+        },
+        "pattern": {
+          "description": "KRDS 패턴 이름 (예: "login"). 정형 화면이면 지정하라 — 완성 구조를 반환한다",
+          "type": "string",
+        },
+        "siteMenu": {
+          "description": "withSiteChrome의 헤더 메뉴(1~3단계) — 주면 킷 데모 메뉴(자리 문구 수십 개) 대신 이 트리로 데스크톱 메뉴와 모바일 전체메뉴를 만든다. 하위가 없는 항목은 href 필수, 하위가 있는 항목은 여닫는 버튼이 된다. 예: [{label:"민원",children:[{label:"민원 신청",href:"/apply"}]},{label:"알림",href:"/notice"}]",
+          "items": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "children": {
+                      "items": {
+                        "properties": {
+                          "href": {
+                            "type": "string",
+                          },
+                          "label": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "label",
+                          "href",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "href": {
+                      "type": "string",
+                    },
+                    "label": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "label",
+                  ],
+                  "type": "object",
+                },
+                "type": "array",
+              },
+              "href": {
+                "type": "string",
+              },
+              "label": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "label",
+            ],
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "slots": {
+          "additionalProperties": {
+            "type": "string",
+          },
+          "description": "패턴 슬롯 값 — 필수 슬롯 미입력 시 무엇을 채울지 안내만 반환한다",
+          "propertyNames": {
+            "type": "string",
+          },
+          "type": "object",
+        },
+        "withCarousel": {
+          "description": "캐러셀 사용 예정이면 true — swiper 번들 스크립트 포함",
+          "type": "boolean",
+        },
+        "withSiteChrome": {
+          "description": "true면 사이트 공통부(공식 배너·헤더·푸터·운영기관 식별자)를 도구가 올바른 랜드마크 구조로 조립해 포함한다 — 직접 조립보다 이 옵션을 권장. siteMenu·orgName·logoSrc로 메뉴와 로고까지 만든다",
+          "type": "boolean",
+        },
+      },
+      "required": [
+        "pageTitle",
+      ],
+      "type": "object",
+    },
+    "name": "get_page_scaffold",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "componentId": {
+          "description": "컴포넌트 id — 'krds:button' 또는 'button'",
+          "type": "string",
+        },
+      },
+      "required": [
+        "componentId",
+      ],
+      "type": "object",
+    },
+    "name": "get_requirements",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "actions": {
+          "description": "검사 전에 실행할 상호작용(순서대로, 실제 클릭·키 입력) — 모달 열림·탭 전환·오류 표시 같은 상태 화면을 검사할 때. click·fill은 selector, fill은 value, press는 key(Enter·Escape·ArrowRight 등, selector를 주면 그 요소에 초점 뒤), wait는 selector(보일 때까지) 또는 ms. 예: [{type:"click",selector:"#apply"},{type:"wait",selector:".form-hint-invalid"}]. 한 단계라도 실패하면 검사 무효로 기록돼 gate가 막는다. 임시 빌드로 초기값을 바꾸지 말고 이것을 쓴다",
+          "items": {
+            "properties": {
+              "key": {
+                "type": "string",
+              },
+              "ms": {
+                "type": "number",
+              },
+              "selector": {
+                "type": "string",
+              },
+              "type": {
+                "enum": [
+                  "click",
+                  "press",
+                  "fill",
+                  "wait",
+                ],
+                "type": "string",
+              },
+              "value": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "type",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "type": "array",
+        },
+        "filePath": {
+          "description": "검사할 로컬 HTML 파일 경로",
+          "type": "string",
+        },
+        "html": {
+          "description": "HTML 문자열 — 상대 경로 자산이 깨지므로 최후 수단",
+          "type": "string",
+        },
+        "keepRuns": {
+          "description": "화면별로 남길 최근 검사 수 — 첫 회(기준 증빙)는 항상 따로 남기므로 결과는 첫 회 + 최근 N회(최대 N+1개)다. 미지정이면 환경 변수 KRDS_A11Y_KEEP_RUNS, 그것도 없으면 전부 보존",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "type": "integer",
+        },
+        "outDir": {
+          "description": "리포트·스크린샷 저장 디렉터리 (기본 reports/) — 화면별 하위 폴더에 검사 이력이 쌓인다",
+          "type": "string",
+        },
+        "screen": {
+          "description": "화면 이름 — 검사 기록 폴더 이름이 된다. 같은 화면을 호스트·포트를 바꿔 검사해도 이력이 이어지고, 상태 화면(actions)은 다른 이름으로 따로 기록하라 — 예: "apply-form", "apply-form-오류". 없으면 url·파일 이름에서 만든다",
+          "type": "string",
+        },
+        "sourceDir": {
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          ],
+          "description": "url(dev 서버·배포본)을 검사할 때 그 화면을 만드는 소스 폴더 — 예: "src", ["src", "public"], JSP는 "src/main/webapp". 넘기면 gate가 검사 뒤 소스가 바뀌었는지(낡음)를 판정해 재검사를 요구한다. 없으면 url 검사의 낡음은 판정 불가",
+        },
+        "url": {
+          "description": "검사할 페이지 URL (http/https)",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "validate_page",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "assetBase": {
+          "description": "킷 자산 경로 (기본 node_modules/krds-uiux, 예: /krds-uiux)",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_icon_fix_css",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "framework": {
+          "description": "프레임워크 — react(Vite 등 SPA 공통) 또는 nextjs. 비우면 목록을 안내한다",
+          "enum": [
+            "react",
+            "nextjs",
+          ],
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_framework_guide",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "query": {
+          "description": "검색어 — 공백 구분 낱말 전부 포함 매칭. 예: "light-color text", "pc-gap"",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_tokens",
+  },
+  {
+    "input": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "properties": {
+        "filePath": {
+          "description": "점검할 로컬 HTML 파일 경로",
+          "type": "string",
+        },
+        "html": {
+          "description": "HTML 문자열 — 최후 수단",
+          "type": "string",
+        },
+        "selectors": {
+          "default": [],
+          "description": "점검할 CSS 셀렉터 목록 (각각 첫 매칭 요소를 읽음)",
+          "items": {
+            "type": "string",
+          },
+          "maxItems": 20,
+          "type": "array",
+        },
+        "url": {
+          "description": "점검할 페이지 URL (http/https)",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "inspect_page",
+  },
+]
+`;

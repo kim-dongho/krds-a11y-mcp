@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 71건 · 클래스: br, btn-wrap, certify-opt-tit, certify-option, certify-sel-wrap, certify-type, conts-area, guest, h-tit, h-txt, helper-box, helper-desc-wrap, helper-tit, id, join-member-bn-wrap, krds-info-list, login-link, login-type, mobile, page-title-wrap, public, simplicity, small-txt, sns, txt-desc, type-desc, type-tit */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+.page-title-wrap .h-tit .small-txt {
+  display: flex;
+  margin-bottom: var(--krds-pc-gap-layout-title-body-small);
+  font-size: var(--krds-pc-font-size-heading-xxsmall);
+  color: var(--krds-light-color-text-subtle);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+  .page-title-wrap .h-tit .small-txt {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-small);
+    font-size: var(--krds-mobile-font-size-heading-xxsmall);
+  }
+}
+.page-title-wrap .h-txt {
+  font-size: var(--krds-pc-font-size-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-txt {
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+}
+.conts-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+  width: 100%;
+}
+[data-krds-mode=high-contrast] .page-title-wrap .h-tit .small-txt {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-title-wrap .h-tit .small-txt {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap .h-txt .br {
+    display: none;
+  }
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+.krds-info-list li .helper-box {
+  margin-top: var(--krds-pc-gap-layout-title-body-medium);
+}
+.krds-info-list + .helper-box {
+  margin-top: var(--krds-gap-7);
+}
+.helper-box {
+  --helper-color-background: var(--krds-light-color-surface-secondary-subtler);
+  --helper-color-border: var(--krds-light-color-border-secondary-light);
+  --helper-color-text: var(--krds-light-color-text-secondary);
+  --helper-width-border: var(--krds-light-border-width-variable-regular);
+  --helper-icon-size: var(--krds-size-height-3);
+  --helper-gap-tit-icon: var(--krds-gap-3);
+  --helper-desc-wrap-margin-top: var(--krds-gap-4);
+  --helper-desc-wrap-margin-left: calc(var(--krds-size-height-3) + var(--krds-gap-3));
+  width: 100%;
+  padding: var(--krds-pc-padding-card-xsmall);
+  border-radius: var(--krds-radius-xlarge2);
+  background-color: var(--helper-color-background);
+  border: var(--helper-width-border) solid var(--helper-color-border);
+}
+.helper-box .helper-tit {
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--helper-color-text);
+  font-weight: var(--krds-font-weight-bold);
+}
+.helper-box .helper-tit::before {
+  margin-right: var(--helper-gap-tit-icon);
+  content: "";
+  display: inline-flex;
+  width: var(--helper-icon-size);
+  height: var(--helper-icon-size);
+  background-color: var(--krds-light-color-text-basic);
+  background-color: transparent !important;
+  forced-color-adjust: none;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iOCIgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgMiAxOCkiIGZpbGw9IiMwMDM2NzUiLz4KPHJlY3QgeD0iOS4xNjc5NyIgeT0iOS4xNjYwMiIgd2lkdGg9IjEuNjY2NjciIGhlaWdodD0iNSIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iOC4zMzIwMyIgeT0iOS4xNjYwMiIgd2lkdGg9IjEuNjY2NjciIGhlaWdodD0iMC44MzMzMzMiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjguMzMyMDMiIHk9IjEzLjMzNCIgd2lkdGg9IjMuMzMzMzMiIGhlaWdodD0iMC44MzMzMzMiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjkuNzkxNjciIGN5PSI2Ljg3NTY1IiByPSIxLjA0MTY3IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K);
+  background-size: contain;
+}
+.helper-box .helper-desc-wrap {
+  margin-top: var(--helper-desc-wrap-margin-top);
+  margin-left: var(--helper-desc-wrap-margin-left);
+}
+@media (max-width: 767px) {
+  .conts-area {
+    gap: var(--krds-gap-8);
+    /* 신청하기 : 상단 타이틀 간격 */
+  }
+  .krds-info-list li .helper-box {
+    margin-top: var(--krds-mobile-gap-layout-title-body-medium);
+  }
+  .helper-box {
+    padding: var(--krds-mobile-padding-card-xsmall);
+  }
+  .helper-box .helper-desc-wrap {
+    margin-top: var(--krds-gap-3);
+  }
+}
+[data-krds-mode=high-contrast] .helper-box {
+  --helper-color-background: var(--krds-high-contrast-color-surface-secondary-subtler);
+  --helper-color-border: var(--krds-high-contrast-color-border-secondary-light);
+  --helper-color-text: var(--krds-high-contrast-color-text-secondary);
+  --helper-width-border: var(--krds-high-contrast-border-width-variable-regular);
+}
+[data-krds-mode=high-contrast] .helper-box .helper-tit::before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2LjY2NjciIGhlaWdodD0iMTYuNjY2NyIgcng9IjguMzMzMzMiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDEuNjY2MDIgMTguMzMyKSIgZmlsbD0iI0FCRDhFMyIvPgo8cGF0aCBkPSJNOS45MTQ3MSA3Ljg2NzE5QzEwLjQ2NyA3Ljg2NzE5IDEwLjkxNDcgNy40MTk0NyAxMC45MTQ3IDYuODY3MTlDMTAuOTE0NyA2LjMxNDkgMTAuNDY3IDUuODY3MTkgOS45MTQ3MSA1Ljg2NzE5QzkuMzYyNDMgNS44NjcxOSA4LjkxNDcxIDYuMzE0OSA4LjkxNDcxIDYuODY3MTlDOC45MTQ3MSA3LjQxOTQ3IDkuMzYyNDMgNy44NjcxOSA5LjkxNDcxIDcuODY3MTlaIiBmaWxsPSIjMUUyMTI0Ii8+CjxwYXRoIGQ9Ik04LjY5ODA1IDguNjkyM0M4LjU4NzU5IDguNjkyMyA4LjQ5ODA1IDguNzgxODQgOC40OTgwNSA4Ljg5MjNWOS40OTIzQzguNDk4MDUgOS42MDI3NiA4LjU4NzU5IDkuNjkyMyA4LjY5ODA1IDkuNjkyM0g5LjIxNjAyQzkuMzI2NDcgOS42OTIzIDkuNDE2MDIgOS43ODE4NCA5LjQxNjAyIDkuODkyM1YxMi45OTQ1SDguNTMyMDNDOC40MjE1NyAxMi45OTQ1IDguMzMyMDMgMTMuMDg0IDguMzMyMDMgMTMuMTk0NVYxMy43OTQ1QzguMzMyMDMgMTMuOTA0OSA4LjQyMTU3IDEzLjk5NDUgOC41MzIwMyAxMy45OTQ1SDExLjQ2NTRDMTEuNTc1OCAxMy45OTQ1IDExLjY2NTQgMTMuOTA0OSAxMS42NjU0IDEzLjc5NDVWMTMuMTk0NUMxMS42NjU0IDEzLjA4NCAxMS41NzU4IDEyLjk5NDUgMTEuNDY1NCAxMi45OTQ1SDEwLjkxNlY4Ljg5MjNDMTAuOTE2IDguNzgxODQgMTAuODI2NSA4LjY5MjMgMTAuNzE2IDguNjkyM0g4LjY5ODA1WiIgZmlsbD0iIzFFMjEyNCIvPgo8L3N2Zz4K);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .helper-box {
+    --helper-color-background: var(--krds-high-contrast-color-surface-secondary-subtler);
+    --helper-color-border: var(--krds-high-contrast-color-border-secondary-light);
+    --helper-color-text: var(--krds-high-contrast-color-text-secondary);
+    --helper-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  }
+  [data-krds-mode=theme] .helper-box .helper-tit::before {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2LjY2NjciIGhlaWdodD0iMTYuNjY2NyIgcng9IjguMzMzMzMiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDEuNjY2MDIgMTguMzMyKSIgZmlsbD0iI0FCRDhFMyIvPgo8cGF0aCBkPSJNOS45MTQ3MSA3Ljg2NzE5QzEwLjQ2NyA3Ljg2NzE5IDEwLjkxNDcgNy40MTk0NyAxMC45MTQ3IDYuODY3MTlDMTAuOTE0NyA2LjMxNDkgMTAuNDY3IDUuODY3MTkgOS45MTQ3MSA1Ljg2NzE5QzkuMzYyNDMgNS44NjcxOSA4LjkxNDcxIDYuMzE0OSA4LjkxNDcxIDYuODY3MTlDOC45MTQ3MSA3LjQxOTQ3IDkuMzYyNDMgNy44NjcxOSA5LjkxNDcxIDcuODY3MTlaIiBmaWxsPSIjMUUyMTI0Ii8+CjxwYXRoIGQ9Ik04LjY5ODA1IDguNjkyM0M4LjU4NzU5IDguNjkyMyA4LjQ5ODA1IDguNzgxODQgOC40OTgwNSA4Ljg5MjNWOS40OTIzQzguNDk4MDUgOS42MDI3NiA4LjU4NzU5IDkuNjkyMyA4LjY5ODA1IDkuNjkyM0g5LjIxNjAyQzkuMzI2NDcgOS42OTIzIDkuNDE2MDIgOS43ODE4NCA5LjQxNjAyIDkuODkyM1YxMi45OTQ1SDguNTMyMDNDOC40MjE1NyAxMi45OTQ1IDguMzMyMDMgMTMuMDg0IDguMzMyMDMgMTMuMTk0NVYxMy43OTQ1QzguMzMyMDMgMTMuOTA0OSA4LjQyMTU3IDEzLjk5NDUgOC41MzIwMyAxMy45OTQ1SDExLjQ2NTRDMTEuNTc1OCAxMy45OTQ1IDExLjY2NTQgMTMuOTA0OSAxMS42NjU0IDEzLjc5NDVWMTMuMTk0NUMxMS42NjU0IDEzLjA4NCAxMS41NzU4IDEyLjk5NDUgMTEuNDY1NCAxMi45OTQ1SDEwLjkxNlY4Ljg5MjNDMTAuOTE2IDguNzgxODQgMTAuODI2NSA4LjY5MjMgMTAuNzE2IDguNjkyM0g4LjY5ODA1WiIgZmlsbD0iIzFFMjEyNCIvPgo8L3N2Zz4K);
+  }
+}
+.conts-area.login-type {
+  --login-type-color-tooltip: var(--krds-light-color-icon-gray);
+}
+.conts-area.login-type .join-member-bn-wrap ~ .helper-box {
+  margin-top: -1.6rem;
+}
+.certify-sel-wrap {
+  --certify-color-background: var(--krds-light-color-background-gray-subtler);
+  --certify-color-border: var(--krds-light-color-divider-gray);
+  --certify-width-border: var(--krds-light-border-width-variable-regular);
+  --certify-expand-color-background: var(--krds-light-color-surface-white-subtler);
+  --certify-desc-color-text: var(--krds-light-color-text-subtle);
+  width: 100%;
+}
+.certify-sel-wrap .certify-opt-tit {
+  flex-shrink: 0;
+  margin-top: var(--krds-padding-8);
+  width: 35%;
+  font-size: var(--krds-pc-font-size-heading-medium);
+  font-weight: var(--krds-font-weight-bold);
+}
+.certify-sel-wrap .certify-option {
+  border-top: var(--certify-width-border) solid var(--certify-color-border);
+}
+.certify-sel-wrap .certify-option > li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: var(--krds-gap-7);
+  padding-top: var(--krds-padding-8);
+  padding-bottom: var(--krds-padding-8);
+  border-bottom: var(--certify-width-border) solid var(--certify-color-border);
+}
+.certify-sel-wrap .certify-type {
+  flex-shrink: 0;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--krds-gap-5);
+  width: 100%;
+  max-width: 58.8rem;
+}
+.certify-sel-wrap .certify-type > li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-direction: column;
+  position: relative;
+  padding: var(--krds-padding-9) var(--krds-padding-9) var(--krds-padding-9) var(--krds-number-21);
+  background-color: var(--certify-color-background);
+  border-radius: var(--krds-radius-xlarge1);
+}
+.certify-sel-wrap .certify-type > li .login-link {
+  display: block;
+  width: 100%;
+}
+.certify-sel-wrap .certify-type > li .login-link + .btn-wrap {
+  margin-top: var(--krds-padding-6);
+}
+.certify-sel-wrap .certify-type > li .login-link:focus {
+  border-radius: 0;
+}
+.certify-sel-wrap .certify-type > li::before,
+.certify-sel-wrap .certify-type > li::after {
+  position: absolute;
+  top: var(--krds-gap-8);
+  left: var(--krds-gap-8);
+  content: "";
+  display: inline-flex;
+  width: var(--krds-size-height-6);
+  height: var(--krds-size-height-6);
+  background-color: var(--krds-light-color-text-basic);
+  forced-color-adjust: none;
+  background-size: contain;
+}
+.certify-sel-wrap .certify-type > li::after {
+  position: absolute;
+  top: var(--krds-gap-9);
+  left: auto;
+  right: var(--krds-gap-8);
+  display: inline-flex;
+  width: var(--krds-size-height-4);
+  height: var(--krds-size-height-4);
+  background-color: var(--krds-light-color-text-basic);
+  forced-color-adjust: none;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_more.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_more.svg);
+}
+.certify-sel-wrap .certify-type > li.mobile::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_01.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_01.svg);
+}
+.certify-sel-wrap .certify-type > li.public::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_02.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_02.svg);
+}
+.certify-sel-wrap .certify-type > li.simplicity::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_03.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_03.svg);
+}
+.certify-sel-wrap .certify-type > li.sns::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_04.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_04.svg);
+}
+.certify-sel-wrap .certify-type > li.id::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_05.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_05.svg);
+}
+.certify-sel-wrap .certify-type > li.guest::before {
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  mask-size: contain;
+  -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_06.svg);
+  mask-image: url({{assetBase}}/resources/img/component/icon/ico_login_certify_type_06.svg);
+}
+.certify-sel-wrap .certify-type > li .type-tit {
+  margin: var(--krds-gap-2) 0;
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+}
+.certify-sel-wrap .certify-type > li .type-desc {
+  margin-top: var(--krds-gap-3);
+  padding-right: var(--krds-padding-10);
+  color: var(--certify-desc-color-text);
+}
+.join-member-bn-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: var(--krds-gap-5);
+}
+.join-member-bn-wrap .txt-desc {
+  flex-shrink: 0;
+  flex-grow: 0;
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .conts-area[class*=login-] {
+    gap: var(--krds-gap-7);
+  }
+  .conts-area.login-type .join-member-bn-wrap ~ .helper-box {
+    margin-top: -0.8rem;
+  }
+  .certify-sel-wrap .certify-opt-tit {
+    margin-top: 0;
+    width: 100%;
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .certify-sel-wrap .certify-option > li {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: var(--krds-gap-5);
+    padding-top: var(--krds-padding-6);
+    padding-bottom: var(--krds-padding-6);
+  }
+  .certify-sel-wrap .certify-type {
+    max-width: none;
+    width: 100%;
+    gap: var(--krds-gap-4);
+  }
+  .certify-sel-wrap .certify-type > li {
+    padding: var(--krds-padding-8);
+  }
+  .certify-sel-wrap .certify-type > li .login-link + .btn-wrap {
+    margin-top: var(--krds-gap-3);
+  }
+  .certify-sel-wrap .certify-type > li::before {
+    width: var(--krds-size-height-5);
+    height: var(--krds-size-height-5);
+    position: absolute;
+    top: 2.4rem;
+    left: 2.4rem;
+  }
+  .certify-sel-wrap .certify-type > li::after {
+    width: var(--krds-size-height-4);
+    height: var(--krds-size-height-4);
+    position: absolute;
+    top: 2.4rem;
+    left: auto;
+    right: 2.4rem;
+  }
+  .certify-sel-wrap .certify-type > li .type-tit {
+    margin: var(--krds-number-1) 0;
+    padding-left: var(--krds-gap-10);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .certify-sel-wrap .certify-type > li .type-desc {
+    margin-top: var(--krds-gap-3);
+  }
+  .join-member-bn-wrap {
+    flex-direction: column;
+    gap: var(--krds-gap-4);
+  }
+  .join-member-bn-wrap .txt-desc {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+}
+[data-krds-mode=high-contrast] .conts-area.login-type {
+  --login-type-color-tooltip: var(--krds-high-contrast-color-icon-gray);
+}
+[data-krds-mode=high-contrast] .certify-sel-wrap {
+  --certify-color-background: var(--krds-high-contrast-color-background-gray-subtler);
+  --certify-color-border: var(--krds-high-contrast-color-divider-gray);
+  --certify-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  --certify-expand-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+  --certify-desc-color-text: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .certify-sel-wrap .certify-type > li::after {
+  display: inline-flex;
+  width: var(--krds-size-height-4);
+  height: var(--krds-size-height-4);
+  background-color: var(--krds-high-contrast-color-text-basic);
+  forced-color-adjust: none;
+}
+[data-krds-mode=high-contrast] .certify-sel-wrap .certify-type > li::before {
+  display: inline-flex;
+  width: var(--krds-size-height-6);
+  height: var(--krds-size-height-6);
+  background-color: var(--krds-high-contrast-color-text-basic);
+  forced-color-adjust: none;
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .conts-area.login-type {
+    --login-type-color-tooltip: var(--krds-high-contrast-color-icon-gray);
+  }
+  [data-krds-mode=theme] .certify-sel-wrap {
+    --certify-color-background: var(--krds-high-contrast-color-background-gray-subtler);
+    --certify-color-border: var(--krds-high-contrast-color-divider-gray);
+    --certify-width-border: var(--krds-high-contrast-border-width-variable-regular);
+    --certify-expand-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+    --certify-desc-color-text: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .certify-sel-wrap .certify-type > li::after {
+    display: inline-flex;
+    width: var(--krds-size-height-4);
+    height: var(--krds-size-height-4);
+    background-color: var(--krds-high-contrast-color-text-basic);
+    forced-color-adjust: none;
+  }
+  [data-krds-mode=theme] .certify-sel-wrap .certify-type > li::before {
+    display: inline-flex;
+    width: var(--krds-size-height-6);
+    height: var(--krds-size-height-6);
+    background-color: var(--krds-high-contrast-color-text-basic);
+    forced-color-adjust: none;
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 프라이머리 파랑(#256ef4)은 회색 배경 위에서 대비 4.16:1로 미달(4.5:1 필요)
+     — 킷 토큰 내 진한 단계로 교체 */
+  .helper-box a.krds-btn.link { color: var(--krds-color-light-primary-70); }
+  .helper-box a.krds-btn.link .underline { color: inherit; }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb 2곳만 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="login-select">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+  <div class="inner">
+
+    <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+    <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+      <ol class="breadcrumb">
+        <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+        <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+      </ol>
+    </nav>
+
+    <!-- 페이지 타이틀 — KRDS 로그인 패턴(service_03_05) 구조 -->
+    <div class="page-title-wrap">
+      <h1 class="h-tit"><span class="small-txt">{{serviceName}}</span>{{pageTitle}}</h1>
+      <p class="h-txt">{{introText}}</p>
+    </div>
+
+    <div class="conts-area login-type">
+
+      <!-- 인증 방식 선택 — 그룹·카드는 콘텐츠 자유 영역: 서비스가 제공하는 방식만
+           남기고 링크를 연결한다. 그룹(certify-opt-tit)·카드(login-link) 구조는 유지 -->
+      <div class="certify-sel-wrap">
+        <ul class="certify-option">
+          <li>
+            <!-- 교정: 원본은 h1 다음 h3로 제목 수준을 건너뛰었다 — h2로 조정 -->
+            <h2 class="certify-opt-tit">한번에 본인인증하고 <br class="br">모든 서비스 이용하기</h2>
+            <ul class="certify-type">
+              <li class="mobile">
+                <a href="#" class="login-link">
+                  <h3 class="type-tit">모바일 신분증</h3>
+                  <p class="type-desc">행정안전부에서 제공하는 모바일 신분증 앱을 이용하여 로그인하기</p>
+                </a>
+              </li>
+              <li class="public">
+                <a href="#" class="login-link">
+                  <h3 class="type-tit">공동·금융 인증서</h3>
+                  <p class="type-desc">금융기관이나 공식인증기관에서 발급받은 공동인증서 또는 금융인증서를 이용하여 로그인하기</p>
+                </a>
+              </li>
+              <li class="simplicity">
+                <a href="#" class="login-link">
+                  <h3 class="type-tit">간편 인증</h3>
+                  <p class="type-desc">민간 전자서명 사업자가 제공하는 전자서명을 이용하여 로그인하기</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <h2 class="certify-opt-tit">간단히 로그인하고 <br class="br">필요시 본인인증하기</h2>
+            <ul class="certify-type">
+              <li class="sns">
+                <a href="#" class="login-link">
+                  <h3 class="type-tit">소셜(SNS)계정으로 로그인</h3>
+                  <p class="type-desc">자주 사용하는 소셜·포털사이트 계정으로 로그인하기</p>
+                </a>
+              </li>
+              <li class="id">
+                <a href="{{idLoginHref}}" class="login-link">
+                  <h3 class="type-tit">아이디/비밀번호</h3>
+                  <p class="type-desc">회원가입시 등록한 아이디와 비밀번호를 이용하여 로그인하기</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <h2 class="certify-opt-tit">회원 가입이 필요하지 않은 <br class="br">단순 서비스 이용하기</h2>
+            <ul class="certify-type">
+              <li class="guest">
+                <a href="#" class="login-link">
+                  <h3 class="type-tit">비회원 로그인</h3>
+                  <p class="type-desc">회원가입 없이 간단한 본인확인만으로 서비스 이용하기</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 회원가입 이동 -->
+      <div class="join-member-bn-wrap">
+        <p class="txt-desc">아직 회원이 아니신가요?</p>
+        <div class="btn-wrap">
+          <a href="{{joinHref}}" class="krds-btn medium text">회원가입 <i class="svg-icon ico-angle right"></i></a>
+        </div>
+      </div>
+
+      <!-- 도움 — 패턴 지침의 '도움말' 요소. 7.2.2: 모든 페이지에서 일관된 위치 유지 -->
+      <div class="helper-box">
+        <p class="helper-tit">로그인에 어려움이 있으신가요?</p>
+        <div class="helper-desc-wrap">
+          <ul class="krds-info-list decimal">
+            <li><a href="{{helpHref}}" class="krds-btn medium link"><span class="underline">로그인 도움말 보기</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

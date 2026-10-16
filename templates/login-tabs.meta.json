@@ -1,0 +1,138 @@
+{
+  "name": "login-tabs",
+  "title": "로그인 (회원 유형 탭)",
+  "source": {
+    "docUrl": "https://www.krds.go.kr/html/site/service/service_03_04.html",
+    "sampleUrl": "https://www.krds.go.kr/html/pattern/sample_login_02.html",
+    "collectedAt": "2026-09-14T01:36:32.843Z",
+    "sha256": "482eee681c896f009b63fa5aa8bc7807a912015f0a69eb60f2f593159b8a342b"
+  },
+  "corrections": [
+    {
+      "what": "viewport의 maximum-scale=1.0, user-scalable=no 제거",
+      "why": "화면 확대 차단은 저시력 사용자를 배제한다 (KWCAG 33항목 밖이나 WCAG 1.4.4 위반, 실사용 영향 실재)"
+    },
+    {
+      "what": "건너뛰기 링크 대상을 #breadcrumb → #main-content로, 대상에 tabindex=\"-1\" 부여",
+      "why": "원본 샘플의 #breadcrumb는 문서에 존재하지 않아 링크가 동작하지 않았다 (스냅샷 구조 검증 32/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "본문 컨테이너 div#container → main#main-content",
+      "why": "원본에 main 랜드마크가 없어 스크린리더의 본문 이동이 불가 (33/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "탭 role·상태를 li → 초점 요소(버튼)로 이동, li는 presentation",
+      "why": "킷 데모는 li에 role=\"tab\"·aria-selected를 부여해 버튼 중첩(nested-interactive)이 된다 — 보조기술이 탭 선택 상태를 초점 요소에서 못 읽는 알려진 결함(KRDS 운영팀 수정 예고, 매핑표 기록). 수정 방향을 선적용",
+      "kwcagId": "kwcag:8.2.1"
+    },
+    {
+      "what": "킷 탭 JS 비활성화(data-listener-attached) + 올바른 탭 동작 스크립트 동봉 — roving tabindex(선택 탭만 Tab 정지점)·Home/End 포함 (2026-10-12 보강)",
+      "why": "킷 ui-script는 li에서 aria-controls를 읽고 li에 role=\"tab\"·aria-selected를 덮어써 교정 마크업과 충돌한다. 킷의 스킵 플래그로 비활성화하고 클릭·방향키(좌우 순환) 전환을 동봉 — 킷이 수정되면 이 스크립트와 li의 role·data 속성을 제거하고 킷 방식으로 복귀 (템플릿 주석 명시) 보강: 비활성 탭도 Tab 정지점이라 탭에서 Tab을 누르면 패널이 아니라 다음 탭으로 가고 Home·End가 없었다 (RC 검증 실측, WAI-ARIA APG 탭 패턴).",
+      "kwcagId": "kwcag:8.2.1"
+    },
+    {
+      "what": "탭별 패널 제목 h3→h2 (sr-only)",
+      "why": "원본은 h1 다음 h3로 수준을 건너뛴다 (6.4.2)",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "what": "폼에 form 요소와 전송 주소 슬롯, 입력에 autocomplete 부여",
+      "why": "원본은 form 없이 필드만 나열된 데모였다 — 비밀번호 관리자·자동완성 동작 보장",
+      "kwcagId": "kwcag:7.3.2"
+    },
+    {
+      "what": "Pretendard GOV @font-face 선언 추가",
+      "why": "킷은 폰트 파일만 동봉하고 선언이 없어 미설치 기기에서 시스템 폰트로 대체된다"
+    },
+    {
+      "what": "브레드크럼의 현재 페이지 항목에 aria-current=\"page\" 부여",
+      "why": "원본 샘플은 현재 위치 표시가 없었다 — 매핑표 breadcrumb ? 항목의 교정 방향 적용",
+      "kwcagId": "kwcag:8.2.1"
+    },
+    {
+      "what": "건너뛰기 도착점(#main-content)의 초점 링 억제",
+      "why": "킷 전역 *:focus 스타일이 main에도 적용돼, 건너뛰기 실행 시 본문 전체가 파란 외곽선으로 감싸인다. 도착점은 조작 컨트롤이 아니므로 시각 링만 억제 (초점 유지)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "킷 component.css 아이콘 경로 버그 우회 — breadcrumb·체크박스 재선언",
+      "why": "킷 v1.1.0 npm판 CSS는 url(../../img/img/…)로 img 세그먼트가 중복돼 아이콘 206곳이 404로 깨진다(오류 표시 없이 아이콘만 사라짐) — 이 페이지에 보이는 곳만 올바른 경로로 덮는다"
+    },
+    {
+      "what": "breadcrumb 폭 제한 승계 — 콘텐츠 컨테이너 폭으로 가운데 정렬",
+      "why": "원본은 #container > .krds-breadcrumb-wrap .breadcrumb에 max-width(1248px)·좌우 패딩을 걸어 로고·GNB와 정렬한다(output.css 20848행). #container 키 규칙이라 발췌에 안 걸렸고 container→main 교정으로 셀렉터도 어긋나 breadcrumb이 화면 좌측 끝에 붙었다 — 실사용 테스트에서 발견(2026-09-22)"
+    }
+  ],
+  "layoutCss": {
+    "note": "레이아웃 CSS는 손으로 쓰지 않는다 — scripts/extract-pattern-css.ts가 원본 패턴 CSS에서 이 템플릿이 쓰는 셀렉터만 발췌해 마커 구간에 주입한다. 출처·sha256은 템플릿의 발췌 블록 머리 주석에 기록",
+    "sourceUrl": "https://www.krds.go.kr/resources/css/pattern/output.css"
+  },
+  "visualCompare": [
+    ".krds-tab-area",
+    ".tab.fill.full",
+    ".login-form-area.type-tab",
+    ".login-info-wrap",
+    ".page-title-wrap"
+  ],
+  "slots": [
+    {
+      "name": "pageTitle",
+      "required": true,
+      "description": "페이지 제목 — <title>과 h1에 들어간다 (예: 로그인 방식을 선택해주세요)",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "name": "loginAction",
+      "required": true,
+      "description": "로그인 폼 전송 주소 (form action — 두 탭 공용, 필요 시 콘텐츠에서 분리)"
+    },
+    {
+      "name": "serviceName",
+      "required": false,
+      "default": "",
+      "description": "h1 위에 붙는 서비스명 작은 글씨"
+    },
+    {
+      "name": "lang",
+      "required": false,
+      "default": "ko",
+      "description": "주 언어 코드",
+      "kwcagId": "kwcag:7.1.1"
+    },
+    {
+      "name": "assetBase",
+      "required": false,
+      "default": "node_modules/krds-uiux",
+      "description": "킷 자산 경로 (예약 슬롯 — 도구가 주입)"
+    },
+    {
+      "name": "idFindHref",
+      "required": false,
+      "default": "#",
+      "description": "아이디 찾기 링크"
+    },
+    {
+      "name": "pwFindHref",
+      "required": false,
+      "default": "#",
+      "description": "비밀번호 찾기 링크"
+    },
+    {
+      "name": "joinHref",
+      "required": false,
+      "default": "#",
+      "description": "회원가입 링크"
+    },
+    {
+      "name": "homeHref",
+      "required": false,
+      "default": "/",
+      "description": "브레드크럼 홈 링크"
+    }
+  ],
+  "dietNote": "원본 142줄 본문(국립중앙도서관 예시) 구조 유지: 회원 유형 탭 2개 + 탭별 로그인 폼 + 다른 로그인 방식 안내. 제거: 간편인증 목록 disclosure. 탭 이름·수와 폼 필드는 콘텐츠 자유 영역 — 탭을 늘리면 button id·aria-controls·패널 id 대응을 유지한다. 유일하게 보정 스크립트(탭 상태 이관)를 동봉하는 템플릿 — 킷 탭 결함 수정 시 제거",
+  "family": "login",
+  "whenToUse": "회원 유형(일반/기관 등)에 따라 로그인 방식이 나뉘는 서비스. 인증 수단 선택 화면은 login-select, 아이디/비밀번호 단일 화면은 login-id"
+}

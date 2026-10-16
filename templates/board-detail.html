@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 46건 · 클래스: breadcrumb, contents, conts-desc, conts-wrap, def-list, def-list-wrap, h-tit, in-between, inner, krds-breadcrumb-wrap, krds-btn, krds-side-navigation, page-btn-wrap, page-title-wrap, sec-tit */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+}
+.page-btn-wrap {
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--krds-gap-5);
+  margin-top: var(--krds-gap-9);
+}
+[data-krds-mode=high-contrast] .page-btn-wrap {
+  background-color: var(--krds-high-contrast-color-background-white);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-btn-wrap {
+    background-color: var(--krds-high-contrast-color-background-white);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .page-btn-wrap {
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    padding: var(--krds-padding-8) var(--krds-padding-6);
+    margin: 0 calc(var(--krds-padding-6) * -1) calc(var(--krds-padding-10) * -1);
+    background-color: var(--krds-light-color-background-white);
+  }
+  .page-btn-wrap > .krds-btn {
+    flex: 1;
+  }
+}
+.conts-wrap {
+  width: 100%;
+  color: var(--krds-light-color-text-bolder);
+}
+.conts-wrap .conts-wrap h3.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+  font-size: var(--krds-pc-font-size-heading-large);
+}
+.conts-wrap .conts-wrap h3.sec-tit ~ .conts-wrap {
+  margin-top: var(--krds-pc-gap-layout-h2-h3);
+}
+.conts-wrap .conts-wrap .conts-desc:not(:last-child) {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+  font-size: var(--krds-pc-font-size-heading-medium);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit ~ .conts-wrap {
+  margin-top: var(--krds-pc-gap-layout-h4-h4);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit + .conts-wrap {
+  margin-top: 0;
+}
+.conts-wrap .conts-wrap .conts-wrap .conts-wrap h5.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-medium);
+  font-size: var(--krds-pc-font-size-heading-small);
+}
+@media (max-width: 767px) {
+  .conts-wrap .conts-wrap h3.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .conts-wrap .conts-wrap h3.sec-tit ~ .conts-wrap {
+    margin-top: var(--krds-mobile-gap-layout-h3-h4);
+  }
+  .conts-wrap .conts-wrap .conts-desc {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+  }
+  .conts-wrap .conts-wrap .conts-wrap h4.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .conts-wrap .conts-wrap .conts-wrap h4.sec-tit ~ .conts-wrap {
+    margin-top: var(--krds-mobile-gap-layout-h5-h5);
+  }
+  .conts-wrap .conts-wrap .conts-wrap .conts-wrap h5.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-medium);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+}
+[data-krds-mode=high-contrast] .conts-wrap {
+  color: var(--krds-high-contrast-color-text-bolder);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .conts-wrap {
+    color: var(--krds-high-contrast-color-text-bolder);
+  }
+}
+.def-list-wrap .def-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--krds-gap-5) 0;
+  border-top: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-divider-gray);
+  border-bottom: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-divider-gray);
+  padding: var(--krds-padding-8) 0;
+}
+.def-list-wrap .def-list > dt {
+  width: 18rem;
+  margin-right: var(--krds-gap-7);
+  font-weight: var(--krds-font-weight-bold);
+}
+.def-list-wrap .def-list > dd {
+  width: calc(100% - (18rem + var(--krds-gap-7)));
+}
+@media (max-width: 767px) {
+  .def-list-wrap .def-list {
+    gap: var(--krds-gap-4) 0;
+    padding: var(--krds-padding-6) 0;
+  }
+  .def-list-wrap .def-list > dt {
+    width: 8.6rem;
+    margin-right: var(--krds-gap-5);
+  }
+  .def-list-wrap .def-list > dd {
+    width: calc(100% - (8.6rem + var(--krds-gap-5)));
+  }
+}
+#container > .inner {
+  min-height: 60rem;
+}
+#container > .inner:not(.in-between) {
+  padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+}
+@media (max-width: 767px) {
+  #container > .inner:not(.in-between) {
+    padding-bottom: var(--krds-mobile-gap-layout-contents-footer);
+  }
+}
+#container > .krds-breadcrumb-wrap {
+  padding-bottom: 0;
+}
+#container > .krds-breadcrumb-wrap .breadcrumb {
+  max-width: var(--krds-contents-wrap-size);
+  padding-left: var(--krds-contents-padding-x);
+  padding-right: var(--krds-contents-padding-x);
+}
+#container .in-between {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: var(--krds-gap-12);
+}
+#container .in-between .krds-side-navigation {
+  width: 29.6rem;
+  padding: var(--krds-padding-10) var(--krds-padding-10) var(--krds-padding-10) 0;
+  border-right: var(--krds-light-border-width-static-regular) solid var(--krds-light-color-divider-gray-light);
+}
+#container .in-between .contents {
+  flex: 1;
+  padding-bottom: var(--krds-gap-12);
+}
+[data-krds-mode=high-contrast] #container .in-between .krds-side-navigation {
+  border-right: var(--krds-high-contrast-border-width-static-regular) solid var(--krds-high-contrast-color-divider-gray-light);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] #container .in-between .krds-side-navigation {
+    border-right: var(--krds-high-contrast-border-width-static-regular) solid var(--krds-high-contrast-color-divider-gray-light);
+  }
+}
+@media (max-width: 1023px) {
+  #container .in-between .krds-side-navigation {
+    display: none;
+  }
+  #container .in-between .contents {
+    padding-left: 0;
+  }
+}
+@media (max-width: 767px) {
+  #container > .inner {
+    min-height: 50rem;
+  }
+  #container .in-between .contents {
+    padding-right: 0;
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+  /* 교정 부속(같은 사유): 원본 #container 키의 LNB 2단 배치 규칙 승계 */
+  #main-content .in-between {
+    display: flex; align-items: normal; justify-content: flex-start;
+    flex-direction: row; gap: var(--krds-gap-12);
+  }
+  #main-content .in-between .krds-side-navigation {
+    width: 29.6rem;
+    padding: var(--krds-padding-10) var(--krds-padding-10) var(--krds-padding-10) 0;
+    border-right: var(--krds-light-border-width-static-regular) solid var(--krds-light-color-divider-gray-light);
+  }
+  #main-content .in-between .contents { flex: 1; padding-bottom: var(--krds-gap-12); }
+  @media (max-width: 1023px) {
+    #main-content .in-between .krds-side-navigation { display: none; }
+    #main-content .in-between .contents { padding-left: 0; }
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb 2곳만 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  /* 교정 부속: 원본 패턴 CSS는 제목 크기·간격을 h3·h4 태그에 건다(원본이 h1 다음 h3) — 위계를 h2·h3으로 바로잡은 만큼 같은 토큰을 옮긴다 */
+  .contents h2.sec-tit { margin-bottom: var(--krds-pc-gap-layout-title-body-large); font-size: var(--krds-pc-font-size-heading-large); }
+  .contents h2.sec-tit ~ .conts-wrap { margin-top: var(--krds-pc-gap-layout-h2-h3); }
+  .contents .conts-wrap .conts-wrap h3.sec-tit { margin-bottom: var(--krds-pc-gap-layout-title-body-medium); font-size: var(--krds-pc-font-size-heading-small); }
+  @media (max-width: 767px) {
+    .contents h2.sec-tit { margin-bottom: var(--krds-mobile-gap-layout-title-body-large); font-size: var(--krds-mobile-font-size-heading-large); }
+    .contents h2.sec-tit ~ .conts-wrap { margin-top: var(--krds-mobile-gap-layout-h3-h4); }
+    .contents .conts-wrap .conts-wrap h3.sec-tit { margin-bottom: var(--krds-mobile-gap-layout-title-body-medium); font-size: var(--krds-mobile-font-size-heading-small); }
+  }
+</style>
+</head>
+<body data-krds-pattern="board-detail">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)을 본문 시작점으로 통일 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+  <div class="inner in-between">
+
+    <!-- 좌측 메뉴(LNB) — 콘텐츠 자유 영역: 사이트의 실제 메뉴 구조로 교체.
+         2~4단계 구조와 토글 동작은 킷 side_navigation 정식 마크업 -->
+    <nav class="krds-side-navigation" aria-label="좌측 메뉴">
+      <h2 class="lnb-tit">{{lnbTitle}}</h2>
+      <ul class="lnb-list">
+        <li class="lnb-item">
+          <button type="button" class="lnb-btn lnb-toggle">메뉴 그룹 1</button>
+          <div class="lnb-submenu">
+            <ul>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 1-1</a></li>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 1-2</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="lnb-item">
+          <button type="button" class="lnb-btn lnb-toggle">메뉴 그룹 2</button>
+          <div class="lnb-submenu">
+            <ul>
+              <li class="lnb-subitem"><a href="#" class="lnb-btn lnb-link">하위 메뉴 2-1</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="contents">
+      <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+      <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+        <ol class="breadcrumb">
+          <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+          <li><a href="{{listHref}}" class="txt">{{pageTitle}}</a></li>
+          <li><a href="#" class="txt" aria-current="page">{{postTitle}}</a></li>
+        </ol>
+      </nav>
+
+      <!-- 교정: 원본의 모바일 드롭다운 타이틀(data-type=responsive)은 킷 JS 부속이라
+           제거 — h1이 전 화면 폭에서 항상 보인다 -->
+      <div class="page-title-wrap">
+        <h1 class="h-tit">{{pageTitle}}</h1>
+      </div>
+
+      <!-- 게시판 상세 — KRDS 공식 샘플에 게시판이 없어 하위 페이지 틀에 킷 부품을 조립했다.
+           h1은 게시판 이름, 글 제목은 h2, 그 아래 h3 (제목 위계, kwcag:6.4.2) -->
+      <!-- 글 — apply-detail과 같은 중첩 conts-wrap 구조(원본 패턴 CSS가 이 중첩에 간격을 건다) -->
+      <div class="conts-wrap">
+        <div class="conts-wrap">
+          <h2 class="sec-tit">{{postTitle}}</h2>
+          <div class="def-list-wrap">
+            <dl class="def-list">
+              <dt>작성자</dt>
+              <dd>담당 부서</dd>
+              <dt>등록일</dt>
+              <dd>2026.10.14</dd>
+              <dt>조회</dt>
+              <dd>12</dd>
+            </dl>
+          </div>
+          <div class="conts-wrap">
+            <div class="conts-desc">게시글 본문이 들어간다. 표·이미지를 넣으면 caption·대체 텍스트를 함께 둔다.</div>
+          </div>
+          <div class="conts-wrap">
+            <h3 class="sec-tit">첨부파일</h3>
+            <!-- 파일 형식·크기를 링크 텍스트에 — 내려받기 전에 알 수 있게 -->
+            <ul class="krds-info-list">
+              <li><a href="#" download>안내문.pdf (PDF, 1.2MB)</a></li>
+            </ul>
+          </div>
+          <!-- 이전·다음 글 — 없는 쪽은 항목을 빼거나 "없음"을 텍스트로 -->
+          <nav class="conts-wrap" aria-labelledby="post-nav-tit">
+            <h3 class="sec-tit" id="post-nav-tit">이전·다음 글</h3>
+            <div class="def-list-wrap">
+              <dl class="def-list">
+                <dt>이전 글</dt>
+                <dd><a href="#">이전 게시글 제목 예시</a></dd>
+                <dt>다음 글</dt>
+                <dd>다음 글이 없다</dd>
+              </dl>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="page-btn-wrap">
+        <a href="{{listHref}}" class="krds-btn large secondary">목록</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+{
+  "name": "main-portal",
+  "title": "메인 화면 (검색 중심)",
+  "source": {
+    "docUrl": "https://www.krds.go.kr/html/site/service/service_01_02.html",
+    "sampleUrl": "https://www.krds.go.kr/html/pattern/sample_main_03.html",
+    "collectedAt": "2026-09-14T01:36:33.013Z",
+    "sha256": "65bbb654eea1a94cf0fb01db6d1697a65af813611cde2a604037394076ef3180"
+  },
+  "corrections": [
+    {
+      "what": "viewport의 maximum-scale=1.0, user-scalable=no 제거",
+      "why": "화면 확대 차단은 저시력 사용자를 배제한다 (KWCAG 33항목 밖이나 WCAG 1.4.4 위반, 실사용 영향 실재)"
+    },
+    {
+      "what": "건너뛰기 링크 대상을 #breadcrumb → #main-content로, 대상에 tabindex=\"-1\" 부여",
+      "why": "원본 샘플의 #breadcrumb는 문서에 존재하지 않아 링크가 동작하지 않았다 (스냅샷 구조 검증 32/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "본문 컨테이너 div#container → main#main-content",
+      "why": "원본에 main 랜드마크가 없어 스크린리더의 본문 이동이 불가 (33/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "배너 제목(sch-tit)을 div → h1으로",
+      "why": "원본 본문에 h1이 없다(h2 자주찾는 메뉴부터 시작) — 배너 제목이 페이지 대표 제목이므로 h1 부여 (6.4.2)",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "what": "검색 입력에 sr-only label 연결, form으로 감싸 전송 주소를 슬롯화",
+      "why": "원본은 title 속성만으로 라벨을 제공했고 폼이 없었다 (매핑표 ② 규칙)",
+      "kwcagId": "kwcag:7.3.2"
+    },
+    {
+      "what": "Pretendard GOV @font-face 선언 추가",
+      "why": "킷은 폰트 파일만 동봉하고 선언이 없어 미설치 기기에서 시스템 폰트로 대체된다"
+    },
+    {
+      "what": "건너뛰기 도착점(#main-content)의 초점 링 억제",
+      "why": "킷 전역 *:focus 스타일이 main에도 적용돼, 건너뛰기 실행 시 본문 전체가 파란 외곽선으로 감싸인다. 도착점은 조작 컨트롤이 아니므로 시각 링만 억제 (초점 유지)",
+      "kwcagId": "kwcag:6.4.1"
+    }
+  ],
+  "layoutCss": {
+    "note": "레이아웃 CSS는 손으로 쓰지 않는다 — scripts/extract-pattern-css.ts가 원본 패턴 CSS에서 이 템플릿이 쓰는 셀렉터만 발췌해 마커 구간에 주입한다. 출처·sha256은 템플릿의 발췌 블록 머리 주석에 기록",
+    "sourceUrl": "https://www.krds.go.kr/resources/css/pattern/output.css"
+  },
+  "visualCompare": [
+    ".main-vban-wrap",
+    ".main-top-sch",
+    ".menu-list-rel",
+    { "sel": ".news-tbl-list", "positionOnly": true },
+    ".main-sect"
+  ],
+  "slots": [
+    {
+      "name": "pageTitle",
+      "required": true,
+      "description": "사이트/서비스명 — <title>에 들어간다",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "name": "heroTitle",
+      "required": true,
+      "description": "비주얼 배너의 대표 제목(h1) — 서비스를 한 줄로 소개",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "name": "searchAction",
+      "required": true,
+      "description": "통합검색 폼 전송 주소 — search-results 패턴 페이지를 연결한다"
+    },
+    {
+      "name": "noticeHref",
+      "required": false,
+      "default": "#",
+      "description": "공지사항 더보기 링크"
+    },
+    {
+      "name": "lang",
+      "required": false,
+      "default": "ko",
+      "description": "주 언어 코드",
+      "kwcagId": "kwcag:7.1.1"
+    },
+    {
+      "name": "assetBase",
+      "required": false,
+      "default": "node_modules/krds-uiux",
+      "description": "킷 자산 경로 (예약 슬롯 — 도구가 주입)"
+    }
+  ],
+  "dietNote": "원본 593줄(메인3 계통) → 뼈대 3구획: 검색 배너 + 자주찾는 메뉴(링크 4·카드 2) + 공지사항. 제거: 사이드 배너 스와이퍼(캐러셀 — 일시정지 등 접근성 요건이 큰 부품이라 get_component(carousel)로 별도 공급), 원스톱서비스·복합콘텐츠·인사말 섹션(main-sect 블록 복제로 추가 가능). 메인1(배너+탭 소식형)·메인2(복합형)는 같은 구획의 조합 차이 — 섹션 조립으로 재현한다",
+  "family": "main",
+  "whenToUse": "사이트 첫 화면 — 통합검색 진입, 자주찾는 메뉴, 소식. 검색 결과는 search-results, 서비스 목록은 apply-list를 연결한다"
+}

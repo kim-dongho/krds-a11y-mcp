@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 61건 · 클래스: bg-white, both, box-cnt, box-sec, box-tit1, box-tit2, chk-column, conts-area, conts-wrap, form-group, h-tit, inner, input-group, krds-btn, krds-check-area, m-column, narrow, outline, outline-tit, outline-txt, page-btn-wrap, page-title-wrap, txt-box */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+}
+.page-btn-wrap {
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--krds-gap-5);
+  margin-top: var(--krds-gap-9);
+}
+.page-btn-wrap.both {
+  justify-content: space-between;
+}
+.conts-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+  width: 100%;
+}
+[data-krds-mode=high-contrast] .page-btn-wrap {
+  background-color: var(--krds-high-contrast-color-background-white);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-btn-wrap {
+    background-color: var(--krds-high-contrast-color-background-white);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .page-btn-wrap {
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    padding: var(--krds-padding-8) var(--krds-padding-6);
+    margin: 0 calc(var(--krds-padding-6) * -1) calc(var(--krds-padding-10) * -1);
+    background-color: var(--krds-light-color-background-white);
+  }
+  .page-btn-wrap > .krds-btn {
+    flex: 1;
+  }
+  .page-btn-wrap.both .krds-btn {
+    padding: 0 var(--krds-padding-4);
+  }
+  .page-btn-wrap.m-column {
+    position: static;
+    flex-direction: column;
+    padding: 0;
+    margin: var(--krds-padding-8) 0 calc(var(--krds-padding-6) * -1);
+  }
+  .page-btn-wrap.m-column .krds-btn {
+    flex: initial;
+  }
+}
+.conts-wrap {
+  width: 100%;
+  color: var(--krds-light-color-text-bolder);
+}
+.txt-box {
+  --txt-box-width-border: var(--krds-light-border-width-static-regular);
+  --txt-box-color-border: var(--krds-light-color-border-gray);
+  --txt-box-color-background: var(--krds-light-color-surface-gray-subtler);
+  padding: var(--krds-pc-padding-card-large);
+  background-color: var(--txt-box-color-background);
+  border: var(--txt-box-width-border) solid var(--txt-box-color-border);
+  border-radius: var(--krds-radius-xlarge1);
+}
+.txt-box:not(:first-of-type) {
+  margin-top: var(--krds-gap-7);
+}
+.txt-box.outline {
+  border-color: var(--krds-light-color-border-secondary-light);
+  background-color: var(--krds-light-color-surface-secondary-subtler);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+}
+.txt-box.outline .outline-tit {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: var(--krds-gap-2);
+  font-size: var(--krds-pc-font-size-heading-medium);
+  font-weight: var(--krds-font-weight-bold);
+}
+.txt-box.outline .outline-tit::before {
+  content: "";
+  display: inline-flex;
+  width: var(--krds-size-height-5);
+  height: var(--krds-size-height-5);
+  background-color: var(--krds-light-color-text-basic);
+  background-color: transparent !important;
+  forced-color-adjust: none;
+  background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1IDVINkM1LjQ0NzcyIDUgNSA1LjQ0NzcyIDUgNlYxM0M1IDEzLjU1MjMgNS40NDc3MiAxNCA2IDE0SDE5IiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0xNSAxOEg2QzUuNDQ3NzIgMTggNSAxOC40NDc3IDUgMTlWMjZDNSAyNi41NTIzIDUuNDQ3NzIgMjcgNiAyN0gxOSIgc3Ryb2tlPSIjMkQyRDJEIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTguNSA4LjEyNDA1TDIxLjczMzIgMTEuODc0MUwyNi42MjUgNS42MjUiIHN0cm9rZT0iIzFENTZCQyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTE4LjUgMjAuNjI0MUwyMS43MzMyIDI0LjM3NDFMMjYuNjI1IDE4LjEyNSIgc3Ryb2tlPSIjMUQ1NkJDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K) no-repeat center;
+  background-size: contain;
+}
+.txt-box.outline .outline-txt {
+  font-size: var(--krds-pc-font-size-body-large);
+}
+.txt-box.bg-white {
+  --bg-white-color-background: var(--krds-light-color-surface-white-subtle);
+  --bg-white-color-background-gray: var(--krds-light-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-light-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-light-color-text-subtle);
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  width: 100%;
+  background-color: var(--bg-white-color-background);
+  /* 바구니 - 자료당일신청(상세)  */
+}
+.txt-box.bg-white .box-tit1 {
+  font-size: var(--krds-pc-font-size-heading-medium);
+  color: var(--krds-light-color-text-bolder);
+}
+.txt-box.bg-white .box-tit2 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  position: relative;
+  gap: var(--krds-gap-3);
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+}
+.txt-box.bg-white .box-cnt {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+}
+.txt-box.bg-white .box-sec {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+}
+.txt-box.bg-white .form-group {
+  width: 75.2rem;
+  max-width: 100%;
+}
+.txt-box.bg-white .form-group .krds-check-area.chk-column {
+  width: 100%;
+}
+[data-krds-mode=high-contrast] .txt-box {
+  --txt-box-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+  --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.outline {
+  border-color: var(--krds-high-contrast-color-border-secondary-light);
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.outline .outline-tit::before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjQgNEM1LjA3NDUyIDQgNCA1LjA3NDUyIDQgNi40VjEyLjRDNCAxMy43MjU1IDUuMDc0NTIgMTQuOCA2LjQgMTQuOEgxOC4xNzQzTDE2IDEyLjY2NjdINi40QzYuMjUyNzIgMTIuNjY2NyA2LjEzMzMzIDEyLjU0NzMgNi4xMzMzMyAxMi40VjYuNEM2LjEzMzMzIDYuMjUyNzIgNi4yNTI3MiA2LjEzMzMzIDYuNCA2LjEzMzMzSDIyLjI0TDIzLjY5MzMgNEg2LjRaTTYuNCAxNy4xOTk5QzUuMDc0NTIgMTcuMTk5OSA0IDE4LjI3NDQgNCAxOS41OTk5VjI1LjU5OTlDNCAyNi45MjU0IDUuMDc0NTIgMjcuOTk5OSA2LjQgMjcuOTk5OUwxOCAyOEwxNS44NjY3IDI1Ljg2NjVINi40QzYuMjUyNzIgMjUuODY2NSA2LjEzMzMzIDI1Ljc0NzEgNi4xMzMzMyAyNS41OTk5VjE5LjU5OTlDNi4xMzMzMyAxOS40NTI2IDYuMjUyNzIgMTkuMzMzMiA2LjQgMTkuMzMzMkgyMi4zNDM4TDIzLjczMzMgMTcuMjcwOEMyMy42MTQ0IDE3LjIyNSAyMy40Njc0IDE3LjE5OTkgMjMuMzMyMyAxNy4xOTk5SDYuNFoiIGZpbGw9IiNGNEY1RjYiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNy4yNjI3IDQuNDUwNTdDMjcuNzQ5NyA0Ljc4MjAxIDI3Ljg3NTkgNS40NDU1MSAyNy41NDQ0IDUuOTMyNTNMMjIuMSAxMy45MzI1QzIxLjkyMTIgMTQuMTk1MiAyMS42MzQ2IDE0LjM2NDUgMjEuMzE4MyAxNC4zOTQzQzIxLjAwMiAxNC40MjQyIDIwLjY4ODggMTQuMzExNSAyMC40NjQxIDE0LjA4NjhMMTcuMTI5IDEwLjc1MzVDMTYuNzEyNCAxMC4zMzcxIDE2LjcxMjIgOS42NjE2OCAxNy4xMjg2IDkuMjQ1MDFDMTcuNTQ1MSA4LjgyODM0IDE4LjIyMDUgOC44MjgxNyAxOC42MzcxIDkuMjQ0NjJMMjEuMDYxMSAxMS42NjczTDI1Ljc4MDggNC43MzIyNkMyNi4xMTIyIDQuMjQ1MjQgMjYuNzc1NyA0LjExOTEyIDI3LjI2MjcgNC40NTA1N1oiIGZpbGw9IiNCMUNFRkIiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNy4yNjI3IDE3Ljc4NDZDMjcuNzQ5NyAxOC4xMTYgMjcuODc1OSAxOC43Nzk1IDI3LjU0NDQgMTkuMjY2NUwyMi4xIDI3LjI2NjVDMjEuOTIxMiAyNy41MjkyIDIxLjYzNDYgMjcuNjk4NSAyMS4zMTgzIDI3LjcyODNDMjEuMDAyIDI3Ljc1ODIgMjAuNjg4OCAyNy42NDU0IDIwLjQ2NDEgMjcuNDIwOEwxNy4xMjkgMjQuMDg3NUMxNi43MTI0IDIzLjY3MSAxNi43MTIyIDIyLjk5NTcgMTcuMTI4NiAyMi41NzlDMTcuNTQ1MSAyMi4xNjIzIDE4LjIyMDUgMjIuMTYyMiAxOC42MzcxIDIyLjU3ODZMMjEuMDYxMSAyNS4wMDEzTDI1Ljc4MDggMTguMDY2MkMyNi4xMTIyIDE3LjU3OTIgMjYuNzc1NyAxNy40NTMxIDI3LjI2MjcgMTcuNzg0NloiIGZpbGw9IiNCMUNFRkIiLz4KPC9zdmc+Cg==);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white {
+  --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtle);
+  --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white .box-tit1 {
+  color: var(--krds-high-contrast-color-text-bolder);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .txt-box {
+    --txt-box-width-border: var(--krds-high-contrast-border-width-variable-regular);
+    --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+    --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.outline {
+    border-color: var(--krds-high-contrast-color-border-secondary-light);
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.outline .outline-tit::before {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjQgNEM1LjA3NDUyIDQgNCA1LjA3NDUyIDQgNi40VjEyLjRDNCAxMy43MjU1IDUuMDc0NTIgMTQuOCA2LjQgMTQuOEgxOC4xNzQzTDE2IDEyLjY2NjdINi40QzYuMjUyNzIgMTIuNjY2NyA2LjEzMzMzIDEyLjU0NzMgNi4xMzMzMyAxMi40VjYuNEM2LjEzMzMzIDYuMjUyNzIgNi4yNTI3MiA2LjEzMzMzIDYuNCA2LjEzMzMzSDIyLjI0TDIzLjY5MzMgNEg2LjRaTTYuNCAxNy4xOTk5QzUuMDc0NTIgMTcuMTk5OSA0IDE4LjI3NDQgNCAxOS41OTk5VjI1LjU5OTlDNCAyNi45MjU0IDUuMDc0NTIgMjcuOTk5OSA2LjQgMjcuOTk5OUwxOCAyOEwxNS44NjY3IDI1Ljg2NjVINi40QzYuMjUyNzIgMjUuODY2NSA2LjEzMzMzIDI1Ljc0NzEgNi4xMzMzMyAyNS41OTk5VjE5LjU5OTlDNi4xMzMzMyAxOS40NTI2IDYuMjUyNzIgMTkuMzMzMiA2LjQgMTkuMzMzMkgyMi4zNDM4TDIzLjczMzMgMTcuMjcwOEMyMy42MTQ0IDE3LjIyNSAyMy40Njc0IDE3LjE5OTkgMjMuMzMyMyAxNy4xOTk5SDYuNFoiIGZpbGw9IiNGNEY1RjYiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNy4yNjI3IDQuNDUwNTdDMjcuNzQ5NyA0Ljc4MjAxIDI3Ljg3NTkgNS40NDU1MSAyNy41NDQ0IDUuOTMyNTNMMjIuMSAxMy45MzI1QzIxLjkyMTIgMTQuMTk1MiAyMS42MzQ2IDE0LjM2NDUgMjEuMzE4MyAxNC4zOTQzQzIxLjAwMiAxNC40MjQyIDIwLjY4ODggMTQuMzExNSAyMC40NjQxIDE0LjA4NjhMMTcuMTI5IDEwLjc1MzVDMTYuNzEyNCAxMC4zMzcxIDE2LjcxMjIgOS42NjE2OCAxNy4xMjg2IDkuMjQ1MDFDMTcuNTQ1MSA4LjgyODM0IDE4LjIyMDUgOC44MjgxNyAxOC42MzcxIDkuMjQ0NjJMMjEuMDYxMSAxMS42NjczTDI1Ljc4MDggNC43MzIyNkMyNi4xMTIyIDQuMjQ1MjQgMjYuNzc1NyA0LjExOTEyIDI3LjI2MjcgNC40NTA1N1oiIGZpbGw9IiNCMUNFRkIiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNy4yNjI3IDE3Ljc4NDZDMjcuNzQ5NyAxOC4xMTYgMjcuODc1OSAxOC43Nzk1IDI3LjU0NDQgMTkuMjY2NUwyMi4xIDI3LjI2NjVDMjEuOTIxMiAyNy41MjkyIDIxLjYzNDYgMjcuNjk4NSAyMS4zMTgzIDI3LjcyODNDMjEuMDAyIDI3Ljc1ODIgMjAuNjg4OCAyNy42NDU0IDIwLjQ2NDEgMjcuNDIwOEwxNy4xMjkgMjQuMDg3NUMxNi43MTI0IDIzLjY3MSAxNi43MTIyIDIyLjk5NTcgMTcuMTI4NiAyMi41NzlDMTcuNTQ1MSAyMi4xNjIzIDE4LjIyMDUgMjIuMTYyMiAxOC42MzcxIDIyLjU3ODZMMjEuMDYxMSAyNS4wMDEzTDI1Ljc4MDggMTguMDY2MkMyNi4xMTIyIDE3LjU3OTIgMjYuNzc1NyAxNy40NTMxIDI3LjI2MjcgMTcuNzg0NloiIGZpbGw9IiNCMUNFRkIiLz4KPC9zdmc+Cg==);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white {
+    --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtle);
+    --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+    --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+    --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white .box-tit1 {
+    color: var(--krds-high-contrast-color-text-bolder);
+  }
+}
+@media (max-width: 767px) {
+  .conts-area {
+    gap: var(--krds-gap-8);
+    /* 신청하기 : 상단 타이틀 간격 */
+  }
+  .txt-box {
+    padding: var(--krds-mobile-padding-card-large);
+  }
+  .txt-box:not(:first-of-type) {
+    margin-top: var(--krds-gap-5);
+  }
+  .txt-box.outline .outline-tit {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .txt-box.outline .outline-txt {
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+  .txt-box.bg-white {
+    gap: var(--krds-gap-5);
+  }
+  .txt-box.bg-white .box-tit1 {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .txt-box.bg-white .box-tit2 {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .txt-box.bg-white .box-cnt {
+    gap: var(--krds-gap-7);
+  }
+  .txt-box.bg-white .box-sec {
+    gap: var(--krds-gap-4);
+    overflow: hidden;
+  }
+  .txt-box.bg-white .input-group.m-column {
+    flex-direction: column;
+    gap: var(--krds-gap-5);
+  }
+  .txt-box.bg-white .input-group.m-column .krds-btn {
+    width: 100%;
+  }
+}
+[data-krds-mode=high-contrast] .conts-wrap {
+  color: var(--krds-high-contrast-color-text-bolder);
+}
+[data-krds-mode=high-contrast] .txt-box {
+  --txt-box-width-border: var(--krds-high-contrast-border-width-static-regular);
+  --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+  --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.outline {
+  border-color: var(--krds-high-contrast-color-border-secondary-light);
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white {
+  --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+  --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .conts-wrap {
+    color: var(--krds-high-contrast-color-text-bolder);
+  }
+  [data-krds-mode=theme] .txt-box {
+    --txt-box-width-border: var(--krds-high-contrast-border-width-static-regular);
+    --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+    --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.outline {
+    border-color: var(--krds-high-contrast-color-border-secondary-light);
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white {
+    --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+    --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+    --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+    --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+  }
+}
+@media (max-width: 767px) {
+  .conts-area[class*=login-] {
+    gap: var(--krds-gap-7);
+  }
+}
+@media (min-width: 1024px) {
+  .inner.narrow {
+    max-width: calc(79.2rem + var(--krds-contents-padding-x) * 2);
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb 2곳만 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="apply-issue">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+
+  <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+  <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+    <ol class="breadcrumb">
+      <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+      <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+    </ol>
+  </nav>
+
+  <div class="inner narrow">
+
+    <div class="page-title-wrap">
+      <h1 class="h-tit">{{pageTitle}}</h1>
+    </div>
+
+    <div class="conts-area">
+      <div class="conts-wrap">
+
+        <!-- 유의사항 — 콘텐츠 자유 영역: 서비스의 실제 안내로 교체 -->
+        <div class="txt-box outline">
+          <!-- 교정: 원본은 h1 다음 h4로 수준을 건너뛰었다 — h2/h3로 조정 -->
+          <h2 class="outline-tit">시작하기 전에</h2>
+          <p class="outline-txt">{{noticeText}}</p>
+        </div>
+
+        <!-- 신청 정보 입력 — 콘텐츠 자유 영역: 서비스 실제 필드로 교체.
+             모든 입력에 label 연결 필수 (kwcag:7.3.2) -->
+        <div class="txt-box bg-white">
+          <h2 class="box-tit1">신청 정보 입력</h2>
+          <div class="box-cnt">
+
+            <div class="box-sec">
+              <h3 class="box-tit2">대상 주소</h3>
+              <div class="form-group">
+                <div class="form-tit">
+                  <label for="issue-addr">주소</label>
+                </div>
+                <div class="form-conts">
+                  <div class="input-group m-column">
+                    <input type="text" id="issue-addr" class="krds-input" placeholder="검색 버튼을 눌러주세요" readonly>
+                    <button type="button" class="krds-btn large secondary">검색</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="box-sec">
+              <h3 class="box-tit2" id="issue-target-tit">발급 대상 구분</h3>
+              <div class="form-conts">
+                <!-- 라디오 그룹 이름 — 킷 .krds-check-area는 class뿐인 div라 보이는 제목으로 그룹을 묶는다 (kwcag:7.3.2) -->
+                <div class="row krds-check-area chk-column" role="radiogroup" aria-labelledby="issue-target-tit">
+                  <div class="krds-form-check large">
+                    <input type="radio" name="issueTarget" id="issue-target-1" checked>
+                    <label for="issue-target-1">구분 예시 1</label>
+                  </div>
+                  <div class="krds-form-check large">
+                    <input type="radio" name="issueTarget" id="issue-target-2">
+                    <label for="issue-target-2">구분 예시 2</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 발급 유형 선택 -->
+        <div class="txt-box bg-white">
+          <h2 class="box-tit1">발급 유형 선택</h2>
+          <div class="box-cnt">
+            <div class="box-sec">
+              <h3 class="box-tit2" id="issue-type-tit">발급 유형</h3>
+              <div class="form-group">
+                <div class="form-conts">
+                  <div class="row krds-check-area chk-column" role="radiogroup" aria-labelledby="issue-type-tit">
+                    <div class="krds-form-check large">
+                      <input type="radio" name="issueType" id="issue-type-1" checked>
+                      <label for="issue-type-1">온라인 발급 - 본인 출력</label>
+                    </div>
+                    <div class="krds-form-check large">
+                      <input type="radio" name="issueType" id="issue-type-2">
+                      <label for="issue-type-2">온라인 발급 - 전자지갑</label>
+                    </div>
+                    <div class="krds-form-check large">
+                      <input type="radio" name="issueType" id="issue-type-3">
+                      <label for="issue-type-3">등기우편</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 신청/취소 — 취소는 이동이므로 링크, 신청은 제출 동작이므로 버튼 -->
+    <div class="page-btn-wrap both m-column">
+      <a href="{{cancelHref}}" class="krds-btn xlarge tertiary">취소하기</a>
+      <button type="button" class="krds-btn xlarge primary">신청하기</button>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

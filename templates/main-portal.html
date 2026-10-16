@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 96건 · 클래스: c-btn, c-tit, c-txt, d-auto, d-card, date, fill, ico-plus, ico-search, icon, in, inner, krds-btn, krds-btn-tag, krds-input, krds-tag-wrap, li1, li2, main-box-responsive, main-sect, main-tit-wrap, main-top-sch, main-vban-wrap, menu-list-rel, news-tbl-list, outline, sch-form-wrap, sch-input, sch-tag, sch-tit, text, tit, xlarge */
+.main-vban-wrap .sch-input .krds-input {
+  font-size: var(--krds-pc-font-size-heading-medium);
+}
+.main-vban-wrap .sch-input .ico-search {
+  right: var(--krds-gap-7);
+}
+.main-vban-wrap .main-top-sch {
+  display: flex;
+  align-items: normal;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--krds-gap-4);
+  width: 100%;
+  max-width: 79.2rem;
+  margin: 0 auto var(--krds-gap-11);
+  padding-top: var(--krds-padding-8);
+}
+.main-vban-wrap .main-top-sch .sch-tit {
+  font-size: var(--krds-pc-font-size-heading-large);
+  font-weight: var(--krds-font-weight-bold);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+}
+.main-vban-wrap .main-top-sch .sch-form-wrap {
+  gap: var(--krds-gap-9);
+}
+.main-vban-wrap .main-top-sch .sch-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: var(--krds-gap-7);
+  width: 100%;
+}
+.main-vban-wrap .main-top-sch .sch-tag dt {
+  font-weight: var(--krds-font-weight-bold);
+}
+.main-vban-wrap .main-top-sch .sch-tag .krds-tag-wrap {
+  row-gap: var(--krds-gap-3);
+}
+.main-vban-wrap .main-top-sch .sch-tag .krds-btn-tag {
+  border-color: var(--krds-light-color-border-gray);
+  border-radius: var(--krds-radius-medium1);
+}
+.main-sect {
+  margin-top: var(--krds-gap-11);
+}
+.main-sect .inner {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+.main-sect .news-tbl-list {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-4);
+}
+.main-sect .news-tbl-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: var(--krds-padding-3) 0;
+  gap: var(--krds-gap-5);
+}
+.main-sect .news-tbl-list li .tit {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+.main-sect .news-tbl-list li .tit:hover {
+  text-decoration: underline;
+  text-underline-offset: var(--krds-font-underline-offset);
+}
+.main-sect .news-tbl-list li .tit:visited {
+  color: var(--krds-light-color-link-visited);
+}
+.main-sect .news-tbl-list li .date {
+  flex-shrink: 0;
+  color: var(--krds-light-color-text-subtle);
+}
+.main-sect .menu-list-rel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: var(--krds-gap-7);
+}
+.main-sect .menu-list-rel li > a {
+  display: block;
+}
+.main-sect .menu-list-rel li > a:hover .d-card .c-tit {
+  text-decoration: none;
+}
+.main-sect .menu-list-rel li > .krds-btn.text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: var(--krds-pc-font-size-body-large);
+  font-weight: var(--krds-font-weight-bold);
+  width: 100%;
+  height: 6.1rem;
+  padding: var(--krds-pc-padding-card-xsmall) var(--krds-pc-padding-card-small);
+  background-color: var(--krds-light-color-surface-secondary-subtler);
+  border-radius: var(--krds-radius-xlarge1);
+}
+.main-sect .menu-list-rel .li1 {
+  grid-column: 1/3;
+}
+.main-sect .menu-list-rel .li2 {
+  grid-column: 3/5;
+}
+.main-sect .menu-list-rel .d-card {
+  padding: var(--krds-pc-padding-card-small);
+}
+.main-sect .menu-list-rel .d-card .text {
+  gap: var(--krds-gap-3);
+}
+.main-sect .menu-list-rel.outline {
+  background-color: var(--krds-light-color-background-white);
+}
+.main-sect .menu-list-rel.outline li > .krds-btn {
+  border: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-border-gray);
+  background-color: var(--krds-light-color-background-white);
+}
+.main-box-responsive {
+  display: grid;
+  grid-template-columns: 1fr 41rem;
+  gap: var(--krds-gap-7);
+}
+.main-box-responsive > div {
+  flex: 1;
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.main-box-responsive .d-auto {
+  flex: 1;
+}
+.main-box-responsive .in {
+  height: 100%;
+  padding: var(--krds-pc-padding-card-medium);
+  border-radius: var(--krds-radius-xlarge2);
+  background-color: var(--krds-light-color-surface-secondary-subtler);
+}
+.main-box-responsive .in.outline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  border: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-border-gray);
+  background-color: var(--krds-light-color-surface-white-subtle);
+}
+.main-box-responsive .in.outline .main-tit-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 100%;
+}
+.main-box-responsive .in.outline .main-tit-wrap .tit {
+  font-size: var(--krds-pc-font-size-heading-xsmall);
+}
+.main-tit-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: var(--krds-gap-5);
+}
+.main-tit-wrap .tit {
+  font-size: var(--krds-pc-font-size-heading-large);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+}
+.main-tit-wrap .krds-btn.text {
+  gap: var(--krds-gap-2);
+  height: 3.2rem;
+}
+.main-tit-wrap .krds-btn.text.ico-plus {
+  margin-left: auto;
+}
+.d-card {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.d-card .in {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  flex: 1;
+}
+.d-card .in > .text {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+}
+.d-card > .text {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+}
+.d-card .c-tit {
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+.d-card .c-txt {
+  color: var(--krds-light-color-text-subtle);
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.d-card .c-btn {
+  margin-top: auto;
+}
+.d-card.fill {
+  padding: var(--krds-pc-padding-card-small);
+  border-radius: var(--krds-radius-xlarge1);
+  background-color: var(--krds-light-color-surface-secondary-subtler);
+}
+.d-card.fill .c-btn {
+  text-align: right;
+}
+a:hover .d-card .c-tit {
+  text-decoration: underline;
+  text-underline-offset: var(--krds-font-underline-offset);
+}
+.main-vban-wrap [class*=swiper-button-] {
+  border: var(--krds-light-border-width-variable-regular) solid #D7D9DB;
+}
+.main-sect [class*=swiper-button-] {
+  border: var(--krds-light-border-width-variable-regular) solid #D7D9DB;
+}
+@media (max-width: 1023px) {
+  .main-sect .menu-list-rel {
+    display: flex;
+    align-items: normal;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 767px) {
+  .main-vban-wrap .sch-input .krds-input {
+    font-size: var(--krds-pc-font-size-heading-medium);
+  }
+  .main-vban-wrap .sch-input .ico-search {
+    right: var(--krds-gap-5);
+  }
+  .main-vban-wrap .main-top-sch {
+    padding-top: 0;
+    margin-bottom: auto var(--krds-gap-9);
+  }
+  .main-vban-wrap .main-top-sch .sch-tit {
+    font-size: var(--krds-mobile-font-size-heading-large);
+  }
+  .main-vban-wrap .main-top-sch .sch-form-wrap {
+    gap: var(--krds-gap-7);
+  }
+  .main-vban-wrap .main-top-sch .sch-tag {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--krds-gap-5);
+  }
+  .main-vban-wrap .sch-input .krds-input {
+    height: var(--krds-size-height-9);
+  }
+  .main-vban-wrap .sch-input .krds-btn.icon.xlarge {
+    width: var(--krds-size-height-5);
+    height: var(--krds-size-height-5);
+  }
+  .main-box-responsive {
+    grid-template-columns: 100%;
+    height: auto !important;
+    gap: var(--krds-gap-5);
+  }
+  .main-box-responsive .in {
+    padding: var(--krds-mobile-padding-card-medium);
+  }
+  .main-box-responsive .in.outline {
+    gap: var(--krds-gap-5);
+  }
+  .main-sect {
+    margin-top: var(--krds-gap-10);
+  }
+  .main-sect .inner {
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+  .main-sect .d-card .in {
+    gap: var(--krds-gap-8);
+  }
+  .main-sect .news-tbl-list {
+    gap: var(--krds-gap-3);
+  }
+  .main-sect .news-tbl-list li {
+    flex-direction: column;
+    gap: var(--krds-gap-3);
+    padding: var(--krds-padding-2) 0;
+  }
+  .main-sect .menu-list-rel {
+    display: flex;
+    align-items: normal;
+    justify-content: flex-start;
+    flex-direction: column;
+    grid-gap: var(--krds-gap-5);
+  }
+  .main-sect .menu-list-rel li > .krds-btn.text {
+    height: 5.3rem;
+    padding: var(--krds-mobile-padding-card-xsmall) var(--krds-mobile-padding-card-small);
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+  .main-sect .menu-list-rel li.d-card {
+    padding: var(--krds-mobile-padding-card-small);
+  }
+  .main-box-responsive .in.outline .main-tit-wrap .tit {
+    font-size: var(--krds-mobile-font-size-heading-xsmall);
+  }
+  .main-tit-wrap .tit {
+    font-size: var(--krds-mobile-font-size-heading-large);
+  }
+  .d-card {
+    padding: var(--krds-mobile-padding-card-small);
+  }
+  .d-card .c-tit {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+}
+[data-krds-mode=high-contrast] .main-sect .news-tbl-list li .tit:visited {
+  color: var(--krds-high-contrast-color-link-visited);
+}
+[data-krds-mode=high-contrast] .main-sect .news-tbl-list li .date {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .main-sect .menu-list-rel li > .krds-btn.text {
+  border: none;
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .main-sect .menu-list-rel.outline {
+  background-color: var(--krds-high-contrast-color-background-white);
+}
+[data-krds-mode=high-contrast] .main-sect .menu-list-rel.outline li > .krds-btn {
+  border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-border-gray);
+  background-color: var(--krds-high-contrast-color-background-white);
+}
+[data-krds-mode=high-contrast] .main-box-responsive .in {
+  border-radius: var(--krds-radius-xlarge2);
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .main-box-responsive .in.outline {
+  border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-border-gray);
+  background-color: var(--krds-high-contrast-color-surface-white-subtle);
+}
+[data-krds-mode=high-contrast] .d-card .c-txt {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .d-card.fill {
+  background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+}
+[data-krds-mode=high-contrast] .main-vban-wrap [class*=swiper-button-] {
+  border: var(--krds-high-contrast-border-width-variable-regular) solid #D7D9DB;
+}
+[data-krds-mode=high-contrast] .main-sect [class*=swiper-button-] {
+  border: var(--krds-high-contrast-border-width-variable-regular) solid #D7D9DB;
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .main-sect .news-tbl-list li .tit:visited {
+    color: var(--krds-high-contrast-color-link-visited);
+  }
+  [data-krds-mode=theme] .main-sect .news-tbl-list li .date {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .main-sect .menu-list-rel li > .krds-btn.text {
+    border: none;
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .main-sect .menu-list-rel.outline {
+    background-color: var(--krds-high-contrast-color-background-white);
+  }
+  [data-krds-mode=theme] .main-sect .menu-list-rel.outline li > .krds-btn {
+    border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-border-gray);
+    background-color: var(--krds-high-contrast-color-background-white);
+  }
+  [data-krds-mode=theme] .main-box-responsive .in {
+    border-radius: var(--krds-radius-xlarge2);
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .main-box-responsive .in.outline {
+    border: var(--krds-high-contrast-border-width-variable-regular) solid var(--krds-high-contrast-color-border-gray);
+    background-color: var(--krds-high-contrast-color-surface-white-subtle);
+  }
+  [data-krds-mode=theme] .d-card .c-txt {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .d-card.fill {
+    background-color: var(--krds-high-contrast-color-surface-secondary-subtler);
+  }
+  [data-krds-mode=theme] .main-vban-wrap [class*=swiper-button-] {
+    border: var(--krds-high-contrast-border-width-variable-regular) solid #D7D9DB;
+  }
+  [data-krds-mode=theme] .main-sect [class*=swiper-button-] {
+    border: var(--krds-high-contrast-border-width-variable-regular) solid #D7D9DB;
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content { padding-bottom: var(--krds-pc-gap-layout-contents-footer); }
+</style>
+</head>
+<body data-krds-pattern="main-portal">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container). 메인 화면은 breadcrumb 없음 -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+
+  <!-- 비주얼 배너 — 검색 중심형 (메인3 계통). 배너를 캐러셀로 쓰려면
+       get_component(carousel)로 추가한다 (일시정지 등 접근성 요건 동봉) -->
+  <div class="main-vban-wrap">
+    <div class="inner">
+      <div class="main-top-sch">
+        <!-- 교정: 원본 배너 제목은 div — 페이지의 대표 제목이므로 h1 부여 -->
+        <h1 class="sch-tit">{{heroTitle}}</h1>
+        <form class="sch-form-wrap vert" method="get" action="{{searchAction}}">
+          <div class="sch-input">
+            <!-- 교정: 원본은 title 속성만으로 라벨 제공 — sr-only label 연결 -->
+            <label for="main-search" class="sr-only">검색어 입력</label>
+            <input type="text" id="main-search" name="query" class="krds-input xlarge" placeholder="검색어를 입력해주세요">
+            <button type="submit" class="krds-btn xlarge icon ico-search">
+              <span class="sr-only">검색</span>
+              <i class="svg-icon ico-sch"></i>
+            </button>
+          </div>
+          <!-- 추천 검색어 — 콘텐츠 자유 영역 -->
+          <dl class="sch-tag">
+            <dt>추천 검색어</dt>
+            <dd class="krds-tag-wrap large">
+              <a href="#" class="krds-btn-tag link">추천 검색어 1</a>
+              <a href="#" class="krds-btn-tag link">추천 검색어 2</a>
+              <a href="#" class="krds-btn-tag link">추천 검색어 3</a>
+            </dd>
+          </dl>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자주찾는 메뉴 — 콘텐츠 자유 영역: 서비스의 실제 메뉴로 교체 -->
+  <div class="main-sect">
+    <div class="inner">
+      <div class="main-tit-wrap">
+        <h2 class="tit">자주찾는 메뉴</h2>
+      </div>
+      <ul class="menu-list-rel">
+        <li><a href="#" class="krds-btn large text">자주찾는 메뉴 1 <i class="svg-icon ico-more"></i></a></li>
+        <li><a href="#" class="krds-btn large text">자주찾는 메뉴 2 <i class="svg-icon ico-more"></i></a></li>
+        <li><a href="#" class="krds-btn large text">자주찾는 메뉴 3 <i class="svg-icon ico-more"></i></a></li>
+        <li><a href="#" class="krds-btn large text">자주찾는 메뉴 4 <i class="svg-icon ico-more"></i></a></li>
+        <li class="li1">
+          <a href="#">
+            <div class="d-card fill">
+              <div class="in">
+                <div class="text">
+                  <p class="c-tit">대표 서비스 카드</p>
+                  <p class="c-txt">서비스에 대한 짧은 소개 문장이 들어간다.</p>
+                </div>
+                <p class="c-btn">
+                  <span class="krds-btn medium text">바로가기 <i class="svg-icon ico-more"></i></span>
+                </p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="li2">
+          <a href="#">
+            <div class="d-card fill">
+              <div class="in">
+                <div class="text">
+                  <p class="c-tit">대표 서비스 카드 2</p>
+                  <p class="c-txt">서비스에 대한 짧은 소개 문장이 들어간다.</p>
+                </div>
+                <p class="c-btn">
+                  <span class="krds-btn medium text">바로가기 <i class="svg-icon ico-more"></i></span>
+                </p>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 공지사항 — 콘텐츠 자유 영역. 섹션 추가는 main-sect 블록을 복제한다 -->
+  <div class="main-sect">
+    <div class="inner">
+      <div class="main-tit-wrap">
+        <h2 class="tit">공지사항</h2>
+        <a href="{{noticeHref}}" class="krds-btn small text">더보기 <i class="svg-icon ico-plus"></i></a>
+      </div>
+      <div class="main-box-responsive">
+        <div class="d-auto">
+          <div class="in outline">
+            <ul class="news-tbl-list">
+              <li>
+                <a href="#" class="tit">공지사항 제목 예시 1</a>
+                <span class="date">2026-01-01</span>
+              </li>
+              <li>
+                <a href="#" class="tit">공지사항 제목 예시 2</a>
+                <span class="date">2026-01-01</span>
+              </li>
+              <li>
+                <a href="#" class="tit">공지사항 제목 예시 3</a>
+                <span class="date">2026-01-01</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- 우측 배너 자리 — 콘텐츠 자유 영역. 회전 배너(캐러셀)가 필요하면
+             get_component(carousel)로 교체한다 (일시정지 등 접근성 요건 동봉) -->
+        <div class="d-fix">
+          <div class="in">
+            <div class="d-card">
+              <div class="text">
+                <p class="c-txt">알아두면 좋은 서비스</p>
+                <p class="c-tit">홍보 배너 자리</p>
+              </div>
+              <p class="c-btn">
+                <a href="#" class="krds-btn medium text">바로가기 <i class="svg-icon ico-more"></i></a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

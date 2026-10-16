@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플은 화면 확대를 차단했다 (저시력 사용자 배제) — 확대 허용으로 교체 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 83건 · 클래스: between, bg-white, both, box-cnt, box-sec, box-tit1, box-tit2, btn-wrap, conts-area, conts-wrap, form-group, h-tit, inner, input-group, krds-btn, krds-step-wrap, m-column, narrow, page-btn-wrap, page-step, page-title-wrap, sec-tit, step-now, step-type, tbl-no-data, txt-box */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+}
+.page-title-wrap.between {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+.page-title-wrap.between .krds-step-wrap {
+  margin-left: auto;
+  margin-bottom: 0;
+}
+.page-btn-wrap {
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--krds-gap-5);
+  margin-top: var(--krds-gap-9);
+}
+.page-btn-wrap.both {
+  justify-content: space-between;
+}
+.page-btn-wrap.both .btn-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--krds-gap-5);
+  width: auto;
+}
+.conts-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+  width: 100%;
+}
+.conts-area .sec-tit {
+  font-size: var(--krds-pc-font-size-heading-medium);
+}
+@media (max-width: 767px) {
+  .conts-area .sec-tit {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+}
+.page-step .conts-wrap .sec-tit .step-now {
+  display: block;
+  margin-bottom: var(--krds-gap-3);
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-regular);
+  color: var(--krds-light-color-text-subtle);
+}
+.page-step .conts-wrap .sec-tit .step-now strong {
+  color: var(--krds-light-color-text-primary);
+  font-weight: var(--krds-font-weight-bold);
+}
+@media (max-width: 767px) {
+  .page-step .conts-wrap .sec-tit .step-now {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+}
+[data-krds-mode=high-contrast] .page-step .conts-wrap .sec-tit .step-now {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .page-step .conts-wrap .sec-tit .step-now strong {
+  color: var(--krds-high-contrast-color-text-primary);
+}
+[data-krds-mode=high-contrast] .page-btn-wrap {
+  background-color: var(--krds-high-contrast-color-background-white);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-step .conts-wrap .sec-tit .step-now {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .page-step .conts-wrap .sec-tit .step-now strong {
+    color: var(--krds-high-contrast-color-text-primary);
+  }
+  [data-krds-mode=theme] .page-btn-wrap {
+    background-color: var(--krds-high-contrast-color-background-white);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .page-title-wrap.between {
+    flex-direction: column;
+  }
+  .page-btn-wrap {
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    padding: var(--krds-padding-8) var(--krds-padding-6);
+    margin: 0 calc(var(--krds-padding-6) * -1) calc(var(--krds-padding-10) * -1);
+    background-color: var(--krds-light-color-background-white);
+  }
+  .page-btn-wrap > .krds-btn {
+    flex: 1;
+  }
+  .page-btn-wrap.both .krds-btn {
+    padding: 0 var(--krds-padding-4);
+  }
+  .page-btn-wrap.both .krds-btn + .btn-wrap {
+    justify-content: flex-end;
+    flex: 2.4;
+  }
+  .page-btn-wrap.both .btn-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    position: relative;
+    width: 100%;
+  }
+  .page-btn-wrap.both .btn-wrap .krds-btn {
+    flex: 1 1 0px;
+    min-width: 0;
+  }
+  .page-btn-wrap.m-column {
+    position: static;
+    flex-direction: column;
+    padding: 0;
+    margin: var(--krds-padding-8) 0 calc(var(--krds-padding-6) * -1);
+  }
+  .page-btn-wrap.m-column .krds-btn {
+    flex: initial;
+  }
+  .page-btn-wrap.m-column .btn-wrap {
+    flex-direction: column;
+  }
+  .page-btn-wrap.m-column .btn-wrap .krds-btn {
+    flex: initial;
+  }
+  .page-step .conts-wrap .conts-wrap .conts-wrap {
+    gap: var(--krds-gap-7);
+  }
+}
+.conts-wrap {
+  width: 100%;
+  color: var(--krds-light-color-text-bolder);
+}
+.conts-wrap .conts-wrap h3.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+  font-size: var(--krds-pc-font-size-heading-large);
+}
+.conts-wrap .conts-wrap h3.sec-tit ~ .conts-wrap {
+  margin-top: var(--krds-pc-gap-layout-h2-h3);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+  font-size: var(--krds-pc-font-size-heading-medium);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit ~ .conts-wrap {
+  margin-top: var(--krds-pc-gap-layout-h4-h4);
+}
+.conts-wrap .conts-wrap .conts-wrap h4.sec-tit + .conts-wrap {
+  margin-top: 0;
+}
+.conts-wrap .conts-wrap .conts-wrap .conts-wrap h5.sec-tit {
+  margin-bottom: var(--krds-pc-gap-layout-title-body-medium);
+  font-size: var(--krds-pc-font-size-heading-small);
+}
+.conts-area.step-type h3.sec-tit {
+  margin-bottom: var(--krds-gap-9);
+}
+.txt-box {
+  --txt-box-width-border: var(--krds-light-border-width-static-regular);
+  --txt-box-color-border: var(--krds-light-color-border-gray);
+  --txt-box-color-background: var(--krds-light-color-surface-gray-subtler);
+  padding: var(--krds-pc-padding-card-large);
+  background-color: var(--txt-box-color-background);
+  border: var(--txt-box-width-border) solid var(--txt-box-color-border);
+  border-radius: var(--krds-radius-xlarge1);
+}
+.txt-box:not(:first-of-type) {
+  margin-top: var(--krds-gap-7);
+}
+.txt-box.bg-white {
+  --bg-white-color-background: var(--krds-light-color-surface-white-subtle);
+  --bg-white-color-background-gray: var(--krds-light-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-light-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-light-color-text-subtle);
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  width: 100%;
+  background-color: var(--bg-white-color-background);
+  /* 바구니 - 자료당일신청(상세)  */
+}
+.txt-box.bg-white .box-tit1 {
+  font-size: var(--krds-pc-font-size-heading-medium);
+  color: var(--krds-light-color-text-bolder);
+}
+.txt-box.bg-white .box-tit2 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  position: relative;
+  gap: var(--krds-gap-3);
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+}
+.txt-box.bg-white .box-cnt {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+}
+.txt-box.bg-white .box-sec {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+}
+.txt-box.bg-white .form-group {
+  width: 75.2rem;
+  max-width: 100%;
+}
+.txt-box.bg-white .tbl-no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: var(--krds-pc-padding-card-medium);
+  font-size: var(--krds-pc-font-size-body-large);
+  color: var(--bg-white-color-text);
+  text-align: center;
+  border-radius: var(--krds-radius-xlarge2);
+  background-color: var(--bg-white-color-background-gray);
+}
+[data-krds-mode=high-contrast] .txt-box {
+  --txt-box-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+  --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white {
+  --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtle);
+  --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white .box-tit1 {
+  color: var(--krds-high-contrast-color-text-bolder);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .txt-box {
+    --txt-box-width-border: var(--krds-high-contrast-border-width-variable-regular);
+    --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+    --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white {
+    --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtle);
+    --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+    --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+    --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white .box-tit1 {
+    color: var(--krds-high-contrast-color-text-bolder);
+  }
+}
+@media (max-width: 767px) {
+  .conts-wrap .conts-wrap h3.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .conts-wrap .conts-wrap h3.sec-tit ~ .conts-wrap {
+    margin-top: var(--krds-mobile-gap-layout-h3-h4);
+  }
+  .conts-wrap .conts-wrap .conts-wrap h4.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .conts-wrap .conts-wrap .conts-wrap h4.sec-tit ~ .conts-wrap {
+    margin-top: var(--krds-mobile-gap-layout-h5-h5);
+  }
+  .conts-wrap .conts-wrap .conts-wrap .conts-wrap h5.sec-tit {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-medium);
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .conts-area {
+    gap: var(--krds-gap-8);
+    /* 신청하기 : 상단 타이틀 간격 */
+  }
+  .conts-area.step-type h3.sec-tit {
+    margin-bottom: var(--krds-gap-7);
+  }
+  .txt-box {
+    padding: var(--krds-mobile-padding-card-large);
+  }
+  .txt-box:not(:first-of-type) {
+    margin-top: var(--krds-gap-5);
+  }
+  .txt-box.bg-white {
+    gap: var(--krds-gap-5);
+  }
+  .txt-box.bg-white .box-tit1 {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .txt-box.bg-white .box-tit2 {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .txt-box.bg-white .box-cnt {
+    gap: var(--krds-gap-7);
+  }
+  .txt-box.bg-white .box-sec {
+    gap: var(--krds-gap-4);
+    overflow: hidden;
+  }
+  .txt-box.bg-white .input-group.m-column {
+    flex-direction: column;
+    gap: var(--krds-gap-5);
+  }
+  .txt-box.bg-white .input-group.m-column .krds-btn {
+    width: 100%;
+  }
+  .txt-box.bg-white .tbl-no-data {
+    padding: var(--krds-mobile-padding-card-medium);
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+}
+[data-krds-mode=high-contrast] .conts-wrap {
+  color: var(--krds-high-contrast-color-text-bolder);
+}
+[data-krds-mode=high-contrast] .txt-box {
+  --txt-box-width-border: var(--krds-high-contrast-border-width-static-regular);
+  --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+  --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+[data-krds-mode=high-contrast] .txt-box.bg-white {
+  --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+  --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+  --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+  --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .conts-wrap {
+    color: var(--krds-high-contrast-color-text-bolder);
+  }
+  [data-krds-mode=theme] .txt-box {
+    --txt-box-width-border: var(--krds-high-contrast-border-width-static-regular);
+    --txt-box-color-border: var(--krds-high-contrast-color-border-gray);
+    --txt-box-color-background: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  [data-krds-mode=theme] .txt-box.bg-white {
+    --bg-white-color-background: var(--krds-high-contrast-color-surface-white-subtler);
+    --bg-white-color-background-gray: var(--krds-high-contrast-color-surface-gray-subtler);
+    --bg-white-color-border: var(--krds-high-contrast-color-divider-gray-light);
+    --bg-white-color-text: var(--krds-high-contrast-color-text-subtle);
+  }
+}
+@media (max-width: 767px) {
+  .conts-area[class*=login-] {
+    gap: var(--krds-gap-7);
+  }
+}
+.inner.page-step {
+  position: relative;
+}
+@media (min-width: 1024px) {
+  .inner.narrow {
+    max-width: calc(79.2rem + var(--krds-contents-padding-x) * 2);
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb 2곳과 셀렉트 화살표를 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  /* 교정 부속: 제목 위계 교정(h3→h2)의 스타일 승계 — 원본 발췌 CSS가 태그 한정
+     셀렉터(h3.sec-tit)라 교정된 h2.sec-tit에 같은 스타일을 재선언 */
+  .conts-wrap .conts-wrap h2.sec-tit {
+    margin-bottom: var(--krds-pc-gap-layout-title-body-large);
+    font-size: var(--krds-pc-font-size-heading-large);
+  }
+  .conts-wrap .conts-wrap h2.sec-tit ~ .conts-wrap { margin-top: var(--krds-pc-gap-layout-h2-h3); }
+  .conts-area.step-type h2.sec-tit { margin-bottom: var(--krds-gap-9); }
+  @media (max-width: 767px) {
+    .conts-wrap .conts-wrap h2.sec-tit {
+      margin-bottom: var(--krds-mobile-gap-layout-title-body-large);
+      font-size: var(--krds-mobile-font-size-heading-medium);
+    }
+    .conts-wrap .conts-wrap h2.sec-tit ~ .conts-wrap { margin-top: var(--krds-mobile-gap-layout-h3-h4); }
+  }
+
+  .krds-step-wrap > li.done > span::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_step_done.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_step_done.svg);
+  }
+  .krds-form-select {
+    background-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  .krds-form-select:disabled, .krds-form-select[readonly] {
+    background-image: url({{assetBase}}/resources/img/component/icon/ico_angle_disabled.svg);
+  }
+  /* 교정: 킷 셀렉트 기본색이 비활성 토큰(#8A949E, 3.08:1)이라 5.4.3 미달 — text-subtle로 (component.css 9616행) */
+  .krds-form-select { color: var(--krds-light-color-text-subtle); }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="apply-form">
+<div id="wrap">
+
+<!-- 교정: 원본 샘플의 건너뛰기 대상(#breadcrumb)은 문서에 존재하지 않았다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+
+  <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+  <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+    <ol class="breadcrumb">
+      <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+      <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+    </ol>
+  </nav>
+
+  <div class="inner narrow page-step">
+
+    <!-- 페이지 타이틀 + 단계 표시 — 단계 구성(수·이름)은 콘텐츠 자유 영역.
+         단, 현재 단계 li의 class="active"와 sr-only '현재단계'는 유지한다 -->
+    <div class="page-title-wrap between">
+      <h1 class="h-tit">{{pageTitle}}</h1>
+      <ol class="krds-step-wrap">
+        <li class="done">
+          <span>
+            <i class="step">1단계</i>
+            <span class="step-tit">유의 사항 확인</span>
+          </span>
+        </li>
+        <li class="done">
+          <span>
+            <i class="step">2단계</i>
+            <span class="step-tit">신청인 정보</span>
+          </span>
+        </li>
+        <li class="active">
+          <span>
+            <em class="sr-only">현재단계</em>
+            <i class="step">3단계</i>
+            <span class="step-tit">정보 입력</span>
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="step">4단계</i>
+            <span class="step-tit">확인 및 제출</span>
+          </span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="conts-area step-type">
+      <div class="conts-wrap">
+        <div class="conts-wrap">
+          <!-- 교정: 원본은 h1 다음 h3로 수준을 건너뛰었다 — h2/h3/h4로 조정 -->
+          <h2 class="sec-tit">
+            <span class="step-now"><strong class="active">3단계</strong> / 4단계</span>
+            정보 입력
+          </h2>
+
+          <div>
+            <!-- 입력 섹션 — 콘텐츠 자유 영역: 서비스의 실제 필드로 교체한다.
+                 단, 모든 입력에는 label 연결이 있어야 한다 — aria-label만으로는 국내 심사 도구
+                 (OpenWAX 등)가 레이블로 인정하지 않는다. 시각 라벨이 없으면 sr-only label을 쓴다 (kwcag:7.3.2) -->
+            <div class="txt-box bg-white">
+              <h3 class="box-tit1">신청 정보</h3>
+              <div class="box-cnt">
+                <div class="box-sec">
+                  <h4 class="box-tit2">주소</h4>
+                  <div class="form-group">
+                    <div class="form-conts">
+                      <div class="input-group m-column">
+                        <!-- 교정: 원본은 title 속성만으로 라벨을 제공했다 — sr-only label 연결
+                             (aria-label은 axe는 통과하나 OpenWAX 등 국내 심사 도구가 label·title만 인정, 2026-09-16) -->
+                        <label class="sr-only" for="addr-sido">시도 선택</label>
+                        <select class="krds-form-select" id="addr-sido">
+                          <option value="">시도 선택</option>
+                          <option value="demo1">항목1</option>
+                          <option value="demo2">항목2</option>
+                        </select>
+                        <label class="sr-only" for="addr-sigungu">시군구 선택</label>
+                        <select class="krds-form-select" id="addr-sigungu">
+                          <option value="">시군구 선택</option>
+                          <option value="demo1">항목1</option>
+                          <option value="demo2">항목2</option>
+                        </select>
+                        <button type="button" class="krds-btn large secondary">주소 조회</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="txt-box bg-white">
+              <h3 class="box-tit1">대상자</h3>
+              <div class="tbl-no-data">
+                주소를 조회해 주세요.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단계 이동 — 이전/임시저장/다음. 동작 연결은 서비스 몫 -->
+    <div class="page-btn-wrap both m-column">
+      <button type="button" class="krds-btn xlarge tertiary">이전으로</button>
+      <div class="btn-wrap">
+        <button type="button" class="krds-btn xlarge tertiary">임시저장</button>
+        <button type="button" class="krds-btn xlarge primary">다음으로</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+</body>
+</html>

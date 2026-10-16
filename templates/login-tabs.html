@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<!-- 교정: 원본 샘플의 화면 확대 차단(저시력 배제)을 허용으로 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}}</title>
+<link rel="stylesheet" href="{{assetBase}}/resources/css/common/common.css">
+<link rel="stylesheet" href="{{assetBase}}/resources/css/component/component.css">
+<style data-krds-a11y="template">
+  /* 킷은 폰트 파일만 동봉하고 @font-face 선언은 소비자 몫이다 */
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 400; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 500; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Pretendard GOV"; font-weight: 700; font-display: swap;
+    src: url("{{assetBase}}/resources/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
+  }
+  /* ==== 원본 패턴 CSS 발췌 시작 — scripts/extract-pattern-css.ts 생성분. 손으로 고치지 말 것 ==== */
+/* 출처: https://www.krds.go.kr/resources/css/pattern/output.css
+   sha256: 35aa64a0cf17c7790f91535f3c26ee88e8eb4ec7b4d64d509eea2c3610f05e75
+   규칙 32건 · 클래스: btn-wrap, conts-area, fill, full, h-tit, krds-btn, krds-tab-area, link-group, login-form-area, login-info-wrap, login-method, login-type-tab, page-title-wrap, small-txt, tab, tab-conts, tit */
+.page-title-wrap {
+  display: flex;
+  align-items: normal;
+  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--krds-pc-gap-layout-h2-h3);
+  gap: var(--krds-pc-gap-layout-title-body-large);
+}
+@media (max-width: 767px) {
+  .page-title-wrap {
+    margin-bottom: var(--krds-mobile-gap-layout-h2-h3);
+    gap: var(--krds-mobile-gap-layout-title-body-large);
+  }
+}
+.page-title-wrap .h-tit {
+  font-size: var(--krds-pc-font-size-heading-xlarge);
+  letter-spacing: var(--krds-typo-letter-spacing-1);
+  font-weight: var(--krds-font-weight-bold);
+}
+.page-title-wrap .h-tit .small-txt {
+  display: flex;
+  margin-bottom: var(--krds-pc-gap-layout-title-body-small);
+  font-size: var(--krds-pc-font-size-heading-xxsmall);
+  color: var(--krds-light-color-text-subtle);
+}
+@media (max-width: 767px) {
+  .page-title-wrap .h-tit {
+    font-size: var(--krds-mobile-font-size-heading-xlarge);
+    letter-spacing: var(--krds-typo-letter-spacing-1);
+  }
+  .page-title-wrap .h-tit .small-txt {
+    margin-bottom: var(--krds-mobile-gap-layout-title-body-small);
+    font-size: var(--krds-mobile-font-size-heading-xxsmall);
+  }
+}
+.conts-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-9);
+  width: 100%;
+}
+[data-krds-mode=high-contrast] .page-title-wrap .h-tit .small-txt {
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .page-title-wrap .h-tit .small-txt {
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+}
+@media (max-width: 1023px) {
+  .page-title-wrap[data-type=responsive] .h-tit {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .conts-area {
+    gap: var(--krds-gap-8);
+    /* 신청하기 : 상단 타이틀 간격 */
+  }
+}
+.login-form-area {
+  --login-form-color-border: var(--krds-light-color-divider-gray);
+  --login-form-width-border: var(--krds-light-border-width-variable-regular);
+  display: flex;
+  position: relative;
+  padding: var(--krds-padding-10);
+  gap: var(--krds-gap-12);
+  width: 100%;
+  border-top: var(--login-form-width-border) solid var(--login-form-color-border);
+  border-bottom: var(--login-form-width-border) solid var(--login-form-color-border);
+}
+.login-form-area::after {
+  content: "";
+  position: absolute;
+  top: var(--krds-gap-9);
+  left: calc(50% - var(--login-form-width-border));
+  width: var(--login-form-width-border);
+  height: calc(100% - var(--krds-gap-12));
+  background-color: var(--login-form-color-border);
+}
+.login-form-area > div {
+  flex: 1;
+}
+.link-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+.link-group > li + li::before {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 var(--krds-gap-3);
+  content: "";
+  width: var(--krds-number-1);
+  height: var(--krds-size-height-2);
+  background-color: var(--login-form-color-border);
+}
+.login-form-area .login-info-wrap {
+  padding: var(--krds-padding-8) 0;
+}
+.login-type-tab .tab-conts {
+  gap: var(--krds-gap-9);
+}
+.login-type-tab .login-info-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: var(--krds-gap-7);
+  padding: 0;
+}
+.login-type-tab .login-info-wrap .tit {
+  font-weight: var(--krds-font-weight-bold);
+}
+.login-type-tab .login-info-wrap .btn-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.login-type-tab .login-info-wrap .btn-wrap.login-method {
+  gap: var(--krds-gap-5);
+}
+.login-type-tab .login-info-wrap .btn-wrap.login-method .krds-btn {
+  width: 100%;
+}
+@media (max-width: 1023px) {
+  .login-form-area {
+    flex-direction: column;
+    padding: var(--krds-padding-8) 0;
+    gap: var(--krds-gap-8);
+  }
+  .login-form-area::after {
+    display: none;
+  }
+  .login-form-area .login-info-wrap {
+    padding-bottom: 0;
+    border-top: var(--krds-light-border-width-variable-regular) solid var(--krds-light-color-divider-gray);
+  }
+  .login-type-tab .krds-tab-area,
+  .login-type-tab .tab-conts,
+  .login-type-tab .login-form-area {
+    gap: var(--krds-gap-7);
+  }
+  .login-type-tab .login-info-wrap {
+    margin-top: 0;
+    padding: var(--krds-padding-7) 0 0;
+    gap: var(--krds-gap-5);
+  }
+}
+@media (max-width: 767px) {
+  .conts-area[class*=login-] {
+    gap: var(--krds-gap-7);
+  }
+  .login-type-tab .tab.fill.full > ul > li {
+    flex: auto;
+  }
+}
+[data-krds-mode=high-contrast] .login-form-area {
+  --login-form-color-border: var(--krds-high-contrast-color-divider-gray);
+  --login-form-width-border: var(--krds-high-contrast-border-width-variable-regular);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] .login-form-area {
+    --login-form-color-border: var(--krds-high-contrast-color-divider-gray);
+    --login-form-width-border: var(--krds-high-contrast-border-width-variable-regular);
+  }
+}
+/* ==== 원본 패턴 CSS 발췌 끝 ==== */
+  /* 건너뛰기 도착점은 컨트롤이 아니다 — 프로그램적 초점에 페이지 전체를 감싸는
+     초점 링이 뜨지 않게 억제 (킷 전역 *:focus가 main에도 적용되는 것 방지) */
+  #main-content:focus { outline: none; box-shadow: none; }
+  /* 교정 부속: 본문 컨테이너 교체(#container→main)로 빠진 원본 규칙 승계 —
+     본문 최소 높이와 본문-푸터 간격 */
+  #main-content > .inner:not(.in-between) {
+    min-height: 60rem;
+    padding-bottom: var(--krds-pc-gap-layout-contents-footer);
+  }
+
+  /* 교정: 킷 v1.1.0 component.css 아이콘 경로 버그(img/img 중복) — 이 페이지에
+     보이는 breadcrumb·체크박스를 올바른 경로로 재선언 */
+  .krds-breadcrumb-wrap .breadcrumb .home .txt::before {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_bread_home.svg);
+  }
+  .krds-breadcrumb-wrap .breadcrumb li:not(:last-child)::after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_angle.svg);
+  }
+  .krds-form-check input[type=checkbox] ~ label:after {
+    -webkit-mask-image: url({{assetBase}}/resources/img/component/icon/ico_checkbox_checked.svg);
+    mask-image: url({{assetBase}}/resources/img/component/icon/ico_checkbox_checked.svg);
+  }
+  /* 교정: 원본 #container 키 규칙 승계 — breadcrumb을 콘텐츠 폭으로 가운데 정렬 (output.css 20848행) */
+  #main-content > .krds-breadcrumb-wrap { padding-bottom: 0; }
+  #main-content > .krds-breadcrumb-wrap .breadcrumb { max-width: var(--krds-contents-wrap-size); padding: 0 var(--krds-contents-padding-x); }
+</style>
+</head>
+<body data-krds-pattern="login-tabs">
+<div id="wrap">
+
+<!-- 교정: 원본의 건너뛰기 대상(#breadcrumb)은 없는 id였다 -->
+<div id="krds-skip-link">
+  <a href="#main-content">본문 바로가기</a>
+</div>
+
+<header>
+  <!-- 사이트 공통부 — get_component: masthead → header → main_menu 로 채운다 -->
+</header>
+
+<!-- 교정: 원본 샘플에는 main 랜드마크가 없었다 (div#container) -->
+<div id="container">
+<main id="main-content" tabindex="-1">
+  <div class="inner">
+
+    <!-- 현재 경로 — 킷 breadcrumb 정식 마크업 -->
+    <nav class="krds-breadcrumb-wrap" aria-label="현재 경로">
+      <ol class="breadcrumb">
+        <li class="home"><a href="{{homeHref}}" class="txt">홈</a></li>
+        <li><a href="#" class="txt" aria-current="page">{{pageTitle}}</a></li>
+      </ol>
+    </nav>
+
+    <div class="page-title-wrap">
+      <h1 class="h-tit"><span class="small-txt">{{serviceName}}</span>{{pageTitle}}</h1>
+    </div>
+
+    <div class="conts-area login-type-tab">
+      <div class="krds-tab-area layer">
+
+        <!-- 교정: 탭 role·상태를 초점 요소(버튼)에 — 킷 결함 수정 방향 선적용.
+             유형 이름·수는 콘텐츠 자유 영역 -->
+        <div class="tab fill full">
+          <ul role="tablist">
+            <li role="presentation" class="active" data-listener-attached="true">
+              <button type="button" class="btn-tab" role="tab" id="tab-login-1"
+                aria-selected="true" aria-controls="panel-login-1">일반 회원 로그인</button>
+            </li>
+            <li role="presentation" data-listener-attached="true">
+              <button type="button" class="btn-tab" role="tab" id="tab-login-2"
+                aria-selected="false" aria-controls="panel-login-2" tabindex="-1">기관 회원 로그인</button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-conts-wrap">
+          <section id="panel-login-1" role="tabpanel" aria-labelledby="tab-login-1" class="tab-conts active">
+            <h2 class="sr-only">일반 회원 로그인</h2>
+            <p>일반 개인 회원을 위한 로그인입니다.</p>
+
+            <div class="login-form-area type-tab">
+              <div class="login-wrap">
+                <form method="post" action="{{loginAction}}">
+                  <fieldset>
+                    <legend>아이디와 비밀번호로 로그인</legend>
+                    <div class="fieldset">
+                      <div class="form-group">
+                        <div class="form-tit">
+                          <label for="login-id">아이디</label>
+                        </div>
+                        <div class="form-conts">
+                          <input type="text" id="login-id" name="loginId" class="krds-input"
+                            placeholder="아이디 입력" autocomplete="username">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="form-tit">
+                          <label for="login-pw">비밀번호</label>
+                        </div>
+                        <div class="form-conts">
+                          <input type="password" id="login-pw" name="loginPw" class="krds-input"
+                            placeholder="비밀번호 입력" autocomplete="current-password">
+                        </div>
+                      </div>
+                      <div class="form-group krds-check-area">
+                        <div class="krds-form-check">
+                          <input type="checkbox" name="keepLogin" id="keep-login">
+                          <label for="keep-login">로그인 상태 유지</label>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="krds-btn large primary">로그인</button>
+                      </div>
+                      <div class="form-group">
+                        <ul class="link-group">
+                          <li><a href="{{idFindHref}}" class="krds-btn medium text">아이디 찾기</a></li>
+                          <li><a href="{{pwFindHref}}" class="krds-btn medium text">비밀번호 찾기</a></li>
+                          <li><a href="{{joinHref}}" class="krds-btn medium text">회원가입</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+
+              <!-- 다른 로그인 방식 — 콘텐츠 자유 영역: 서비스가 제공하는 방식만 남긴다 -->
+              <div class="login-info-wrap">
+                <p class="tit">다른 로그인 방식을 찾고 계신가요?</p>
+                <div class="btn-wrap login-method">
+                  <a href="#" class="krds-btn large tertiary">간편 인증으로 로그인하기</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="panel-login-2" role="tabpanel" aria-labelledby="tab-login-2" class="tab-conts">
+            <h2 class="sr-only">기관 회원 로그인</h2>
+            <div class="login-form-area type-tab">
+              <div class="login-wrap">
+                <form method="post" action="{{loginAction}}">
+                  <fieldset>
+                    <legend>기관 아이디와 비밀번호로 로그인</legend>
+                    <div class="fieldset">
+                      <div class="form-group">
+                        <div class="form-tit">
+                          <label for="org-login-id">기관 아이디</label>
+                        </div>
+                        <div class="form-conts">
+                          <input type="text" id="org-login-id" name="orgLoginId" class="krds-input"
+                            placeholder="기관 아이디 입력" autocomplete="username">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="form-tit">
+                          <label for="org-login-pw">비밀번호</label>
+                        </div>
+                        <div class="form-conts">
+                          <input type="password" id="org-login-pw" name="orgLoginPw" class="krds-input"
+                            placeholder="비밀번호 입력" autocomplete="current-password">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="krds-btn large primary">로그인</button>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+              <div class="login-info-wrap">
+                <p class="tit">기관 회원 안내</p>
+                <p>기관 회원 가입·계정 관련 안내가 들어간다.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <!-- 사이트 공통부 — get_component: footer, identifier 로 채운다 -->
+</footer>
+</div>
+
+<!-- 모달은 #wrap 밖 -->
+
+<script src="{{assetBase}}/resources/js/component/ui-script.js"></script>
+<script>
+// 교정: 킷 탭 JS의 li role·상태 결함(KRDS 수정 예고) — 스킵 플래그로 비활성화하고
+// 올바른 탭 동작을 동봉. 킷 수정 시 이 블록과 li의 role·data 속성 제거.
+(function () {
+  var tabs = [].slice.call(document.querySelectorAll(".krds-tab-area .btn-tab"));
+  // roving tabindex — 선택된 탭만 Tab 정지점(tabindex 0), 나머지는 -1. 탭 목록에서 Tab을 누르면
+  // 다음 탭이 아니라 패널로 간다. 탭 사이 이동은 화살표·Home·End (WAI-ARIA APG 탭 패턴)
+  function select(btn, focus) {
+    tabs.forEach(function (b) {
+      var on = b === btn;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+      b.closest("li").classList.toggle("active", on);
+      document.getElementById(b.getAttribute("aria-controls")).classList.toggle("active", on);
+    });
+    if (focus) btn.focus();
+  }
+  tabs.forEach(function (btn, i) {
+    btn.addEventListener("click", function () { select(btn, false); });
+    btn.addEventListener("keydown", function (e) {
+      var n = tabs.length;
+      var to = e.key === "ArrowRight" ? (i + 1) % n
+        : e.key === "ArrowLeft" ? (i - 1 + n) % n
+        : e.key === "Home" ? 0
+        : e.key === "End" ? n - 1
+        : -1;
+      if (to >= 0) { e.preventDefault(); select(tabs[to], true); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

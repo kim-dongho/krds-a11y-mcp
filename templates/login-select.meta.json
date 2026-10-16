@@ -1,0 +1,141 @@
+{
+  "name": "login-select",
+  "title": "로그인 (인증 방식 선택)",
+  "source": {
+    "docUrl": "https://www.krds.go.kr/html/site/service/service_03_04.html",
+    "sampleUrl": "https://www.krds.go.kr/html/pattern/sample_login_01.html",
+    "collectedAt": "2026-09-14T01:36:32.795Z",
+    "sha256": "5a2f6a86fd41bc5a07151610cd405c6ac0ed555dfa2c467a39f67dbada31a51c"
+  },
+  "corrections": [
+    {
+      "what": "viewport의 maximum-scale=1.0, user-scalable=no 제거",
+      "why": "화면 확대 차단은 저시력 사용자를 배제한다 (KWCAG 33항목 밖이나 WCAG 1.4.4 위반, 실사용 영향 실재)"
+    },
+    {
+      "what": "건너뛰기 링크 대상을 #breadcrumb → #main-content로, 대상에 tabindex=\"-1\" 부여",
+      "why": "원본 샘플의 #breadcrumb는 문서에 존재하지 않아 링크가 동작하지 않았다 (스냅샷 구조 검증 32/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "본문 컨테이너 div#container → main#main-content",
+      "why": "원본에 main 랜드마크가 없어 스크린리더의 본문 이동이 불가 (33/33종 동일)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "제목 위계 교정 — 그룹 제목 h3→h2, 카드 제목 h4→h3",
+      "why": "원본은 h1 다음 h3로 수준을 건너뛴다 (6.4.2 제목 제공 취지 위반, axe heading-order). 킷·패턴 CSS 셀렉터가 클래스 기반(certify-opt-tit, type-tit)이라 태그 교체는 스타일에 영향 없음",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "what": "통합 로그인 토글·키보드 보안 토글·툴팁(login-opt-wrap) 제거",
+      "why": "킷 JS 의존 데모 부속으로 패턴 문서의 필수 구성이 아니다 — 다이어트. 필요 시 get_component(toggle_switch, contextual_help)로 추가"
+    },
+    {
+      "what": "간편인증 브랜드 목록 disclosure·'주민등록표초본' 버튼 제거",
+      "why": "데모 전용 콘텐츠(민간 인증서 브랜드 나열)로 서비스마다 다르다 — 콘텐츠 자유 층위로 위임"
+    },
+    {
+      "what": "Pretendard GOV @font-face 선언 추가",
+      "why": "킷은 폰트 파일만 동봉하고 선언이 없어 미설치 기기에서 시스템 폰트로 대체된다"
+    },
+    {
+      "what": "브레드크럼의 현재 페이지 항목에 aria-current=\"page\" 부여",
+      "why": "원본 샘플은 현재 위치 표시가 없었다 — 매핑표 breadcrumb ? 항목의 교정 방향 적용",
+      "kwcagId": "kwcag:8.2.1"
+    },
+    {
+      "what": "도움 박스 링크 색을 프라이머리 60단계 → 70단계로 교체",
+      "why": "회색 배경(gray-subtler) 위에서 기본 프라이머리는 명도 대비 4.16:1로 미달 — 킷 토큰 내 진한 단계로 4.5:1 충족",
+      "kwcagId": "kwcag:5.4.3"
+    },
+    {
+      "what": "건너뛰기 도착점(#main-content)의 초점 링 억제",
+      "why": "킷 전역 *:focus 스타일이 main에도 적용돼, 건너뛰기 실행 시 본문 전체가 파란 외곽선으로 감싸인다. 도착점은 조작 컨트롤이 아니므로 시각 링만 억제 (초점 유지)",
+      "kwcagId": "kwcag:6.4.1"
+    },
+    {
+      "what": "킷 component.css 아이콘 경로 버그 우회 — breadcrumb 홈·구분자 2곳 재선언",
+      "why": "킷 v1.1.0 npm판 CSS는 url(../../img/img/…)로 img 세그먼트가 중복돼 아이콘 206곳이 404로 깨진다(오류 표시 없이 아이콘만 사라짐) — 이 페이지에 보이는 곳만 올바른 경로로 덮는다"
+    },
+    {
+      "what": "breadcrumb 폭 제한 승계 — 콘텐츠 컨테이너 폭으로 가운데 정렬",
+      "why": "원본은 #container > .krds-breadcrumb-wrap .breadcrumb에 max-width(1248px)·좌우 패딩을 걸어 로고·GNB와 정렬한다(output.css 20848행). #container 키 규칙이라 발췌에 안 걸렸고 container→main 교정으로 셀렉터도 어긋나 breadcrumb이 화면 좌측 끝에 붙었다 — 실사용 테스트에서 발견(2026-09-22)"
+    }
+  ],
+  "layoutCss": {
+    "note": "레이아웃 CSS는 손으로 쓰지 않는다 — scripts/extract-pattern-css.ts가 원본 패턴 CSS에서 이 템플릿이 쓰는 셀렉터만 발췌해 마커 구간에 주입한다. 출처·sha256은 템플릿의 발췌 블록 머리 주석에 기록",
+    "sourceUrl": "https://www.krds.go.kr/resources/css/pattern/output.css"
+  },
+  "visualCompare": [
+    ".certify-sel-wrap",
+    ".certify-option > li:first-child .certify-opt-tit",
+    ".certify-option > li:first-child .certify-type",
+    {
+      "sel": ".join-member-bn-wrap",
+      "positionOnly": true
+    },
+    ".helper-box",
+    ".page-title-wrap"
+  ],
+  "slots": [
+    {
+      "name": "pageTitle",
+      "required": true,
+      "description": "페이지 제목 — <title>과 h1에 들어간다",
+      "kwcagId": "kwcag:6.4.2"
+    },
+    {
+      "name": "serviceName",
+      "required": false,
+      "default": "",
+      "description": "h1 위에 붙는 서비스명 작은 글씨"
+    },
+    {
+      "name": "introText",
+      "required": false,
+      "default": "서비스 이용에 필요한 로그인 방식을 선택하세요.",
+      "description": "제목 아래 안내 문단 (h-txt)"
+    },
+    {
+      "name": "lang",
+      "required": false,
+      "default": "ko",
+      "description": "주 언어 코드",
+      "kwcagId": "kwcag:7.1.1"
+    },
+    {
+      "name": "assetBase",
+      "required": false,
+      "default": "node_modules/krds-uiux",
+      "description": "킷 자산 경로 (예약 슬롯 — 도구가 주입)"
+    },
+    {
+      "name": "idLoginHref",
+      "required": false,
+      "default": "#",
+      "description": "아이디/비밀번호 로그인 페이지 링크 — login-id 패턴으로 만든 페이지를 연결한다"
+    },
+    {
+      "name": "joinHref",
+      "required": false,
+      "default": "#",
+      "description": "회원가입 링크"
+    },
+    {
+      "name": "helpHref",
+      "required": false,
+      "default": "#",
+      "description": "로그인 도움말 링크 (7.2.2 — 전 페이지 일관 위치 유지)"
+    },
+    {
+      "name": "homeHref",
+      "required": false,
+      "default": "/",
+      "description": "브레드크럼 홈 링크"
+    }
+  ],
+  "dietNote": "원본 1,378줄 → 본문 카드 구조만 유지. 사이트 공통부는 get_component 주석 슬롯으로 대체, 데모 부속(통합 로그인 토글·툴팁·간편인증 브랜드 목록 disclosure) 제거. 인증 방식 카드 6종(모바일 신분증/공동·금융/간편/SNS/아이디/비회원)과 3그룹 구조는 패턴 문서 그대로 — 카드 자체는 콘텐츠 자유 층위로, 서비스가 제공하는 방식만 남기면 된다",
+  "family": "login",
+  "whenToUse": "여러 인증 방식(간편인증·모바일 신분증·인증서·아이디 등)을 제공하는 서비스의 로그인 진입 화면. 방식 선택 후 아이디/비밀번호 입력은 login-id를 연결한다. 아이디/비밀번호만 쓰는 서비스면 이 화면 없이 login-id로 직행"
+}
