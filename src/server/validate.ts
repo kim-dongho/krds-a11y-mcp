@@ -136,6 +136,8 @@ export async function runValidate(
     url = local.origin + fileURLToPath(url);
   }
 
+  // 기록 이름은 검사 시작 시각 — 검사 도중(키보드·위젯 검사로 수십 초) 고친 파일을 gate가 낡음으로 본다
+  const stamp = uniqueStamp(dir, new Date());
   let results;
   try {
     results = await scanTargets(
@@ -186,7 +188,6 @@ export async function runValidate(
     render(report) +
     (extraSections.length > 0 ? `\n${extraSections.join("\n")}\n` : "");
 
-  const stamp = validateStamp();
   const reportPath = join(dir, `${stamp}.md`);
   const rawPath = join(dir, `${stamp}.json`);
   let screenshotPath: string | undefined;
@@ -248,3 +249,10 @@ export const PLAYWRIGHT_GUIDE =
   "프로젝트에서 한 번만 설치하면 된다:\n\n" +
   "```sh\npnpm add -D playwright @axe-core/playwright\nnpx playwright install chromium\n```\n\n" +
   "설치 후 같은 호출을 다시 하면 된다.";
+
+/** 같은 밀리초에 시작한 검사가 있으면 1ms씩 밀어 고유한 기록 이름을 만든다 */
+function uniqueStamp(dir: string, at: Date): string {
+  let t = at.getTime();
+  while (existsSync(join(dir, `${validateStamp(new Date(t))}.json`))) t += 1;
+  return validateStamp(new Date(t));
+}

@@ -12,7 +12,7 @@ importers:
         specifier: ^1.30.0
         version: 1.30.0(zod@4.5.4)
       krds-uiux:
-        specifier: ^1.1.0
+        specifier: 1.1.0
         version: 1.1.0
       zod:
         specifier: ^4.5.4

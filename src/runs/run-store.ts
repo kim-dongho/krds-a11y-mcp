@@ -82,7 +82,7 @@ export function readRunStats(jsonPath: string): RunStats | undefined {
       ),
       pageIssues: first?.pageIssues?.length ?? 0,
       ...(first?.status === "error" ? { invalid: String(first.reason ?? "검사 실패") } : {}),
-      stamp: jsonPath.split("/").pop()!.replace(/\.json$/, ""),
+      stamp: basename(jsonPath, ".json"),
     };
   } catch {
     return undefined;
@@ -125,10 +125,13 @@ export function readRunTarget(jsonPath: string): RunTarget | undefined {
   }
 }
 
-/** "validate-2026-10-06T10-00-00" → Date (로컬 시각 아님 — 저장이 toISOString 기반이라 UTC). 형식이 어긋나면 undefined */
+/**
+ * "validate-2026-10-06T10-00-00-123" → Date (로컬 시각 아님 — 저장이 toISOString 기반이라 UTC).
+ * 밀리초가 없는 구형 기록도 읽는다. 형식이 어긋나면 undefined
+ */
 export function stampToDate(stamp: string): Date | undefined {
-  const m = stamp.match(/^validate-(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})$/);
+  const m = stamp.match(/^validate-(\d{4}-\d{2}-\d{2})T(\d{2})-(\d{2})-(\d{2})(?:-(\d{3}))?$/);
   if (!m) return undefined;
-  const d = new Date(`${m[1]}T${m[2]}:${m[3]}:${m[4]}Z`);
+  const d = new Date(`${m[1]}T${m[2]}:${m[3]}:${m[4]}.${m[5] ?? "000"}Z`);
   return Number.isNaN(d.getTime()) ? undefined : d;
 }

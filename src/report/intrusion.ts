@@ -70,8 +70,14 @@ export async function collectIntrusions(page: Page): Promise<IntrusionResult> {
           for (let j = 0; j < r.style.length; j++) declared.add(r.style.item(j));
           if (!a.props.some((p) => declared.has(p))) continue;
           suspects.push({ parent, index: i, text: r.cssText, selector: sel, from, declared, spec: specificity(sel), order });
-        } else if (r instanceof CSSMediaRule || r instanceof CSSSupportsRule) {
-          walk(r.cssRules, r, from);
+        } else if (
+          r instanceof CSSMediaRule ||
+          r instanceof CSSSupportsRule ||
+          // Tailwind v4 등은 규칙을 @layer 안에 둔다 — 들어가지 않으면 통째로 미탐
+          (typeof CSSLayerBlockRule !== "undefined" && r instanceof CSSLayerBlockRule) ||
+          (typeof CSSContainerRule !== "undefined" && r instanceof CSSContainerRule)
+        ) {
+          walk((r as CSSGroupingRule).cssRules, r as CSSGroupingRule, from);
         }
       }
     };
@@ -83,7 +89,8 @@ export async function collectIntrusions(page: Page): Promise<IntrusionResult> {
       try { list = sheet.cssRules; } catch { continue; }
       walk(list, sheet, sheet.href ? sheet.href.split("/").pop()! : "inline <style>");
     }
-    if (suspects.length === 0) return { hits: [] as { selector: string; from: string; props: string[]; elements: number }[], failed: undefined as string | undefined };
+    if (suspects.length === 0)
+      return { hits: [] as { selector: string; from: string; props: string[]; elements: number }[], failed: undefined as string | undefined, restoreFailed: false };
 
     // 2. 킷 요소 (상한 3000)
     const seen = new Set<Element>();
@@ -92,7 +99,7 @@ export async function collectIntrusions(page: Page): Promise<IntrusionResult> {
       seen.add(el);
     }
     const els = [...seen];
-    if (els.length === 0) return { hits: [], failed: undefined };
+    if (els.length === 0) return { hits: [], failed: undefined, restoreFailed: false };
     const measure = () => els.map((el) => { const cs = getComputedStyle(el); return a.props.map((p) => cs.getPropertyValue(p)); });
     // 크롬은 :link·:visited 스타일을 링크 상태와 함께 캐시해, 규칙을 지우거나 시트를 꺼도 링크 색을 다시 계산하지
     // 않는다(실측). 요소를 떼었다 같은 자리에 다시 붙이면 다시 계산된다 — 그런 규칙이 있을 때만, 킷 요소 중 링크에만
@@ -112,14 +119,33 @@ export async function collectIntrusions(page: Page): Promise<IntrusionResult> {
     const before = measure();
     const byParent = new Map<Parent, Suspect[]>();
     for (const s of suspects) byParent.set(s.parent, [...(byParent.get(s.parent) ?? []), s]);
-    for (const [p, list] of byParent) for (const s of [...list].sort((x, y) => y.index - x.index)) p.deleteRule(s.index);
-    relink();
-    const after = measure();
-    for (const [p, list] of byParent) for (const s of [...list].sort((x, y) => x.index - y.index)) p.insertRule(s.text, s.index);
-    relink();
+    // 지운 규칙은 예외가 나도 반드시 되돌린다 — 빠진 채로 axe·대비·스크린샷이 돌면 결과 전체가 틀린다
+    const deleted: Suspect[] = [];
+    let after: string[][] = [];
+    let restoreFailed = false;
+    try {
+      for (const [p, list] of byParent) {
+        for (const s of [...list].sort((x, y) => y.index - x.index)) {
+          p.deleteRule(s.index);
+          deleted.push(s);
+        }
+      }
+      relink();
+      after = measure();
+    } finally {
+      const back = new Map<Parent, Suspect[]>();
+      for (const s of deleted) back.set(s.parent, [...(back.get(s.parent) ?? []), s]);
+      for (const [p, list] of back) {
+        for (const s of [...list].sort((x, y) => x.index - y.index)) {
+          try { p.insertRule(s.text, s.index); } catch { restoreFailed = true; }
+        }
+      }
+      relink();
+    }
+    if (restoreFailed) return { hits: [], failed: undefined, restoreFailed: true };
     const restored = measure();
     if (JSON.stringify(restored) !== JSON.stringify(before)) {
-      return { hits: [], failed: "침투 측정 실패 — 규칙을 되돌린 뒤 계산 스타일이 처음과 달라 결과를 버렸다" };
+      return { hits: [], failed: "침투 측정 실패 — 규칙을 되돌린 뒤 계산 스타일이 처음과 달라 결과를 버렸다", restoreFailed: false };
     }
 
     // 4. 원인 귀속 — 그 속성을 선언하고 요소(상속 속성이면 조상까지)에 맞는 의심 규칙 중 특이성·순서가 가장 센 것
@@ -150,8 +176,11 @@ export async function collectIntrusions(page: Page): Promise<IntrusionResult> {
       .map(([s, g]) => ({ selector: s.selector, from: s.from, props: [...g.props], elements: g.elements.size }))
       .sort((x, y) => y.elements - x.elements)
       .slice(0, 10);
-    return { hits, failed: undefined };
+    return { hits, failed: undefined, restoreFailed: false };
   }, args);
+
+  // 페이지 CSS가 원래대로 돌아오지 않았다 — 이 상태로 이어 재면 모든 결과가 틀린다. 검사 무효로 끝낸다
+  if (raw.restoreFailed) throw new Error("CSS 침투 측정 뒤 규칙을 되돌리지 못했다 — 다시 검사하라");
 
   return {
     issues: raw.hits.map(

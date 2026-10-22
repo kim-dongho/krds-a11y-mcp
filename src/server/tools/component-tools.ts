@@ -2,7 +2,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { COMPONENT_MAPPINGS } from "../../mapping/components.generated.js";
-import { iconFixCss, kitVersion, listMarkupFiles, readMarkup } from "../../mapping/kit-markup.js";
+import { iconFixCss, kitVersion, kitVersionWarning, listMarkupFiles, readMarkup } from "../../mapping/kit-markup.js";
 import { kitBehaviorLines } from "../../mapping/kit-behavior.js";
 import { ASSEMBLY_NOTES, PRESCRIBED_PATTERNS } from "../../mapping/assembly-notes.js";
 import { CONFIRM_FIELDS, classifyRequirements, inputGaps, missingRequirements, normalizeId, normalizeInputs, parseFields } from "./inputs.js";
@@ -35,6 +35,7 @@ export function registerListComponents(server: McpServer): void {
       });
       return text(
         `KRDS 컴포넌트 ${COMPONENT_MAPPINGS.length}종 (킷 v${kitVersion()})\n` +
+          (kitVersionWarning() ? `${kitVersionWarning()}\n` : "") +
           "필수 입력: 변형 없이 get_component를 부를 때 채워야 하는 수. 변형 전용은 그 변형을 고를 때, 해당 시는 그 상황일 때만 필요하다\n\n" +
           lines.join("\n"),
       );

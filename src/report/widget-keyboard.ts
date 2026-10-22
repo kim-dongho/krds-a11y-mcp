@@ -79,6 +79,8 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
       if (expanders.length >= caps.expanders) break;
       if (modalSet.has(el) || el.matches('[role="tab"]') || !shown(el)) continue;
       if (!el.matches('button, [role="button"], a')) continue;
+      // 폼 안의 기본 버튼은 Enter가 제출이라 페이지가 옮겨 간다
+      if (el.closest("form") && el.matches('button:not([type="button"]):not([type="reset"])')) continue;
       const href = el.getAttribute("href");
       if (el.tagName === "A" && href && href !== "#" && !href.startsWith("javascript:")) continue;
       const popup = el.getAttribute("aria-haspopup");
@@ -101,16 +103,27 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
   let checkedReach = false;
   let checkedModal = false;
   let checkedPopup = false;
+  // 검사하다 실패한 위젯 — 예외를 삼키면 아무것도 확인하지 않고 pass가 나간다
+  const failed: AxeNode[] = [];
+  const startUrl = page.url();
+  const fail = async (id: string, what: string, err?: unknown) => {
+    const moved = page.url() !== startUrl;
+    const d = moved ? undefined : await describe(id).catch(() => undefined);
+    const why = moved ? "키를 누르자 페이지가 이동했다" : err instanceof Error ? err.message.split("\n")[0]!.slice(0, 80) : "검사 중 오류";
+    failed.push({ selector: d?.selector ?? `(${what})`, summary: `${what}${d?.name ? ` "${d.name}"` : ""} 검사 실패 — ${why}. 키보드로 직접 확인하라` });
+    return moved;
+  };
 
   // 2. 탭 — 화살표로 다른 탭에 가는가. 못 가도 다른 탭이 Tab 대상이면 쓸 수 있으니 통과
   for (const list of found.tablists) {
     try {
-      checkedReach = true;
       const start = list.tabs[list.selected]!;
       await at(start).focus();
       await page.keyboard.press("ArrowRight");
       await wait();
       const now = await activeMark();
+      if (page.url() !== startUrl) throw new Error("navigated");
+      checkedReach = true;
       if (now && now !== start && list.tabs.includes(now)) continue;
       const othersTabbable = await page.evaluate(
         ({ attr, ids, start }) => ids.filter((id) => id !== start).every((id) => {
@@ -122,14 +135,15 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
       if (othersTabbable) continue;
       const d = await describe(start);
       unreachable.push({ selector: d.selector, summary: `탭 "${d.name}"에서 → 를 눌러도 다른 탭으로 가지 않고, 다른 탭은 Tab 순회에서 빠져 있다 — 키보드로 다른 탭을 열 수 없다` });
-    } catch { /* 이 위젯만 건너뛴다 */ }
+    } catch (e) {
+      if (await fail(list.tabs[list.selected]!, "탭", e)) break;
+    }
   }
 
   // 3. 펼침 트리거 — Enter(안 되면 Space)로 aria-expanded가 바뀌는가, 팝업은 Escape로 닫히는가
   const expanded = (id: string) => at(id).getAttribute("aria-expanded");
   for (const ex of found.expanders) {
     try {
-      checkedReach = true;
       const before = await expanded(ex.id);
       await at(ex.id).focus();
       await page.keyboard.press("Enter");
@@ -143,6 +157,8 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
         after = await expanded(ex.id);
         key = " ";
       }
+      if (page.url() !== startUrl) throw new Error("navigated");
+      checkedReach = true;
       const d = await describe(ex.id);
       if (after === before) {
         unreachable.push({ selector: d.selector, summary: `"${d.name}"에서 Enter·Space를 눌러도 aria-expanded가 바뀌지 않는다 — 키보드로 펼칠 수 없다` });
@@ -161,7 +177,9 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
         await page.keyboard.press(key);
         await wait();
       }
-    } catch { /* 이 위젯만 건너뛴다 */ }
+    } catch (e) {
+      if (await fail(ex.id, "펼침 버튼", e)) break;
+    }
   }
 
   // 4. 모달 — 맨 마지막(닫지 못하면 배경이 inert로 남아 다른 위젯 검사가 오염된다)
@@ -224,10 +242,14 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
         await wait();
         if ((await openDialog()) !== null) break;
       }
-    } catch { /* 이 위젯만 건너뛴다 */ }
+    } catch (e) {
+      if (await fail(trigger, "모달 트리거", e)) break;
+    }
   }
 
-  await page.evaluate((attr) => document.querySelectorAll(`[${attr}]`).forEach((el) => el.removeAttribute(attr)), ATTR);
+  if (page.url() === startUrl) {
+    await page.evaluate((attr) => document.querySelectorAll(`[${attr}]`).forEach((el) => el.removeAttribute(attr)), ATTR);
+  }
 
   // 5. 결과 — 키보드 검사와 같은 형식. 검사한 위젯이 있는데 문제가 없으면 pass, 위젯이 없으면 아무것도 내지 않는다
   const out: AxeFinding[] = [];
@@ -238,5 +260,6 @@ export async function runWidgetKeyboard(page: Page, opts: WidgetKeyboardOptions 
   emit("kbd-widget-unreachable", checkedReach, "violation", unreachable);
   for (const r of ["kbd-modal-focus", "kbd-modal-escape", "kbd-modal-return", "kbd-modal-trap"]) emit(r, checkedModal, "incomplete", review[r]!);
   emit("kbd-popup-escape", checkedPopup, "incomplete", review["kbd-popup-escape"]!);
+  if (failed.length > 0) out.push({ ruleId: "kbd-widget-check-failed", outcome: "incomplete", impact: "moderate", nodes: failed });
   return out;
 }

@@ -1,7 +1,7 @@
 // 페이지 뼈대 도구 — get_page_scaffold
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { kitVersion } from "../../mapping/kit-markup.js";
+import { kitVersion, kitVersionWarning } from "../../mapping/kit-markup.js";
 import {
   assembleSiteChrome,
   buildScaffold,
@@ -222,6 +222,7 @@ export function registerGetPageScaffold(server: McpServer): void {
       const out: string[] = [
         `# 페이지 뼈대 (킷 v${kitVersion()})`,
         "",
+        ...(kitVersionWarning() ? [kitVersionWarning()!, ""] : []),
         ...pageBlock(html, output),
         "",
         "## 이 뼈대가 충족시키는 항목",

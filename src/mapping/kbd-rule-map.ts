@@ -19,4 +19,6 @@ export const KBD_RULE_MAP: Record<string, { kwcagIds: string[]; status: RuleStat
   "kbd-modal-return": { kwcagIds: ["kwcag:6.1.2"], status: "default" },
   "kbd-modal-trap": { kwcagIds: ["kwcag:6.1.2"], status: "default" },
   "kbd-popup-escape": { kwcagIds: ["kwcag:6.1.2"], status: "default" },
+  // 위젯 검사 자체가 실패했다(예외·키 입력으로 페이지 이동) — 통과가 아니라 사람이 확인할 대상
+  "kbd-widget-check-failed": { kwcagIds: ["kwcag:6.1.1"], status: "default" },
 };

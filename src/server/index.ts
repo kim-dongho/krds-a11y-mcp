@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import pkg from "../../package.json";
+import { kitVersionWarning } from "../mapping/kit-markup.js";
 import { registerTools } from "./tools/index.js";
 
 export const SERVER_NAME = "krds-a11y";
@@ -58,5 +59,8 @@ export function createServer(): McpServer {
 
 export async function startServer(): Promise<void> {
   const server = createServer();
+  // stdout은 MCP 통신 전용 — 경고는 stderr로 (클라이언트 로그에 남는다)
+  const kitWarning = kitVersionWarning();
+  if (kitWarning) console.error(`[krds-a11y] ${kitWarning}`);
   await server.connect(new StdioServerTransport());
 }

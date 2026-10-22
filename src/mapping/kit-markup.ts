@@ -3,7 +3,11 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
 // 킷 마크업은 복사하지 않고 npm 의존성(krds-uiux)에서 읽는다.
-// package.json이 킷 버전을 고정하므로 버전 추적이 의존성 관리로 해결된다.
+// package.json이 킷 버전을 정확히 고정한다(범위 지정 금지). 매핑표 근거(파일·행 번호)와
+// 아이콘 교정 CSS가 이 버전 기준이라, 다른 버전이 깔리면 조용히 어긋난다.
+
+/** 매핑표·교정 CSS를 검증한 킷 버전 */
+export const VERIFIED_KIT_VERSION = "1.1.0";
 const require_ = createRequire(import.meta.url);
 
 let kitRootCache: string | undefined;
@@ -20,6 +24,14 @@ export function kitVersion(): string {
     readFileSync(join(kitRoot(), "package.json"), "utf8"),
   ) as { version: string };
   return pkg.version;
+}
+
+/** 설치된 킷이 검증 버전과 다르면 경고 한 줄, 같으면 undefined */
+export function kitVersionWarning(): string | undefined {
+  const v = kitVersion();
+  return v === VERIFIED_KIT_VERSION
+    ? undefined
+    : `⚠ 설치된 킷 v${v}는 검증된 v${VERIFIED_KIT_VERSION}과 다르다 — 매핑표 근거와 아이콘 교정 CSS가 맞지 않을 수 있다`;
 }
 
 /** 컴포넌트 id + 변형 → 킷 html 파일명 (변형 없으면 기본 파일) */

@@ -32,7 +32,7 @@
   "packageManager": "pnpm@11.6.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
-    "krds-uiux": "^1.1.0",
+    "krds-uiux": "1.1.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {

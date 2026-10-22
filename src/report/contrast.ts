@@ -3,6 +3,12 @@ import type { Page } from "playwright";
 import type { AxeFinding } from "./types.js";
 
 /**
+ * 비활성 표시 — 킷은 비활성 페이지 이동(.page-navi.disabled)처럼 class로만 표시하는 곳이 있다.
+ * :disabled는 fieldset[disabled] 안의 컨트롤처럼 속성 없이 비활성인 경우를 잡는다. 실측·강등 모두 closest로 본다
+ */
+const INACTIVE_SELECTOR = "[disabled], :disabled, [aria-disabled='true'], .disabled";
+
+/**
  * axe가 보류(incomplete)한 color-contrast 노드의 대비를 직접 잰다.
  * 단색 배경 가정(조상 중 첫 불투명 배경)의 참고값 — 판정이 아니라 사람 확인을 돕는 실측.
  */
@@ -10,10 +16,24 @@ export async function measureContrast(
   page: Page,
   selectors: string[],
 ): Promise<({ fg: string; bg: string; ratio: number; inactive: boolean; certain: boolean } | null)[]> {
-  return page.evaluate((sels: string[]) => {
+  return page.evaluate(({ sels, inactiveSel }: { sels: string[]; inactiveSel: string }) => {
+    // 계산 스타일은 rgb() 말고도 oklch()·lab()·color(srgb …)로 온다(Tailwind v4 팔레트, color-mix).
+    // rgb()가 아니면 1px 캔버스에 칠해 sRGB로 읽는다. 못 읽으면 null — 호출부가 "확실하지 않음"으로 둔다
+    const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
     const parse = (c: string): number[] | null => {
-      const m = c.match(/rgba?\((\d+),?\s*(\d+),?\s*(\d+)(?:,?\s*([\d.]+))?\)/);
-      return m ? [+m[1]!, +m[2]!, +m[3]!, m[4] === undefined ? 1 : +m[4]!] : null;
+      const m = c.match(/^rgba?\((\d+(?:\.\d+)?),?\s*(\d+(?:\.\d+)?),?\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*([\d.]+%?))?\)$/);
+      if (m) {
+        const a = m[4] === undefined ? 1 : m[4].endsWith("%") ? parseFloat(m[4]) / 100 : +m[4];
+        return [+m[1]!, +m[2]!, +m[3]!, a];
+      }
+      if (!ctx || c === "transparent") return c === "transparent" ? [0, 0, 0, 0] : null;
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = "#010203"; // 표식 — 잘못된 값이면 fillStyle이 바뀌지 않는다
+      ctx.fillStyle = c;
+      if (ctx.fillStyle === "#010203") return null;
+      ctx.fillRect(0, 0, 1, 1);
+      const d = ctx.getImageData(0, 0, 1, 1).data;
+      return [d[0]!, d[1]!, d[2]!, d[3]! / 255];
     };
     const lum = ([r, g, b]: number[]) => {
       const f = (v: number) => {
@@ -24,6 +44,7 @@ export async function measureContrast(
     };
     const hex = ([r, g, b]: number[]) =>
       "#" + [r!, g!, b!].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+    const INACTIVE = inactiveSel;
     return sels.map((sel) => {
       try {
         const el = document.querySelector(sel);
@@ -47,23 +68,24 @@ export async function measureContrast(
             if (!icon) certain = false;
           }
           const c = parse(cs.backgroundColor);
-          if (c && c[3]! > 0.99) {
+          if (!c) certain = false; // 읽지 못한 배경 — 조상 배경(대개 흰색)으로 잰 값을 위반으로 확정하지 않는다
+          else if (c[3]! > 0.99) {
             bg = c;
             break;
-          }
+          } else if (c[3]! > 0) certain = false; // 반투명 배경은 아래 색과 섞인다
           node = node.parentElement;
         }
         if (!bg) bg = [255, 255, 255, 1];
         const l1 = lum(fg);
         const l2 = lum(bg);
         const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-        const inactive = el.matches("[disabled], [aria-disabled='true'], .disabled");
+        const inactive = !!el.closest(INACTIVE);
         return { fg: hex(fg), bg: hex(bg), ratio: Math.round(ratio * 100) / 100, inactive, certain };
       } catch {
         return null;
       }
     });
-  }, selectors);
+  }, { sels: selectors, inactiveSel: INACTIVE_SELECTOR });
 }
 
 /** 배경이 확실해도 위반으로 옮기지 않는 보류 사유 — 겹침·가림·의사 요소 등은 실측이 틀릴 수 있다 */
@@ -95,8 +117,6 @@ export function promoteCertainContrastFailures(findings: AxeFinding[]): AxeFindi
   return out;
 }
 
-/** 비활성 표시 — 킷은 비활성 페이지 이동(.page-navi.disabled)처럼 class로만 표시하는 곳이 있다 */
-const INACTIVE_SELECTOR = "[disabled], [aria-disabled='true'], .disabled";
 
 /**
  * axe가 위반으로 낸 명도 대비 중 비활성 요소를 확인필요로 옮긴다 — KWCAG 5.4.3(WCAG 1.4.3)은 비활성 UI 구성요소를

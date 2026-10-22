@@ -1,7 +1,7 @@
 // gate 판정 로직 — 출력·process.exit 없음 (테스트가 직접 부른다).
 // 판정 로직의 단일 소유자: Stop 훅과 향후 CI가 이 판정 위에 올라간다.
 import { existsSync, readdirSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { listRuns, readRunStats, readRunTarget, stampToDate } from "../runs/index.js";
 
 export type Staleness = "fresh" | "stale" | "unknown";
@@ -133,7 +133,7 @@ export function judge(opts?: { dir?: string; only?: string[] }): GateResult {
     if (!stats) {
       return {
         slug,
-        stamp: latest.split("/").pop()!.replace(/\.json$/, ""),
+        stamp: basename(latest, ".json"),
         violations: 0,
         needsReview: 0,
         kitIssues: 0,

@@ -3,9 +3,12 @@ import { readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { CHROME_MISSING, listRuns, readRunStats } from "../runs/index.js";
 
-/** 검사 산출물 파일명의 몸통 — 시각 기반이라 실행마다 고유하다 */
+/**
+ * 검사 산출물 파일명의 몸통 — 검사 시작 시각(밀리초까지). 초 단위였을 때 1초 안의 연속 검사가
+ * 앞 기록을 덮어썼다. 시작 시각이어야 검사 도중 고친 파일을 gate가 낡음으로 본다
+ */
 export function validateStamp(now: Date = new Date()): string {
-  return `validate-${now.toISOString().replace(/[:.]/g, "-").slice(0, 19)}`;
+  return `validate-${now.toISOString().replace(/[:.]/g, "-").slice(0, 23)}`;
 }
 
 /** 검사 대상 → 산출물 하위 폴더명 — 같은 화면의 검사 이력이 한 폴더에 모인다 */
@@ -29,7 +32,7 @@ export function targetSlug(label: string): string {
   } else if (label === "(html 문자열)") {
     base = "inline";
   } else {
-    base = label.split("/").pop() ?? label;
+    base = label.split(/[\\/]/).pop() ?? label;
   }
   return toSlug(base);
 }
@@ -53,7 +56,10 @@ export function writeSummary(outRoot: string): string {
     if (runs.length === 0) continue;
     const last = readRunStats(runs[runs.length - 1]!);
     if (!last) continue;
-    const when = last.stamp.replace("validate-", "").replace("T", " ").replace(/-(\d\d)-(\d\d)$/, ":$1:$2");
+    const when = last.stamp
+      .replace("validate-", "")
+      .replace("T", " ")
+      .replace(/-(\d\d)-(\d\d)(?:-\d{3})?$/, ":$1:$2");
     // 검사 무효 기록은 위반 0으로 보이면 안 된다 — 킷 미로드 등으로 검사 자체가 실패했다
     const v = last.invalid ? "**검사 무효**" : last.violations > 0 ? `**${last.violations}**` : "0";
     const pi = last.pageIssues > 0 ? `**${last.pageIssues}**` : "0";
