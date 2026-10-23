@@ -50,11 +50,32 @@ AI가 이 서버의 부품·공통부를 받아 Next.js 화면을 만들고, 화
 
 ## 빠른 시작
 
-프로젝트 루트에서:
+요구사항: Node 20 이상. 검사 도구를 쓰려면 Chromium(아래 3번).
 
-```sh
-npx -y krds-a11y-mcp init
-```
+1. 프로젝트 루트(git 저장소 루트)에서 설정을 설치한다
+
+   ```sh
+   npx -y krds-a11y-mcp init
+   ```
+
+2. 도구가 주는 페이지가 불러올 KRDS 킷을 프로젝트에 설치한다. 킷을 문서루트에 복사해 서빙하는 프로젝트(JSP 등)는 그 경로를 `get_page_scaffold`의 `assetBase`로 준다
+
+   ```sh
+   npm i krds-uiux@1.1.0
+   ```
+
+3. 재검사(`validate_page`·`inspect_page`)까지 쓰려면 브라우저 검사 스택을 설치한다. 없으면 도구가 이 안내를 그대로 돌려준다
+
+   ```sh
+   npm i -D playwright @axe-core/playwright
+   npx playwright install chromium
+   ```
+
+4. 설치 상태를 점검한다
+
+   ```sh
+   npx -y krds-a11y-mcp doctor
+   ```
 
 init이 설치하는 것 (기존 파일은 보존하고 우리 항목만 추가, 재실행해도 중복 없음):
 
@@ -65,23 +86,22 @@ init이 설치하는 것 (기존 파일은 보존하고 우리 항목만 추가,
 | `CLAUDE.md` · `AGENTS.md` | 핵심 사용 규칙 (Codex 등 타 AI 도구 호환) |
 | `.codex/config.toml` · `.codex/hooks.json` | Codex용 MCP 서버 등록과 같은 두 훅 |
 
+서버와 훅은 설치한 버전(`krds-a11y-mcp@x.y.z`)으로 고정된다. 세션 중에 새 버전이 나와도 판정 로직이 바뀌지 않고, 훅마다 레지스트리를 조회하지 않는다. Windows에서는 서버를 `cmd /c npx`로 등록한다.
+
 설치 후 처음 한 번:
 
 - **Claude Code** — 프로젝트를 열고 MCP 서버를 승인한다
 - **Codex** — 프로젝트를 신뢰(trust)하고 `/hooks`에서 krds-a11y 훅 2개를 승인한다. 훅 내용이 바뀌면 다시 승인해야 한다
 
-재검사(`validate_page`)까지 쓰려면 브라우저 검사 스택을 한 번 설치한다. 없으면 도구가 이 안내를 그대로 돌려준다.
+**업그레이드**: `npx -y krds-a11y-mcp@latest init`을 다시 실행하면 고정 버전만 새 버전으로 바뀐다(다른 설정은 보존).
 
-```sh
-pnpm add -D playwright @axe-core/playwright
-npx playwright install chromium
-```
+**제거**: `.mcp.json`의 `krds-a11y` 항목, `.claude/settings.json`·`.codex/hooks.json`의 `krds-a11y-mcp` 훅 두 개, `.codex/config.toml`의 `[mcp_servers.krds-a11y]` 표, `CLAUDE.md`·`AGENTS.md`의 `<!-- krds-a11y:begin -->`~`end` 구간을 지운다.
 
 <details>
 <summary>수동 설치</summary>
 
 ```sh
-claude mcp add krds-a11y -- npx -y krds-a11y-mcp
+claude mcp add krds-a11y -- npx -y krds-a11y-mcp@x.y.z
 ```
 
 또는 `.mcp.json`:
@@ -89,7 +109,7 @@ claude mcp add krds-a11y -- npx -y krds-a11y-mcp
 ```json
 {
   "mcpServers": {
-    "krds-a11y": { "command": "npx", "args": ["-y", "krds-a11y-mcp"] }
+    "krds-a11y": { "command": "npx", "args": ["-y", "krds-a11y-mcp@x.y.z"] }
   }
 }
 ```
@@ -115,7 +135,7 @@ AI가 작업을 끝내려 할 때
 
 | 도구 | 시점 | 하는 일 |
 |---|---|---|
-| `list_components` | 탐색 | KRDS 컴포넌트 43종 색인. 변형 없이 부를 때 채워야 하는 필수 입력 수, 변형 전용·해당 시 입력은 따로 표기 |
+| `list_components` | 탐색 | KRDS 컴포넌트 43종 색인. 필수 입력 수와 그것을 채우는 필드명, 변형 이름을 함께 보여 줘 `get_component`를 한 번에 부를 수 있게 한다 |
 | `get_component` | 부품 공급 | 컴포넌트 마크업 + 보장 항목 + **필수 입력 강제**. 필수 입력(레이블 등)을 안 채우면 마크업을 주지 않는다. 반복 항목은 객체 배열(`crumbs: [{crumbLabel, href}]`)로 받는다. 킷 결함이 알려진 부품(탭 등)은 교정본을, 폼 부품은 필수 표시·오류 연결 지침을, JS 동작 부품은 상태 클래스·초기화·끄는 법·라우트 전환 뒤 재초기화를 함께 준다. breadcrumb·pagination·radio_button·checkbox·text_input·select는 **입력값을 교정본 구조에 넣은 마크업을 생성**한다(`required`·`errorMessage`·`checked`·`currentPage` 상태 입력) |
 | `get_requirements` | 설계·리뷰 | 마크업 없이 접근성 요건만 조회 |
 | `get_page_scaffold` | 페이지 생성 | KRDS 공식 패턴 기반 템플릿 13종(로그인 3·신청 5·검색 1·메인 1·서브 1·게시판 2) 또는 빈 뼈대. `withSiteChrome: true`면 정부 배너·헤더·푸터를 코드로 조립한다. `siteMenu`(1~3단계)·`orgName`·`logoSrc`로 헤더 메뉴·모바일 전체메뉴·로고 교체 CSS까지 만든다. `output: "parts"`면 head·header·main·footer·scripts 조각으로 나눠 준다 (JSP include, 레이아웃 컴포넌트) |
@@ -124,6 +144,8 @@ AI가 작업을 끝내려 할 때
 | `get_icon_fix_css` | 교정 | 킷 아이콘 경로 버그(206곳 404) 전면 교정 CSS |
 | `validate_page` | 완성 후 | 렌더된 페이지를 브라우저로 재검사. axe 전수 → KWCAG 33항목 번역, 명도 대비 실측, **키보드 검사**(실제 Tab 순회, 탭 화살표·펼침·모달 초점/Escape 같은 위젯 조작), 사이트 공통부 누락, KRDS 사용 문제(부품 재발명·킷 스타일 조작·오류 메시지 연결 누락·라디오 그룹 이름 누락·모달 배치), 레거시 CSS의 킷 침투, 페이지 문제(리소스 404·가로 넘침·한글 깨짐·화면에 안 그려진 조작 요소). 위반 규칙별 **교정 방법**을 제시하고 리포트·스크린샷을 `reports/`에 남긴다. `actions`(클릭·키 입력·값 입력)로 모달 열림·오류 표시 같은 상태 화면을, `screen`으로 화면 이름별 기록을, `sourceDir`로 dev 서버 url 검사의 낡음 판정을 지원한다 |
 | `inspect_page` | 확인 | 요소의 색·배치·간격(margin·padding·gap)·폰트 적용 여부를 실측 조회 |
+
+실패·거부 응답(필수 입력 누락, 모르는 id·변형·패턴, 검사 실행 실패)은 `isError`로 표시되고 다시 부르는 방법을 담는다. 오타로 보이는 이름에는 가까운 이름을 제안한다.
 
 AI에게 주는 세부 사용 규칙은 MCP 연결 시 서버 instructions로 자동 전달된다(원본: `src/server/index.ts`의 `SERVER_INSTRUCTIONS`). init이 만드는 `CLAUDE.md`·`AGENTS.md`에는 핵심 요약만 마커 구간으로 들어간다.
 
@@ -145,18 +167,18 @@ npx krds-a11y-mcp gate --only form  # 지정 화면만 (반복 가능)
 |---|---|---|
 | 0 | 전 화면 위반 0, 검사 최신 | 없음 |
 | 1 | 위반 잔존 또는 사이트 공통부(헤더·푸터) 누락 | 교정 후 재검사. 일부러 공통부를 뺀 페이지는 `data-krds-a11y="no-chrome"` |
-| 2 | 검사 기록 없음·낡음·검사 무효(킷 CSS 미로드, 상호작용 실패 등) | validate_page 실행 |
+| 2 | 검사 기록 없음·낡음·검사 무효(킷 CSS 미로드, 상호작용 실패 등)·검사한 파일 없음 | validate_page 실행. 파일을 지운 화면은 `reports/<화면>` 폴더를 지운다 |
 
 url 검사는 validate_page에 `sourceDir`을 넘기면 그 아래 소스 수정 시각으로 낡음을 판정한다. 넘기지 않으면 "판정 불가"로 표기한다(통과로 꾸미지 않는다).
 
 ### stop-hook — 작업 종료 차단
 
-AI가 작업을 끝내려는 순간 gate를 판정해, 위반·공통부 누락·낡음이 남으면 종료를 거부하고 교정 지시를 모델에게 전달한다. 통과할 때까지 반복하고, 상한(기본 5회)을 넘으면 "자동 교정 실패, 사람 확인 필요"를 남기고 풀어준다. 검사 기록이 하나도 없는 프로젝트는 막지 않는다(페이지 작업이 없던 세션의 오탐 방지).
+AI가 작업을 끝내려는 순간 gate를 판정해, 위반·공통부 누락·낡음이 남으면 종료를 거부하고 교정 지시를 모델에게 전달한다. 통과할 때까지 반복하고, 상한(기본 5회)을 넘으면 "자동 교정 실패, 사람 확인 필요"를 남기고 풀어준다. 횟수는 세션 단위로 세고, 풀어 준 세션은 다시 막지 않는다. 위반을 일부러 남겨 둔 작업이면 환경 변수 `KRDS_A11Y_GATE=off`로 판정을 끈다. 검사 기록이 하나도 없는 프로젝트는 막지 않는다(페이지 작업이 없던 세션의 오탐 방지).
 
 ```json
 {
   "hooks": {
-    "Stop": [{ "hooks": [{ "type": "command", "command": "npx -y krds-a11y-mcp stop-hook" }] }]
+    "Stop": [{ "hooks": [{ "type": "command", "command": "npx -y krds-a11y-mcp@x.y.z stop-hook", "timeout": 30 }] }]
   }
 }
 ```
@@ -174,8 +196,8 @@ AI가 작업을 끝내려는 순간 gate를 판정해, 위반·공통부 누락�
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [{ "type": "command", "command": "npx -y krds-a11y-mcp pretool-hook" }]
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [{ "type": "command", "command": "npx -y krds-a11y-mcp@x.y.z pretool-hook", "timeout": 30 }]
       }
     ]
   }
@@ -190,6 +212,16 @@ init이 `.codex/hooks.json`에 같은 두 훅을 건다. PreToolUse 대상은 `a
 
 - 프로젝트 신뢰와 `/hooks` 승인 전에는 설정도 훅도 읽히지 않는다
 - **`codex exec`(비대화형)에서는 훅이 실행되지 않는다.** 자동화로 돌린다면 gate를 CI에서 따로 호출해야 한다
+
+## 문제 해결
+
+| 증상 | 확인할 것 |
+|---|---|
+| Claude Code에서 krds-a11y 연결 실패, 또는 예전 버전이 뜬다 | `npx -y krds-a11y-mcp doctor`. 같은 이름의 사용자·로컬 범위 등록이 프로젝트 `.mcp.json`보다 우선한다. 프로젝트 폴더가 git 루트가 아니면 상위 폴더 설정이 적용될 수 있다 |
+| validate_page가 "검사 무효" | 페이지가 킷 CSS를 불러오지 못했다(프로젝트에 `krds-uiux` 미설치, `assetBase` 경로 오류) 또는 `actions` 상호작용이 실패했다. 리포트의 리소스 문제 목록을 본다 |
+| 아이콘만 안 보인다(`img/img` 404) | 킷 v1.1.0의 아이콘 경로 버그다. `withSiteChrome: true`로 조립하거나 `get_icon_fix_css`의 교정 CSS를 넣는다 |
+| Codex에서 훅이 안 돈다 | 프로젝트 신뢰와 `/hooks` 승인이 필요하다. `codex exec`(비대화형)에서는 훅이 돌지 않는다 |
+| 응답에 킷 버전 경고가 나온다 | 설치된 `krds-uiux`가 검증된 1.1.0과 다르다. 매핑표 근거와 교정 CSS가 맞지 않을 수 있다 |
 
 ## 템플릿이 보장하는 것과 지켜야 하는 것
 
@@ -217,7 +249,7 @@ pnpm test             # vitest
 pnpm typecheck        # tsc --noEmit
 pnpm build            # tsup → dist/
 
-pnpm build:previews   # 템플릿 프리뷰 생성
+pnpm build:previews   # 템플릿 프리뷰 생성 (테스트 전에 한 번 필요)
 pnpm scan:axe         # 전 템플릿 axe 전수 (위반 시 exit 1)
 pnpm verify:a11y      # 키보드 전수·접근성 트리 검증
 ```
@@ -227,4 +259,4 @@ pnpm verify:a11y      # 키보드 전수·접근성 트리 검증
 ## 라이선스
 
 - 이 저장소의 코드: [MIT](LICENSE)
-- KRDS 유래 자료(템플릿의 공식 패턴 교정본·발췌 레이아웃 CSS·패턴 이미지, 킷 마크업 인용)는 **공공누리 제1유형**을 따른다. 출처 표기는 [NOTICE](NOTICE)에 있다
+- KRDS 유래 자료(템플릿의 공식 패턴 교정본·발췌 레이아웃 CSS와 그 안의 패턴 아이콘, 킷 마크업 인용)는 **공공누리 제1유형**을 따른다. 출처 표기는 [NOTICE](NOTICE)에 있다

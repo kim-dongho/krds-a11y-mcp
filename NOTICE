@@ -5,7 +5,8 @@ Copyright (c) 2026 kim-dongho — MIT License (LICENSE 참고)
 
 KRDS 유래 자료
 - templates/*.html — KRDS 공식 패턴 샘플(www.krds.go.kr/html/pattern/)을 접근성 교정한 2차적 저작물,
-  템플릿 안의 발췌 레이아웃 CSS(원본 resources/css/pattern/output.css)와 패턴 이미지 포함
+  템플릿 안의 발췌 레이아웃 CSS(원본 resources/css/pattern/output.css)와, 그 CSS에 data URI(SVG)로
+  인라인한 패턴 아이콘 포함
 - docs/mapping/ — 공식 킷(krds-uiux) 마크업·CSS·JS의 인용과 분석
 - 실행 시 공급하는 킷 마크업 — 설치된 krds-uiux 패키지에서 읽는다
 
@@ -17,4 +18,5 @@ KRDS 유래 자료
 제3자 자료
 - krds-uiux (npm, KRDS 이용약관) — 의존성으로 설치되며 이 저장소에 포함되지 않는다.
   킷 안의 Pretendard GOV 폰트 등은 각자의 라이선스를 따른다
-- axe-core, @axe-core/playwright (MPL-2.0) — 선택 의존성
+- axe-core, @axe-core/playwright (MPL-2.0), playwright (Apache-2.0) — 검사 도구용 선택 의존성(peer).
+  소비 프로젝트가 설치하며 이 패키지에 포함되지 않는다

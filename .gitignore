@@ -10,7 +10,6 @@ coverage/
 .DS_Store
 
 # 로컬 산출물
-docs/features
 reports/
 
 # KRDS 패턴 샘플 원본 스냅샷 — 내부 참고용, 배포는 교정본만
