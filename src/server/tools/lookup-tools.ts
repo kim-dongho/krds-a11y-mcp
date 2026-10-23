@@ -2,7 +2,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { iconFixCssAll } from "../../mapping/kit-markup.js";
-import { text } from "./shared.js";
+import { READ_ONLY, text } from "./shared.js";
 
 export function registerGetIconFixCss(server: McpServer): void {
   // ── 5.5 아이콘 버그 전면 교정 CSS — 직접 레이아웃을 짜는 소비자용 (조립 도구를 안 쓰면 받을 길이 없었다)
@@ -14,13 +14,15 @@ export function registerGetIconFixCss(server: McpServer): void {
         "킷 v1.1.0 npm판의 아이콘 경로 버그(img/img 중복, 206곳 404)를 페이지 전체 범위로 교정하는 CSS를 반환한다. " +
         "get_page_scaffold(withSiteChrome)를 쓰면 자동 주입되므로 필요 없다. " +
         "레이아웃을 직접 구성하는 프로젝트(React 레이아웃 등)에서 아이콘이 안 보일 때, " +
-        "빠진 곳을 한 개씩 손으로 고치지 말고 이 전체본을 받아 교정 파일로 저장하라.",
+        "빠진 곳을 한 개씩 손으로 고치지 말고 이 전체본을 받아 교정 파일로 저장하라. 컴포넌트 하나에 필요한 부분은 get_component 응답에도 들어 있다. " +
+        "반환: 저장·로드 방법과 CSS 코드 블록.",
       inputSchema: {
         assetBase: z
           .string()
           .optional()
-          .describe("킷 자산 경로 (기본 node_modules/krds-uiux, 예: /krds-uiux)"),
+          .describe("CSS의 url()이 가리킬 킷 자산 경로 — 페이지에서 킷을 서빙하는 경로와 같아야 한다. 기본 \"node_modules/krds-uiux\", 예: \"/krds-uiux\""),
       },
+      annotations: READ_ONLY,
     },
     async ({ assetBase }) => {
       const base = (assetBase ?? "node_modules/krds-uiux").replace(/\/$/, "");
@@ -54,7 +56,9 @@ export function registerGetFrameworkGuide(server: McpServer): void {
       description:
         "React·Next.js에서 킷을 쓸 때의 충돌(킷 JS는 DOMContentLoaded 1회 init·클라이언트 " +
         "라우팅 모름)과 실사용 검증된 처방을 반환한다. 킷 위젯(탭·아코디언·GNB)이 SPA에서 " +
-        "동작하지 않으면 자체 해법을 발명하기 전에 이 가이드를 먼저 보라.",
+        "동작하지 않으면 자체 해법을 발명하기 전에 이 가이드를 먼저 보라. 위젯별 상태 클래스·초기화 함수는 get_component의 '킷 동작' 절에 있다. " +
+        "반환: 마크다운 — 충돌 원인과 처방(코드 포함). framework 없이 부르면 고를 수 있는 목록.",
+      annotations: READ_ONLY,
       inputSchema: {
         framework: z
           .enum(["react", "nextjs"])
@@ -79,7 +83,9 @@ export function registerGetTokens(server: McpServer): void {
         "킷 디자인 토큰(색·간격·글자 크기 등 CSS 커스텀 프로퍼티)을 조회한다. " +
         "var() 참조는 실제 값(hex 등)까지 풀어서 준다. " +
         "커스텀 CSS에서 색·크기가 필요하면 임의 값 대신 여기서 토큰을 찾아 var()로 쓰라 — " +
-        "명도 대비 등 접근성 보장이 토큰에 내장돼 있다. query 없이 부르면 분류 안내를 준다.",
+        "명도 대비 등 접근성 보장이 토큰에 내장돼 있다. query 없이 부르면 분류 안내를 준다. " +
+        "반환: 토큰 이름·값·풀린 실제 값 목록(최대 80개).",
+      annotations: READ_ONLY,
       inputSchema: {
         query: z
           .string()

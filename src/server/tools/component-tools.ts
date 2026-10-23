@@ -2,11 +2,11 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { COMPONENT_MAPPINGS } from "../../mapping/components.generated.js";
-import { iconFixCss, kitVersion, kitVersionWarning, listMarkupFiles, readMarkup } from "../../mapping/kit-markup.js";
+import { iconFixCss, kitVersion, kitVersionWarning, listMarkupFiles, readMarkup, variantsOf } from "../../mapping/kit-markup.js";
 import { kitBehaviorLines } from "../../mapping/kit-behavior.js";
 import { ASSEMBLY_NOTES, PRESCRIBED_PATTERNS } from "../../mapping/assembly-notes.js";
 import { CONFIRM_FIELDS, classifyRequirements, inputGaps, missingRequirements, normalizeId, normalizeInputs, parseFields } from "./inputs.js";
-import { byId, itemLabel, text } from "./shared.js";
+import { READ_ONLY, byId, errorText, itemLabel, suggest, text } from "./shared.js";
 import { RENDERERS, renderComponent } from "../../markup/index.js";
 
 export function registerListComponents(server: McpServer): void {
@@ -16,10 +16,12 @@ export function registerListComponents(server: McpServer): void {
     {
       title: "KRDS 컴포넌트 목록",
       description:
-        "사용 가능한 KRDS 컴포넌트 43종의 색인을 반환한다. 각 항목은 id·이름과 " +
-        "해당 컴포넌트에서 사용자가 반드시 채워야 하는 접근성 필수 입력의 개수를 담는다. " +
-        "마크업과 상세 요건은 get_component로 조회한다.",
+        "사용 가능한 KRDS 컴포넌트 43종의 색인을 반환한다. 각 줄은 id·이름, 필수 입력 수, 그것을 채우는 " +
+        "필드명(필드:), 변형 이름(변형:)을 담는다 — get_component의 componentId·inputs·variant에 그대로 쓴다. " +
+        "페이지 전체를 만들 때는 이 도구보다 get_page_scaffold를 먼저 부른다. 마크업은 get_component, 요건만은 get_requirements. " +
+        "반환: 마크다운 목록 한 장.",
       inputSchema: {},
+      annotations: READ_ONLY,
     },
     async () => {
       // 필수 입력 개수는 get_component가 변형 없이 부를 때 막는 기준과 같다 — 매핑 행 수를 그대로 세면
@@ -30,13 +32,19 @@ export function registerListComponents(server: McpServer): void {
           variantOnly.length > 0 ? `변형 전용 ${variantOnly.length}` : "",
           optional.length > 0 ? `해당 시 ${optional.length}` : "",
         ].filter(Boolean);
-        const variants = listMarkupFiles(c.componentId).length > 1 ? " · 변형 있음" : "";
-        return `${c.componentId} · ${c.name} — 필수 입력 ${required.length}건${extra.length ? ` (${extra.join(", ")})` : ""}, 보장 ${c.auto.length}건${variants}`;
+        const variants = variantsOf(c.componentId);
+        const keys = [...new Set(required.flatMap((r) => parseFields(r.field).keys))];
+        return (
+          `${c.componentId} · ${c.name} — 필수 입력 ${required.length}건${extra.length ? ` (${extra.join(", ")})` : ""}, 보장 ${c.auto.length}건` +
+          (keys.length ? ` · 필드: ${keys.join(", ")}` : "") +
+          (variants.length ? ` · 변형: ${variants.join(", ")}` : "")
+        );
       });
       return text(
         `KRDS 컴포넌트 ${COMPONENT_MAPPINGS.length}종 (킷 v${kitVersion()})\n` +
           (kitVersionWarning() ? `${kitVersionWarning()}\n` : "") +
-          "필수 입력: 변형 없이 get_component를 부를 때 채워야 하는 수. 변형 전용은 그 변형을 고를 때, 해당 시는 그 상황일 때만 필요하다\n\n" +
+          "필수 입력: 변형 없이 get_component를 부를 때 채워야 하는 수. 변형 전용은 그 변형을 고를 때, 해당 시는 그 상황일 때만 필요하다\n" +
+          "필드: 필수 입력을 채우는 inputs 키 · 변형: get_component의 variant 값\n\n" +
           lines.join("\n"),
       );
     },
@@ -50,10 +58,11 @@ export function registerGetComponent(server: McpServer): void {
     {
       title: "KRDS 컴포넌트 공급",
       description:
-        "KRDS 컴포넌트의 킷 마크업과 접근성 요건을 반환한다. " +
-        "이 컴포넌트가 보장하는 KWCAG 항목, 사용자가 반드시 채워야 하는 값(필수 입력), " +
-        "그리고 페이지 조립 후 따로 확인해야 하는 항목을 함께 알려준다. " +
-        "필수 입력을 채우지 않으면 마크업 대신 무엇을 채워야 하는지 안내한다.",
+        "KRDS 컴포넌트 하나의 마크업과 접근성 요건을 반환한다. 필수 입력(레이블·대체 텍스트 등)을 inputs에 채워야 " +
+        "마크업을 준다 — 비우면 isError 응답으로 채울 필드명과 입력 예시를 안내하니, 그대로 채워 다시 부른다. " +
+        "breadcrumb·pagination·radio_button·checkbox·text_input·select는 입력값을 넣은 마크업을 만들어 주고, 나머지는 킷 원본과 채워 넣을 값을 준다. " +
+        "페이지 전체 뼈대는 get_page_scaffold, 요건만 볼 때는 get_requirements, id·변형·필드명 목록은 list_components. " +
+        "반환: 마크다운 — 마크업, 보장 항목, 페이지에서 따로 확인할 항목, 조립 지침, 킷 동작(상태 클래스·초기화), 필요하면 아이콘 교정 CSS.",
       inputSchema: {
         componentId: z
           .string()
@@ -61,7 +70,7 @@ export function registerGetComponent(server: McpServer): void {
         variant: z
           .string()
           .optional()
-          .describe("변형 이름 — 예: 'icon', 'size'. 킷 파일명 접미사와 같다"),
+          .describe("변형 이름 — list_components 각 줄의 '변형:' 목록 중 하나(예: button의 'icon'). 없으면 기본형"),
         inputs: z
           .record(
             z.string(),
@@ -75,21 +84,24 @@ export function registerGetComponent(server: McpServer): void {
           )
           .optional()
           .describe(
-            "필수 입력 값 — 필드명: 값. 배열(헤더 목록 등)은 쉼표로 이어 받는다. " +
-              "반복 항목은 객체 배열로 줘도 된다 — 예: crumbs: [{crumbLabel, href}, …]. 바깥 키 이름(crumbs·items 등)은 자유이고 항목 안의 키가 필드명이다. " +
-              "상태 입력: required(필수 표시)·checked(선택된 항목)는 불리언, errorMessage(오류 상태), currentPage(현재 쪽). " +
-              "확인용 입력(modalPlacement·captionSync 등 구현 의무 확인)은 true를 준다. " +
-              "breadcrumb·pagination·radio_button·checkbox·text_input·select는 값을 넣은 마크업을 만들어 준다. " +
-              "미제공 시 요건 안내만 반환하고 마크업은 주지 않는다",
+            "필드명 → 값. 필드명은 list_components 각 줄의 '필드:' 목록에 있다. 여러 값은 쉼표로 잇거나 배열로, " +
+              "반복 항목은 객체 배열로 준다(예: crumbs: [{crumbLabel, href}]). 확인용 입력(modalPlacement 등)은 true",
           ),
       },
+      annotations: READ_ONLY,
     },
     async ({ componentId, variant, inputs }) => {
       const id = normalizeId(componentId);
       const c = byId.get(id);
-      if (!c) {
-        return text(
-          `알 수 없는 컴포넌트: ${id}\nlist_components로 사용 가능한 id를 확인하라.`,
+      if (!c) return errorText(unknownComponent(id));
+      // 잘못된 변형을 조용히 기본형으로 바꾸면 에이전트는 요청한 변형을 받은 줄 안다
+      const variants = variantsOf(id);
+      if (variant && !variants.includes(variant)) {
+        const near = suggest(variant, variants);
+        return errorText(
+          `${id}에는 변형 '${variant}'이 없다. ` +
+            (variants.length ? `variant는 ${variants.join(", ")} 중 하나로 다시 부르거나 빼고 부른다` : "이 컴포넌트는 변형이 없다 — variant를 빼고 다시 부른다") +
+            (near ? ` (혹시 '${near}'?)` : ""),
         );
       }
 
@@ -123,7 +135,7 @@ export function registerGetComponent(server: McpServer): void {
         // 렌더러가 있으면 입력 모양을 보여 준다 — 실사용에서 바깥 키·항목 구조를 추측하던 마찰
         const renderer = RENDERERS[id];
         if (renderer) out.push("", `입력 예시 (값을 채우면 마크업을 만들어 준다): ${renderer.example}`);
-        return text(out.join("\n"));
+        return errorText(out.join("\n"));
       }
 
       // 렌더러가 있으면 입력값을 교정본 구조에 넣은 마크업을 준다 — 킷 원본을 받아 손으로 다시 쓰던
@@ -135,6 +147,7 @@ export function registerGetComponent(server: McpServer): void {
         out.push(
           "## 생성 마크업 — 입력값을 교정본 구조에 넣었다. 그대로 써도 된다",
           "",
+          ...(variant ? [`variant '${variant}'는 생성 마크업에 반영되지 않는다 — 변형 모양이 필요하면 아래 킷 원본을 참고하라`, ""] : []),
           "```html",
           generated.html,
           "```",
@@ -145,7 +158,7 @@ export function registerGetComponent(server: McpServer): void {
         try {
           markup = readMarkup(id, variant);
         } catch (error) {
-          return text(
+          return errorText(
             `# ${c.name} (${id})\n\n마크업을 가져오지 못했다.\n\n` +
               `${error instanceof Error ? error.message : String(error)}\n\n` +
               `이 컴포넌트의 킷 파일: ${listMarkupFiles(id).join(", ") || "(없음)"}`,
@@ -267,17 +280,18 @@ export function registerGetRequirements(server: McpServer): void {
     {
       title: "컴포넌트 접근성 요건 조회",
       description:
-        "마크업 없이 특정 컴포넌트의 접근성 요건만 조회한다. " +
-        "필수 입력 목록, 보장 항목, 위임 항목, 그리고 아직 확정되지 않은 " +
-        "미해결 질문까지 포함한다. 코드 리뷰나 설계 검토에 쓴다.",
+        "마크업 없이 컴포넌트 하나의 접근성 요건만 조회한다 — 필수 입력(필드명·규칙), 보장 항목과 근거, " +
+        "페이지 수준으로 위임되는 항목, 아직 판정되지 않은 질문. 코드 리뷰·설계 검토용이다. " +
+        "마크업이 필요하면 get_component를 부른다. 반환: 마크다운.",
       inputSchema: {
-        componentId: z.string().describe("컴포넌트 id — 'krds:button' 또는 'button'"),
+        componentId: z.string().describe("컴포넌트 id — 'krds:button' 또는 'button'. 목록은 list_components"),
       },
+      annotations: READ_ONLY,
     },
     async ({ componentId }) => {
       const id = normalizeId(componentId);
       const c = byId.get(id);
-      if (!c) return text(`알 수 없는 컴포넌트: ${id}`);
+      if (!c) return errorText(unknownComponent(id));
 
       const out: string[] = [`# ${c.name} (${id}) 접근성 요건`, ""];
       out.push(`킷 파일: ${listMarkupFiles(id).join(", ") || "(없음)"}`, "");
@@ -291,6 +305,10 @@ export function registerGetRequirements(server: McpServer): void {
       const req = classifyRequirements(c.conditional);
       const reqRow = (r: (typeof req.required)[number]) =>
         `- **${r.field}**${r.scope ? ` (${r.scope})` : ""} — ${itemLabel(r.kwcagId)}\n  - ${r.rule}`;
+      const reqKeys = [...new Set(req.required.flatMap((r) => parseFields(r.field).keys))];
+      if (reqKeys.length > 0) out.push(`get_component inputs 키: ${reqKeys.join(", ")}`, "");
+      const renderer = RENDERERS[id];
+      if (renderer) out.push(`입력 예시: ${renderer.example}`, "");
       section(`필수 입력 (${req.required.length})`, req.required.map(reqRow));
       section(`변형 전용 필수 입력 (${req.variantOnly.length}) — 그 변형을 고를 때만`, req.variantOnly.map(reqRow));
       section(`해당 시 입력 (${req.optional.length}) — 그 상황일 때만`, req.optional.map(reqRow));
@@ -312,5 +330,15 @@ export function registerGetRequirements(server: McpServer): void {
       );
       return text(out.join("\n"));
     },
+  );
+}
+
+/** 모르는 id — 가까운 id를 제안하고 목록 도구를 안내한다 */
+function unknownComponent(id: string): string {
+  const near = suggest(id.replace("krds:", ""), COMPONENT_MAPPINGS.map((c) => c.componentId.replace("krds:", "")));
+  return (
+    `알 수 없는 컴포넌트: ${id}` +
+    (near ? ` — 혹시 'krds:${near}'?` : "") +
+    "\nlist_components로 id 목록을 확인하고 다시 부른다."
   );
 }

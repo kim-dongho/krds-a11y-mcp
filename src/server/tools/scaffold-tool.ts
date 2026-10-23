@@ -14,7 +14,7 @@ import {
 } from "../scaffold.js";
 import { siteMenuError } from "../../markup/site-header.js";
 import { listPatterns, renderPattern, resolvePattern } from "../../templates/index.js";
-import { itemLabel, text } from "./shared.js";
+import { READ_ONLY, errorText, itemLabel, suggest, text } from "./shared.js";
 
 /** 페이지 HTML 출력 — page면 한 덩어리, parts면 include 조각별 코드 블록 */
 export function pageBlock(html: string, output: "page" | "parts" = "page"): string[] {
@@ -45,21 +45,27 @@ export function pageBlock(html: string, output: "page" | "parts" = "page"): stri
 
 export function registerGetPageScaffold(server: McpServer): void {
   // ── 페이지 뼈대: 컴포넌트 이전에 페이지 수준 요건을 깔아준다
+  // 패턴 이름을 설명에 싣는다 — 실패한 호출을 한 번 거쳐야 이름을 알 수 있던 마찰
+  const patternNames = listPatterns().map((m) => m.name);
+  const families = [...new Set(patternNames.map((n) => n.split("-")[0]!))].filter(
+    (f) => patternNames.filter((n) => n.startsWith(`${f}-`)).length > 1,
+  );
   server.registerTool(
     "get_page_scaffold",
     {
       title: "KRDS 페이지 뼈대",
       description:
-        "KRDS 페이지의 시작 골격을 반환한다. pattern을 지정하면 공식 KRDS 패턴 기반 " +
-        "완성 템플릿(접근성 교정 적용)을 주고, 미지정 시 빈 뼈대를 준다. " +
-        "새 페이지를 만들 때 컴포넌트 조회보다 먼저 호출하라. 로그인·신청 등 정형 화면은 " +
-        "반드시 pattern을 사용하라 — 레이아웃을 직접 창작하지 않는 것이 KRDS 준수의 기본이다.",
+        "KRDS 페이지의 시작 골격을 반환한다. 새 페이지를 만들 때 get_component보다 먼저 부른다. " +
+        `pattern을 주면 공식 KRDS 패턴을 접근성 교정한 완성 템플릿을 주고(${patternNames.join(", ")}), 없으면 빈 뼈대를 준다. ` +
+        "로그인·신청·검색·게시판 같은 정형 화면은 반드시 pattern을 쓴다 — 레이아웃을 직접 창작하지 않는 것이 KRDS 준수의 기본이다. " +
+        "withSiteChrome: true면 정부 배너·헤더·푸터까지 조립한다. 본문 부품은 get_component로 채운다. " +
+        "필수 입력(pageTitle, 패턴의 필수 슬롯)이 비면 isError 응답으로 채울 값을 안내한다. 반환: 마크다운 — 페이지 HTML(또는 include 조각), 교정 내역, 조립 지침.",
       inputSchema: {
         pageTitle: z
           .string()
           .min(1)
           .describe("페이지 제목 — <title>과 h1에 들어간다 (kwcag:6.4.2). 비어있으면 안 된다"),
-        lang: z.string().optional().describe('주 언어 코드. 기본 "ko" (kwcag:7.1.1)'),
+        lang: z.string().optional().describe('<html lang> 언어 코드(BCP 47) — 예: "ko", "en". 기본 "ko" (kwcag:7.1.1)'),
         assetBase: z
           .string()
           .optional()
@@ -69,7 +75,7 @@ export function registerGetPageScaffold(server: McpServer): void {
         withCarousel: z
           .boolean()
           .optional()
-          .describe("캐러셀 사용 예정이면 true — swiper 번들 스크립트 포함"),
+          .describe("캐러셀을 쓸 예정이면 true — swiper 번들 스크립트를 넣는다. pattern 없이 빈 뼈대를 받을 때만 반영된다"),
         withSiteChrome: z
           .boolean()
           .optional()
@@ -99,8 +105,8 @@ export function registerGetPageScaffold(server: McpServer): void {
           )
           .optional()
           .describe(
-            "withSiteChrome의 헤더 메뉴(1~3단계) — 주면 킷 데모 메뉴(자리 문구 수십 개) 대신 이 트리로 데스크톱 메뉴와 모바일 전체메뉴를 만든다. " +
-              "하위가 없는 항목은 href 필수, 하위가 있는 항목은 여닫는 버튼이 된다. 예: [{label:\"민원\",children:[{label:\"민원 신청\",href:\"/apply\"}]},{label:\"알림\",href:\"/notice\"}]",
+            "withSiteChrome의 헤더 메뉴(1~3단계) — 주면 킷 데모 메뉴(자리 문구 수십 개) 대신 이 트리로 데스크톱 메뉴와 모바일 전체메뉴를 만든다. orgName이 함께 필요하다. " +
+              "하위가 없는 항목은 href 필수(3단계는 언제나 href), 하위가 있는 항목은 여닫는 버튼이 된다. 예: [{label:\"민원\",children:[{label:\"민원 신청\",href:\"/apply\"}]},{label:\"알림\",href:\"/notice\"}]",
           ),
         homeHref: z.string().optional().describe('로고 링크 — 기본 "/"'),
         loginHref: z.string().optional().describe("있으면 헤더에 로그인 링크를 둔다 (siteMenu와 함께)"),
@@ -111,11 +117,17 @@ export function registerGetPageScaffold(server: McpServer): void {
         pattern: z
           .string()
           .optional()
-          .describe('KRDS 패턴 이름 (예: "login"). 정형 화면이면 지정하라 — 완성 구조를 반환한다'),
+          .describe(
+            `KRDS 패턴 이름 — ${patternNames.join(", ")}. ` +
+              (families.length ? `계열 이름(${families.join(", ")})만 주면 변형 목록과 고르는 기준을 돌려준다` : ""),
+          ),
         slots: z
           .record(z.string(), z.string())
           .optional()
-          .describe("패턴 슬롯 값 — 필수 슬롯 미입력 시 무엇을 채울지 안내만 반환한다"),
+          .describe(
+            "패턴 슬롯 값(슬롯 이름 → 문자열). 슬롯 이름은 패턴마다 다르다 — 처음엔 slots 없이 pattern만 주고 부르면 " +
+              "필수 슬롯 이름과 설명이 isError 응답으로 온다. pageTitle·lang·assetBase는 슬롯이 아니라 위 입력으로 준다",
+          ),
         output: z
           .enum(["page", "parts"])
           .optional()
@@ -123,6 +135,7 @@ export function registerGetPageScaffold(server: McpServer): void {
             '"parts"면 조각(head·header·main·footer·scripts)으로 나눠 준다 — 여러 화면이 공통부를 공유할 때(JSP include, 정적 사이트 공통 조각, 레이아웃 컴포넌트) 손으로 떼어 내지 말고 이것을 써라. 기본 "page"',
           ),
       },
+      annotations: READ_ONLY,
     },
     async ({ pageTitle, lang, assetBase, withCarousel, withSiteChrome, pattern, slots, output, orgName, siteMenu, homeHref, loginHref, logoSrc }) => {
       const chrome: SiteChromeOptions = {
@@ -133,11 +146,11 @@ export function registerGetPageScaffold(server: McpServer): void {
         ...(logoSrc ? { logoSrc } : {}),
       };
       if (!withSiteChrome && Object.keys(chrome).length > 0) {
-        return text("orgName·siteMenu·homeHref·loginHref·logoSrc는 공통부를 만들 때 쓴다 — withSiteChrome: true와 함께 다시 호출하라.");
+        return errorText("orgName·siteMenu·homeHref·loginHref·logoSrc는 공통부를 만들 때 쓴다 — withSiteChrome: true와 함께 다시 호출하라.");
       }
       if (chrome.menu) {
         const err = !chrome.orgName ? "orgName(기관명)이 비었다 — 로고의 유일한 대체 텍스트다" : siteMenuError(chrome.menu);
-        if (err) return text(`siteMenu로 헤더를 만들 수 없다: ${err}`);
+        if (err) return errorText(`siteMenu로 헤더를 만들 수 없다: ${err} — 고쳐서 다시 호출하라.`);
       }
       const chromeNote = chrome.menu
         ? "헤더 메뉴는 siteMenu로 만들었다 — 메뉴를 바꾸려면 siteMenu를 고쳐 다시 받는다. 푸터 안내 문구(주소·연락처·관련 사이트)는 콘텐츠로 교체하라."
@@ -146,7 +159,10 @@ export function registerGetPageScaffold(server: McpServer): void {
         const resolved = resolvePattern(pattern);
         if (resolved.kind === "none") {
           const names = listPatterns().map((m) => `${m.name} — ${m.title}`);
-          return text(`알 수 없는 패턴: ${pattern}\n\n사용 가능한 패턴:\n${names.map((n) => `- ${n}`).join("\n")}`);
+          const near = suggest(pattern, patternNames);
+          return errorText(
+            `알 수 없는 패턴: ${pattern}${near ? ` — 혹시 '${near}'?` : ""}\n\n아래 이름 중 하나로 다시 호출하라:\n${names.map((n) => `- ${n}`).join("\n")}`,
+          );
         }
         if (resolved.kind === "family") {
           // 같은 화면 계열에 변형이 여럿 — 도구가 임의로 고르지 않는다
@@ -162,10 +178,13 @@ export function registerGetPageScaffold(server: McpServer): void {
         const merged = { pageTitle, ...(lang ? { lang } : {}), ...(assetBase ? { assetBase } : {}), ...(slots ?? {}) };
         const rendered = renderPattern(resolved.meta.name, merged);
         if (rendered === null) {
-          return text(`패턴 로드 실패: ${resolved.meta.name}`);
+          return errorText(
+            `패턴 템플릿 파일을 읽지 못했다: ${resolved.meta.name} — 패키지 설치가 깨졌을 수 있다. ` +
+              "npx 캐시(~/.npm/_npx)를 지우고 다시 시도하거나, pattern 없이 빈 뼈대로 진행하라.",
+          );
         }
         if (!rendered.ok) {
-          return text([
+          return errorText([
             `# ${resolved.meta.name} 패턴 — 필수 슬롯이 채워지지 않아 템플릿을 제공하지 않는다 (${rendered.missing.length}건)`,
             "",
             "아래 값을 slots에 담아 다시 호출하라.",
@@ -181,6 +200,7 @@ export function registerGetPageScaffold(server: McpServer): void {
         return text([
           `# ${meta.title} 템플릿 (패턴: ${meta.name})`,
           "",
+          ...(withCarousel ? ["withCarousel은 빈 뼈대에만 반영된다 — 이 패턴에 캐러셀을 넣으려면 swiper 스크립트를 직접 추가하라.", ""] : []),
           "**이 구조는 KRDS 공식 패턴 기준이다. 구조·요소 순서를 유지하고, 변경은 사용자의 명시적 요구가 있을 때만 하라.** " +
             `근거 문서: ${meta.source.docUrl}`,
           "",

@@ -77,7 +77,7 @@ describe("actions — 상태 화면 검사", () => {
   }, 120_000);
 
   it("빠진 값은 실행 전에 거부한다", async () => {
-    expect(await call({ filePath: page(), actions: [{ type: "click" }] })).toBe("actions 1번째: click에는 selector가 필요하다");
+    expect(await call({ filePath: page(), actions: [{ type: "click" }] })).toBe("actions 1번째: click에는 selector가 필요하다 — 고쳐서 다시 호출하라.");
     expect(await call({ filePath: page(), actions: [{ type: "press" }] })).toContain("press에는 key가 필요하다");
   });
 });

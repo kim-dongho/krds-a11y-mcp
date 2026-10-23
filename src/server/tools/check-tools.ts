@@ -6,7 +6,10 @@ import { actionError, describeAction } from "../../report/page-actions.js";
 import { keepRunsFrom } from "../../runs/index.js";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { text } from "./shared.js";
+import { errorText, text } from "./shared.js";
+
+const ONE_OF = "url·filePath·html 중 정확히 하나만 준다";
+const URL_RE = /^https?:\/\//i;
 
 export function registerValidatePage(server: McpServer): void {
   // ── 5. 검증: 조립·변환이 끝난 페이지의 재검사 (안전망 — 생성 시점 강제가 못 막은 것을 잡는다)
@@ -20,18 +23,22 @@ export function registerValidatePage(server: McpServer): void {
         "수동 확인이 필요한 항목은 확인 절차와 함께 명시한다 — 자동 판정은 접근성 이슈의 일부이므로 " +
         "이 도구의 통과가 심사 통과를 뜻하지 않는다. " +
         "템플릿을 프레임워크로 변환한 뒤, 페이지를 조립한 뒤, 콘텐츠를 채운 뒤에 호출하라. " +
-        "url(dev 서버·배포본) 또는 filePath(로컬 HTML)를 권장한다 — 상대 경로 자산이 그대로 해석된다.",
+        "url(dev 서버·배포본) 또는 filePath(로컬 HTML)를 권장한다 — 상대 경로 자산이 그대로 해석된다. " +
+        "파일을 쓴다: outDir(기본 reports/) 아래 화면별 폴더에 리포트(md)·원시 데이터(json)·스크린샷 2장을 남기고 SUMMARY.md를 갱신한다. " +
+        "keepRuns를 주면 보존 개수를 넘은 이전 검사 기록을 지운다. 이 기록을 Stop 훅과 gate 명령이 읽어 작업 종료를 판정한다. " +
+        "요소 하나의 색·배치·폰트만 확인할 때는 inspect_page를 쓴다. " +
+        "반환: 마크다운 — 결론 한 줄(위반 수·검사 무효·공통부 누락), 직전 대비, KRDS 사용 문제, 리소스 오류, 산출물 경로, 리포트 전문.",
       inputSchema: {
-        url: z.string().optional().describe("검사할 페이지 URL (http/https)"),
-        filePath: z.string().optional().describe("검사할 로컬 HTML 파일 경로"),
+        url: z.string().regex(URL_RE, "http:// 또는 https://로 시작해야 한다").optional().describe(`검사할 페이지 URL(http/https) — dev 서버·배포본. ${ONE_OF}`),
+        filePath: z.string().optional().describe(`검사할 로컬 HTML 파일 경로 — 상대 경로는 프로젝트 루트(MCP 서버 실행 위치) 기준. ${ONE_OF}`),
         html: z
           .string()
           .optional()
-          .describe("HTML 문자열 — 상대 경로 자산이 깨지므로 최후 수단"),
+          .describe(`HTML 문자열 — 상대 경로 자산이 깨지므로 최후 수단(임시 파일로 써서 검사한다). ${ONE_OF}`),
         outDir: z
           .string()
           .optional()
-          .describe("리포트·스크린샷 저장 디렉터리 (기본 reports/) — 화면별 하위 폴더에 검사 이력이 쌓인다"),
+          .describe("리포트·스크린샷 저장 디렉터리(기본 reports/, 프로젝트 루트 기준) — 화면별 하위 폴더에 검사 이력이 쌓인다. gate·Stop 훅은 reports/를 읽으니 바꾸지 않는 것을 권장"),
         keepRuns: z
           .number()
           .int()
@@ -44,7 +51,7 @@ export function registerValidatePage(server: McpServer): void {
           .union([z.string(), z.array(z.string())])
           .optional()
           .describe(
-            "url(dev 서버·배포본)을 검사할 때 그 화면을 만드는 소스 폴더 — 예: \"src\", [\"src\", \"public\"], JSP는 \"src/main/webapp\". " +
+            "url(dev 서버·배포본)을 검사할 때 그 화면을 만드는 소스 폴더(프로젝트 루트 기준) — 예: \"src\", [\"src\", \"public\"], JSP는 \"src/main/webapp\". " +
               "넘기면 gate가 검사 뒤 소스가 바뀌었는지(낡음)를 판정해 재검사를 요구한다. 없으면 url 검사의 낡음은 판정 불가",
           ),
         screen: z
@@ -57,11 +64,11 @@ export function registerValidatePage(server: McpServer): void {
         actions: z
           .array(
             z.object({
-              type: z.enum(["click", "press", "fill", "wait"]),
-              selector: z.string().optional(),
-              key: z.string().optional(),
-              value: z.string().optional(),
-              ms: z.number().optional(),
+              type: z.enum(["click", "press", "fill", "wait"]).describe("동작 — click·fill은 selector 필요, press는 key, wait는 selector 또는 ms"),
+              selector: z.string().optional().describe("대상 CSS 셀렉터 — 예: \"#apply\", \".open-modal\""),
+              key: z.string().optional().describe("press의 키 이름(Playwright 표기) — 예: \"Enter\", \"Escape\", \"ArrowRight\""),
+              value: z.string().optional().describe("fill로 넣을 값"),
+              ms: z.number().int().min(0).max(30000).optional().describe("wait의 대기 시간(밀리초, 최대 30000)"),
             }),
           )
           .max(20)
@@ -73,12 +80,13 @@ export function registerValidatePage(server: McpServer): void {
               "한 단계라도 실패하면 검사 무효로 기록돼 gate가 막는다. 임시 빌드로 초기값을 바꾸지 말고 이것을 쓴다",
           ),
       },
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
     },
     async ({ outDir, keepRuns, sourceDir, screen, actions, ...input }) => {
       const resolved = resolveValidateTarget(input);
-      if (!resolved.ok) return text(resolved.error);
+      if (!resolved.ok) return errorText(resolved.error);
       const badAction = (actions ?? []).map((a, i) => [i, actionError(a)] as const).find(([, e]) => e);
-      if (badAction) return text(`actions ${badAction[0] + 1}번째: ${badAction[1]}`);
+      if (badAction) return errorText(`actions ${badAction[0] + 1}번째: ${badAction[1]} — 고쳐서 다시 호출하라.`);
       // 소스 폴더 — 프로젝트(cwd) 기준, 실제로 있는 경로만 기록한다
       const sources = (sourceDir === undefined ? [] : Array.isArray(sourceDir) ? sourceDir : [sourceDir])
         .map((p) => resolve(process.cwd(), p))
@@ -102,9 +110,12 @@ export function registerValidatePage(server: McpServer): void {
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         if (/Cannot find (module|package)|ERR_MODULE_NOT_FOUND/i.test(msg)) {
-          return text(PLAYWRIGHT_GUIDE);
+          return errorText(PLAYWRIGHT_GUIDE);
         }
-        return text(`검사 실행 실패: ${msg}`);
+        return errorText(
+          `검사 실행 실패: ${msg}\n` +
+            "url이면 서버가 떠 있는지, filePath면 경로가 맞는지 확인하라. 브라우저가 없다는 오류면 `npx playwright install chromium`을 실행한 뒤 다시 부른다.",
+        );
       }
 
       const head = result.invalid
@@ -202,22 +213,27 @@ export function registerInspectPage(server: McpServer): void {
       description:
         "렌더된 페이지에서 요소의 계산 스타일(색·배경·폰트·크기·배치·margin·padding·gap)과 폰트 적용 여부를 읽는다. " +
         "'이 요소가 무슨 색인가', '폰트가 진짜 적용됐나(시스템 폰트 폴백인가)', '어디에 배치됐나'를 " +
-        "확인할 때 임시 playwright 스크립트를 만들지 말고 이 도구를 쓴다. " +
-        "url 또는 filePath와 CSS 셀렉터 목록을 받는다.",
+        "확인할 때 임시 playwright 스크립트를 만들지 말고 이 도구를 쓴다. 파일을 쓰지 않는다. " +
+        "접근성 판정(위반·KWCAG 항목)은 validate_page를 쓴다. " +
+        "반환: 마크다운 — 문서 제목, 본문 폰트 적용 여부, 셀렉터마다 배치·색·폰트·간격.",
       inputSchema: {
-        url: z.string().optional().describe("점검할 페이지 URL (http/https)"),
-        filePath: z.string().optional().describe("점검할 로컬 HTML 파일 경로"),
-        html: z.string().optional().describe("HTML 문자열 — 최후 수단"),
+        url: z.string().regex(URL_RE, "http:// 또는 https://로 시작해야 한다").optional().describe(`점검할 페이지 URL(http/https). ${ONE_OF}`),
+        filePath: z.string().optional().describe(`점검할 로컬 HTML 파일 경로(프로젝트 루트 기준). ${ONE_OF}`),
+        html: z.string().optional().describe(`HTML 문자열 — 최후 수단. ${ONE_OF}`),
         selectors: z
           .array(z.string())
           .max(20)
           .default([])
-          .describe("점검할 CSS 셀렉터 목록 (각각 첫 매칭 요소를 읽음)"),
+          .describe(
+            "점검할 CSS 셀렉터(최대 20개) — 각 셀렉터의 첫 매칭 요소를 읽고 매칭 개수를 함께 준다. " +
+              "예: [\"h1\", \".krds-btn.primary\", \"#main-content\"]. 비우면 문서 제목과 본문 폰트만 준다",
+          ),
       },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
     },
     async ({ selectors, ...input }) => {
       const resolved = resolveValidateTarget(input);
-      if (!resolved.ok) return text(resolved.error);
+      if (!resolved.ok) return errorText(resolved.error);
 
       let r: Awaited<ReturnType<typeof runInspect>>;
       try {
@@ -225,9 +241,12 @@ export function registerInspectPage(server: McpServer): void {
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         if (/Cannot find (module|package)|ERR_MODULE_NOT_FOUND/i.test(msg)) {
-          return text(PLAYWRIGHT_GUIDE);
+          return errorText(PLAYWRIGHT_GUIDE);
         }
-        return text(`점검 실행 실패: ${msg}`);
+        return errorText(
+          `점검 실행 실패: ${msg}\n` +
+            "url이면 서버가 떠 있는지, filePath면 경로가 맞는지 확인하라. 셀렉터 문법 오류면 고쳐서 다시 부른다.",
+        );
       }
 
       const out: string[] = [
