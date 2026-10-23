@@ -3,11 +3,11 @@
 import type { Server } from "node:http";
 import { chromium, type Browser } from "playwright";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { serveLocal } from "../src/server/serve-local.js";
+import { serveForTests } from "./helpers/serve.js";
 
 let local: { server: Server; origin: string };
 let browser: Browser;
-beforeAll(async () => { local = await serveLocal(); browser = await chromium.launch(); });
+beforeAll(async () => { local = await serveForTests(); browser = await chromium.launch(); });
 afterAll(async () => { local?.server.close(); await browser?.close(); });
 
 describe("board-detail 간격·제목 크기", () => {

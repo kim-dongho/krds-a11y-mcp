@@ -9,13 +9,13 @@ import { ASSEMBLY_NOTES } from "../src/mapping/assembly-notes.js";
 import { lookupRule } from "../src/mapping/axe-rule-map.js";
 import { prescriptionFor } from "../src/mapping/fix-prescriptions.js";
 import { scanTargets } from "../src/report/runner.js";
-import { serveLocal } from "../src/server/serve-local.js";
+import { serveForTests } from "./helpers/serve.js";
 import { listPatterns } from "../src/templates/index.js";
 
 const kit = dirname(createRequire(import.meta.url).resolve("krds-uiux/package.json"));
 const demo = (f: string) => readFileSync(join(kit, "html/code", f), "utf8").replace(/class="sample"/g, "");
 let local: { server: Server; origin: string };
-beforeAll(async () => { local = await serveLocal(); });
+beforeAll(async () => { local = await serveForTests(); });
 afterAll(() => { local?.server.close(); });
 
 // outside: #wrap 밖에 둘 마크업 — 킷 모달은 열 때 #wrap에 inert를 걸므로 모달은 #wrap 밖이어야 한다

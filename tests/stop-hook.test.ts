@@ -100,8 +100,8 @@ describe("parseStopHookArgs", () => {
   });
 });
 
-describe("RC 교정 재현 (rc-fixes)", () => {
-  it("F4 — 공통부 누락 차단은 질문 없이 따를 기본 규칙을 준다", () => {
+describe("회귀", () => {
+  it("공통부 누락 차단은 질문 없이 따를 기본 규칙을 준다", () => {
     const root = freshDir();
     const dir = join(root, "chromeless");
     mkdirSync(dir, { recursive: true });
@@ -118,16 +118,42 @@ describe("RC 교정 재현 (rc-fixes)", () => {
     expect(code).toBe(2);
     expect(err.join(" ")).toContain("질문하지 말고");
     expect(err.join(" ")).toContain("withSiteChrome: true");
-    // 위반이 없으면 "위반을 교정하라" 문장을 붙이지 않는다 (RC 재검증 지적)
+    // 위반이 없으면 "위반을 교정하라" 문장을 붙이지 않는다 (검증에서 지적)
     expect(err.join(" ")).not.toContain("위반을 교정하고");
   });
 
-  it("F7 — 상대 경로 reports는 프로젝트 루트 기준으로 찾는다 (하위 폴더에서 실행돼도)", () => {
+  it("상대 경로 reports는 프로젝트 루트 기준으로 찾는다 (하위 폴더에서 실행돼도)", () => {
     const root = freshDir();
     seedRun(join(root, "reports"), "form", 1);
     const err: string[] = [];
     // 현재 폴더(테스트 실행 위치)에는 reports가 없다 — 루트를 넘겨야 찾는다
     const code = runStopHook({ dir: "reports", maxRetries: 5 }, (s) => err.push(s), root);
     expect(code).toBe(2);
+  });
+});
+
+describe("세션 단위 카운터와 끄기", () => {
+  const seed = (root: string) => {
+    const dir = join(root, "page");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      join(dir, "validate-2026-10-06T10-00-00.json"),
+      JSON.stringify({ target: { label: "http://x/", kind: "url" }, report: { items: [{ grade: "violation" }] }, results: [{ status: "ok" }] }),
+    );
+  };
+  const run = (root: string, session?: string, env: NodeJS.ProcessEnv = {}) =>
+    runStopHook({ dir: root, maxRetries: 2 }, () => {}, root, session, env);
+
+  it("상한을 넘겨 풀어 준 세션은 다시 막지 않고, 새 세션은 처음부터 센다", () => {
+    const root = mkdtempSync(join(tmpdir(), "sh-session-"));
+    seed(root);
+    expect([run(root, "a"), run(root, "a"), run(root, "a"), run(root, "a")]).toEqual([2, 2, 0, 0]);
+    expect(run(root, "b")).toBe(2);
+  });
+
+  it("KRDS_A11Y_GATE=off면 판정하지 않는다", () => {
+    const root = mkdtempSync(join(tmpdir(), "sh-off-"));
+    seed(root);
+    expect(run(root, undefined, { KRDS_A11Y_GATE: "off" })).toBe(0);
   });
 });

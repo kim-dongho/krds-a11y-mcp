@@ -12,7 +12,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { renderSiteHeader, siteMenuError, type MenuNode } from "../src/markup/site-header.js";
 import { scanTargets } from "../src/report/runner.js";
 import { createServer } from "../src/server/index.js";
-import { serveLocal } from "../src/server/serve-local.js";
+import { serveForTests } from "./helpers/serve.js";
 
 const kit = dirname(createRequire(import.meta.url).resolve("krds-uiux/package.json"));
 const MENU: MenuNode[] = [
@@ -32,7 +32,7 @@ beforeAll(async () => {
   const client = new Client({ name: "hdr", version: "0" });
   await client.connect(a);
   call = async (name, args) => ((await client.callTool({ name, arguments: args })).content as { text: string }[]).map((x) => x.text).join("\n");
-  local = await serveLocal();
+  local = await serveForTests();
   browser = await chromium.launch();
   closeAll = async () => { await client.close(); await server.close(); local.server.close(); await browser.close(); };
 });

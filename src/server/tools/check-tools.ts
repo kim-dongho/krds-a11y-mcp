@@ -4,8 +4,9 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PLAYWRIGHT_GUIDE, resolveValidateTarget, runInspect, runValidate, screenSlug } from "../validate.js";
 import { actionError, describeAction } from "../../report/page-actions.js";
 import { keepRunsFrom } from "../../runs/index.js";
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, rmSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { errorText, text } from "./shared.js";
 
 const ONE_OF = "url·filePath·html 중 정확히 하나만 준다";
@@ -108,6 +109,7 @@ export function registerValidatePage(server: McpServer): void {
           keepRunsFrom(keepRuns),
         );
       } catch (error) {
+        dropInline(resolved);
         const msg = error instanceof Error ? error.message : String(error);
         if (/Cannot find (module|package)|ERR_MODULE_NOT_FOUND/i.test(msg)) {
           return errorText(PLAYWRIGHT_GUIDE);
@@ -118,6 +120,7 @@ export function registerValidatePage(server: McpServer): void {
         );
       }
 
+      dropInline(resolved);
       const head = result.invalid
         ? `**검사 무효 — ${result.invalid}** 이 결과는 판정이 아니다(아래 "위반 0"은 검사하지 못했다는 뜻). gate가 이 화면을 막는다 — 원인을 고친 뒤 다시 검사하라.`
         : result.chromeMissing && result.violationCount === 0
@@ -239,6 +242,7 @@ export function registerInspectPage(server: McpServer): void {
       try {
         r = await runInspect(resolved, selectors);
       } catch (error) {
+        dropInline(resolved);
         const msg = error instanceof Error ? error.message : String(error);
         if (/Cannot find (module|package)|ERR_MODULE_NOT_FOUND/i.test(msg)) {
           return errorText(PLAYWRIGHT_GUIDE);
@@ -249,6 +253,7 @@ export function registerInspectPage(server: McpServer): void {
         );
       }
 
+      dropInline(resolved);
       const out: string[] = [
         `# inspect_page — ${resolved.label}`,
         "",
@@ -274,4 +279,14 @@ export function registerInspectPage(server: McpServer): void {
       return text(out.join("\n"));
     },
   );
+}
+
+/** html 문자열 검사가 만든 임시 폴더를 지운다 — 검사마다 tmp에 쌓이던 것 */
+function dropInline(target: { kind?: string; url: string }): void {
+  if (target.kind !== "inline") return;
+  try {
+    rmSync(dirname(fileURLToPath(target.url)), { recursive: true, force: true });
+  } catch {
+    /* 정리 실패는 검사 결과와 무관하다 */
+  }
 }

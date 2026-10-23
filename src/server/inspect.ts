@@ -1,7 +1,5 @@
 // inspect_page 실측 — 렌더된 페이지의 폰트·색·배치를 읽는다 (확인용 임시 스크립트 대체)
-import type { Server } from "node:http";
-import { fileURLToPath } from "node:url";
-import { serveLocal } from "./serve-local.js";
+import { openTarget } from "./serve-local.js";
 
 export type ElementProbe = {
   selector: string;
@@ -43,12 +41,8 @@ export async function runInspect(
   const { loadBrowserStack } = await import("../report/runner.js");
   const { chromium } = loadBrowserStack();
 
-  let url = target.url;
-  let local: { server: Server; origin: string } | undefined;
-  if (url.startsWith("file://")) {
-    local = await serveLocal();
-    url = local.origin + fileURLToPath(url);
-  }
+  const opened = await openTarget(target.url);
+  const url = opened.url;
 
   const browser = await chromium.launch();
   try {
@@ -96,6 +90,6 @@ export async function runInspect(
     }, selectors);
   } finally {
     await browser.close();
-    local?.server.close();
+    opened.close();
   }
 }

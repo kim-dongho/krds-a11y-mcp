@@ -52,3 +52,24 @@ describe("명도 대비 실측", () => {
     expect(m.inactive).toBe(true);
   });
 });
+
+describe("로컬 서빙 범위", () => {
+  it("허용한 폴더 밖의 파일은 403 — 검사하는 동안 파일 시스템 전체가 열려 있던 문제", async () => {
+    const { mkdtempSync, writeFileSync } = await import("node:fs");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const { serveLocal } = await import("../src/server/serve-local.js");
+    const inside = mkdtempSync(join(tmpdir(), "srv-in-"));
+    const outside = mkdtempSync(join(tmpdir(), "srv-out-"));
+    writeFileSync(join(inside, "a.html"), "<p>a</p>");
+    writeFileSync(join(outside, "b.html"), "<p>b</p>");
+    const { server, origin } = await serveLocal([inside]);
+    try {
+      expect((await fetch(origin + join(inside, "a.html"))).status).toBe(200);
+      expect((await fetch(origin + join(outside, "b.html"))).status).toBe(403);
+      expect((await fetch(`${origin}${inside}/../${outside.split("/").pop()}/b.html`)).status).toBe(403);
+    } finally {
+      server.close();
+    }
+  });
+});

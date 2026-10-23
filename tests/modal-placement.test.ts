@@ -1,5 +1,5 @@
 // 모달 배치 — 킷 모달은 열 때 #wrap에 inert를 건다. 스캐폴드·템플릿에 #wrap이 없어 "모달은 #wrap 밖" 요건을
-// 지킬 자리가 없던 문제(실사용 3세션). 공식 샘플 구조(#wrap > 헤더·#container·푸터, 모달은 그 밖)를 되살렸다
+// 지킬 자리가 없던 문제(실사용). 공식 샘플 구조(#wrap > 헤더·#container·푸터, 모달은 그 밖)를 되살렸다
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import type { Server } from "node:http";
 import { createRequire } from "node:module";
@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ASSEMBLY_NOTES } from "../src/mapping/assembly-notes.js";
 import { scanTargets } from "../src/report/runner.js";
 import { assembleSiteChrome, buildScaffold, splitScaffold } from "../src/server/scaffold.js";
-import { serveLocal } from "../src/server/serve-local.js";
+import { serveForTests } from "./helpers/serve.js";
 import { listPatterns } from "../src/templates/index.js";
 
 const kit = dirname(createRequire(import.meta.url).resolve("krds-uiux/package.json"));
@@ -17,7 +17,7 @@ const modalDemo = readFileSync(join(kit, "html/code/modal.html"), "utf8");
 const trigger = modalDemo.match(/<button[^>]*open-modal[\s\S]*?<\/button>/)![0];
 const modal = modalDemo.replace(trigger, "");
 let local: { server: Server; origin: string };
-beforeAll(async () => { local = await serveLocal(); });
+beforeAll(async () => { local = await serveForTests(); });
 afterAll(() => { local?.server.close(); });
 
 /** 스캐폴드 + 공통부에 지침대로 모달을 넣은 페이지 */

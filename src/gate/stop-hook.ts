@@ -17,7 +17,8 @@ export const STOP_HOOK_USAGE = [
   "사용법: krds-a11y-mcp stop-hook [--dir <경로>] [--max-retries <N>]",
   "",
   "Claude Code Stop 훅용. gate를 판정해 위반·낡음이 남으면 작업 종료를 차단한다 (exit 2).",
-  "재시도 상한(기본 5회)을 넘으면 자동 교정 실패로 보고 통과시킨다.",
+  "재시도 상한(기본 5회)을 넘으면 자동 교정 실패로 보고 통과시키고, 그 세션에서는 다시 막지 않는다.",
+  "환경 변수 KRDS_A11Y_GATE=off면 판정하지 않고 통과시킨다 (위반을 일부러 남겨 둔 작업 등).",
   "",
   ".claude/settings.json 등록 예:",
   '  { "hooks": { "Stop": [ { "hooks": [ { "type": "command",',
@@ -48,13 +49,32 @@ function counterPath(dir: string): string {
   return join(resolve(dir), ".stop-hook-retries");
 }
 
-function readCounter(path: string): number {
+/**
+ * 카운터 상태 — 세션 id가 있으면 세션 단위로 센다. 세션을 몰라 하나로 세던 때는 상한을 넘겨 풀어 준 뒤에도
+ * 다음 턴(단순 질문 포함)마다 다시 5번씩 막았고, 지난 세션의 횟수가 이어졌다
+ */
+type CounterState = { n: number; session?: string; released?: boolean };
+
+function readCounter(path: string): CounterState {
+  let raw: string;
   try {
-    const n = Number(readFileSync(path, "utf8").trim());
-    return Number.isInteger(n) && n >= 0 ? n : 0;
+    raw = readFileSync(path, "utf8").trim();
   } catch {
-    return 0;
+    return { n: 0 };
   }
+  const n = Number(raw);
+  if (Number.isInteger(n) && n >= 0) return { n }; // 세션 없는 형식(숫자 하나)
+  try {
+    const d = JSON.parse(raw) as CounterState;
+    return Number.isInteger(d.n) && d.n >= 0 ? d : { n: 0 };
+  } catch {
+    return { n: 0 };
+  }
+}
+
+function writeCounter(path: string, state: CounterState): void {
+  if (!existsSync(dirname(path))) mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, state.session ? JSON.stringify(state) : String(state.n));
 }
 
 /**
@@ -65,8 +85,12 @@ export function runStopHook(
   args: StopHookArgs,
   errLine: (s: string) => void = (s) => console.error(s),
   root: string = projectRoot(),
+  session?: string,
+  env: NodeJS.ProcessEnv = process.env,
 ): 0 | 2 {
-  // 상대 경로는 프로젝트 루트 기준 — 세션이 하위 폴더에서 돌아도 같은 reports를 본다 (RC 검증 실측)
+  // 사용자가 일부러 끈 경우 — 위반을 남겨 둔 채 다른 작업을 하는 세션
+  if (env.KRDS_A11Y_GATE?.trim().toLowerCase() === "off") return 0;
+  // 상대 경로는 프로젝트 루트 기준 — 세션이 하위 폴더에서 돌아도 같은 reports를 본다 (실측)
   const dir = resolve(root, args.dir);
   const result = judge({ dir });
   const counter = counterPath(dir);
@@ -83,17 +107,21 @@ export function runStopHook(
     return 0;
   }
 
-  const n = readCounter(counter) + 1;
+  let state = readCounter(counter);
+  if (session && state.session !== session) state = { n: 0, session }; // 새 세션은 처음부터 센다
+  if (session && state.released) return 0; // 이 세션은 이미 사람 확인으로 넘겼다
+  const n = state.n + 1;
   if (n > args.maxRetries) {
-    rmSync(counter, { force: true });
+    if (session) writeCounter(counter, { n, session, released: true });
+    else rmSync(counter, { force: true });
     errLine(
-      `접근성 게이트 차단 ${args.maxRetries}회 초과 — 자동 교정 실패로 보고 종료를 허용한다. ` +
-        `남은 문제는 사람이 확인하라: ${result.reason}`,
+      `접근성 게이트 차단 ${args.maxRetries}회 초과 — 자동 교정 실패로 보고 종료를 허용한다` +
+        (session ? "(이 세션에서는 다시 막지 않는다)" : "") +
+        `. 남은 문제는 사람이 확인하라: ${result.reason}`,
     );
     return 0;
   }
-  if (!existsSync(dirname(counter))) mkdirSync(dirname(counter), { recursive: true });
-  writeFileSync(counter, String(n));
+  writeCounter(counter, { n, ...(session ? { session } : {}) });
 
   errLine(
     [
@@ -138,5 +166,6 @@ export async function runStopHookCli(argv: string[]): Promise<number> {
       payload = undefined;
     }
   }
-  return runStopHook(parsed, undefined, hookRoot(payload));
+  const session = (payload as { session_id?: unknown } | undefined)?.session_id;
+  return runStopHook(parsed, undefined, hookRoot(payload), typeof session === "string" && session ? session : undefined);
 }

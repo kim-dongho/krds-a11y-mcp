@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Server } from "node:http";
 import { fileURLToPath } from "node:url";
-import { serveLocal } from "../src/server/serve-local.js";
+import { serveForTests } from "./helpers/serve.js";
 import { invisibleIssue } from "../src/report/invisible.js";
 import { scanTargets } from "../src/report/runner.js";
 import { listPatterns } from "../src/templates/index.js";
@@ -16,7 +16,7 @@ import { listPatterns } from "../src/templates/index.js";
 // 아이콘이 실제로 안 그려지고(검출기는 그걸 정확히 잡는다), 404도 "로드 실패"로만 남는다 (실측)
 const kit = dirname(createRequire(import.meta.url).resolve("krds-uiux/package.json"));
 let local: { server: Server; origin: string };
-beforeAll(async () => { local = await serveLocal(); });
+beforeAll(async () => { local = await serveForTests(); });
 afterAll(() => { local?.server.close(); });
 const served = (fileUrl: string) => local.origin + fileURLToPath(fileUrl);
 const page = (body: string, css = "") => {

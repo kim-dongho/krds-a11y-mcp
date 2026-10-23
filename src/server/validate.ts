@@ -2,12 +2,11 @@
 // playwright는 devDependency라 여기서 정적 import하지 않는다 — 호출 시점에 동적 로드하고,
 // 없으면 설치 안내를 반환한다 (src/report/index.ts의 격리 원칙).
 import { existsSync, mkdirSync, mkdtempSync, renameSync, statSync, writeFileSync } from "node:fs";
-import type { Server } from "node:http";
 import { tmpdir } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 import { listRuns, pruneRuns, readRunStats } from "../runs/index.js";
-import { serveLocal } from "./serve-local.js";
+import { openTarget } from "./serve-local.js";
 import { describeAction } from "../report/page-actions.js";
 import type { PageAction } from "../report/types.js";
 import { chromeBanner, screenSlug, targetSlug, validateStamp, writeSummary } from "./report-summary.js";
@@ -53,7 +52,7 @@ export function resolveValidateTarget(input: ValidateInput): ResolvedTarget {
 
   if (input.filePath) {
     const abs = isAbsolute(input.filePath) ? input.filePath : resolve(input.filePath);
-    // 없는 파일을 검사하면 로컬 서버의 404 응답을 페이지로 검사해 기록이 남고 gate가 그걸 센다 (RC 검증 실측)
+    // 없는 파일을 검사하면 로컬 서버의 404 응답을 페이지로 검사해 기록이 남고 gate가 그걸 센다 (실측)
     if (!existsSync(abs) || !statSync(abs).isFile()) {
       return { ok: false, error: `검사할 파일이 없다: ${abs} — 경로를 확인하라 (상대 경로는 현재 폴더 기준)` };
     }
@@ -128,13 +127,8 @@ export async function runValidate(
   const prevRuns = listRuns(dir);
   const prev = prevRuns.length > 0 ? readRunStats(prevRuns[prevRuns.length - 1]!) : undefined;
 
-  // file:// 대상은 일회용 로컬 http로 서빙 — CORS 잡음 제거 + 404를 진짜 404로
-  let url = target.url;
-  let local: { server: Server; origin: string } | undefined;
-  if (url.startsWith("file://")) {
-    local = await serveLocal();
-    url = local.origin + fileURLToPath(url);
-  }
+  const opened = await openTarget(target.url);
+  const url = opened.url;
 
   // 기록 이름은 검사 시작 시각 — 검사 도중(키보드·위젯 검사로 수십 초) 고친 파일을 gate가 낡음으로 본다
   const stamp = uniqueStamp(dir, new Date());
@@ -145,7 +139,7 @@ export async function runValidate(
       { ruleSet: "baseline", screenshotDir: dir, kitConventions: true, keyboard: true },
     );
   } finally {
-    local?.server.close();
+    opened.close();
   }
 
   const report = translate(results);
@@ -171,12 +165,12 @@ export async function runValidate(
       ...first.kitIssues!.map((i) => `- ${i}`),
     );
   }
-  // 공통부 누락은 접근성 위반이 아니라 리포트 결론은 "위반 0"인데 gate는 막는다 — 맨 앞에 알린다 (RC 검증 실측)
+  // 공통부 누락은 접근성 위반이 아니라 리포트 결론은 "위반 0"인데 gate는 막는다 — 맨 앞에 알린다 (실측)
   const banner = first?.status === "ok" ? chromeBanner(first.kitIssues) : undefined;
   const chromeMissing = banner !== undefined;
   // 상태 화면은 무엇을 누른 뒤의 화면인지 증빙에 남긴다
   const stateLine = target.actions?.length ? `> 검사 상태: ${target.actions.map(describeAction).join(" → ")} 뒤의 화면\n\n` : "";
-  // 검사 무효(상호작용 실패·킷 미로드 등) — 아래 리포트의 "위반 0"은 판정이 아니다. 결론만 읽고 통과로 오해했다(실사용 2세션)
+  // 검사 무효(상호작용 실패·킷 미로드 등) — 아래 리포트의 "위반 0"은 판정이 아니다. 결론만 읽고 통과로 오해했다(실사용)
   const invalid = first?.status === "error" ? first.reason : undefined;
   const invalidLine = invalid
     ? `> **⚠ 검사 무효 — ${invalid}**\n> 아래 리포트의 "위반 0"은 판정 결과가 아니다. gate는 이 화면을 막는다. 원인을 고친 뒤 다시 검사하라.\n\n`
