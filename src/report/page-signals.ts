@@ -47,7 +47,7 @@ export async function collectPageSignals(page: Page): Promise<string[]> {
 export async function checkAssetsLoaded(page: Page, target: Target): Promise<boolean> {
   if (target.kind !== "kit-demo") {
     // 사이트: KRDS 클래스를 쓰는데 킷 토큰이 비어 있으면 킷 CSS가 안 불러진 것 — 스타일 없는 DOM 검사는 무효다
-    // (킷 CSS 404인데 위반 0으로 통과하던 문제, RC 검증 실측). 토큰은 <link>든 번들러 inline이든 똑같이
+    // (킷 CSS 404인데 위반 0으로 통과하던 문제, 실측). 토큰은 <link>든 번들러 inline이든 똑같이
     // 정의되므로 번들러 프로젝트를 오탐하지 않는다. KRDS를 안 쓰는 화면은 판정하지 않는다
     return page.evaluate(() => {
       if (!document.querySelector('[class*="krds-"]')) return true;

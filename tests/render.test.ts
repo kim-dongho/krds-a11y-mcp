@@ -91,8 +91,8 @@ describe("render — 교정 처방", () => {
   });
 });
 
-describe("RC 교정 재현 (rc-fixes) — 리포트 문구", () => {
-  it("F5 — 규칙 대표 문장은 위반 쪽을 쓴다 (보류 문장이 대표가 되지 않는다)", () => {
+describe("회귀 — 리포트 문구", () => {
+  it("규칙 대표 문장은 위반 쪽을 쓴다 (보류 문장이 대표가 되지 않는다)", () => {
     const md = render(
       translate([
         scan([
@@ -104,19 +104,19 @@ describe("RC 교정 재현 (rc-fixes) — 리포트 문구", () => {
     expect(md).toMatch(/키보드 초점 표시\) — 초점을 받아도/);
   });
 
-  it("F5 — 판정 보류 사유를 'axe'로 고정해 쓰지 않는다 (키보드 검사는 axe가 아니다)", () => {
+  it("판정 보류 사유를 'axe'로 고정해 쓰지 않는다 (키보드 검사는 axe가 아니다)", () => {
     const md = render(translate([scan([{ ruleId: "kbd-reachable", outcome: "incomplete", nodes: nodes(1) }])]));
     expect(md).not.toContain("axe가 위반으로 확정하지 못하고");
     expect(md).not.toContain("axe 판정 보류");
   });
 
-  it("F5 — 키보드 검사를 돌렸으면 검사 정보에 수행 사실이 남는다", () => {
+  it("키보드 검사를 돌렸으면 검사 정보에 수행 사실이 남는다", () => {
     const s = scan([]);
     if (s.status === "ok") s.engine.keyboard = { stops: 37, end: "body" };
     expect(render(translate([s]))).toContain("Tab 키를 37번 눌러 화면 끝까지 순회");
   });
 
-  it("F5 — axe tabindex 위반에도 교정 방법이 붙는다", () => {
+  it("axe tabindex 위반에도 교정 방법이 붙는다", () => {
     const md = render(translate([scan([{ ruleId: "tabindex", outcome: "violation", nodes: nodes(1) }])]));
     expect(md).toContain("양수 tabindex를 지우고");
   });

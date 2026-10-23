@@ -1,5 +1,5 @@
 // 필수 입력 판정 — list_components 개수·get_requirements 구분·get_component 차단이 같은 기준을 쓴다.
-// 실사용 5회 지적(button 3 vs 1 등)과 2026-10-14 조사에서 나온 결함(모달·TTS 요건 미강제, 확인용 입력 false 통과)
+// 실사용 지적(button 3 vs 1 등)과 2026-10-14 조사에서 나온 결함(모달·TTS 요건 미강제, 확인용 입력 false 통과)
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";

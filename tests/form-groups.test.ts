@@ -1,5 +1,5 @@
 // 폼 그룹 경고 — 라디오 그룹 이름 누락(kwcag:7.3.2), 숨은 legend에만 있는 필수 표시.
-// apply-issue 템플릿 라디오 그룹에 이름이 없었는데 validate가 못 잡았고(실사용 3세션), 킷 CSS가 legend를 숨겨
+// apply-issue 템플릿 라디오 그룹에 이름이 없었는데 validate가 못 잡았고(실사용), 킷 CSS가 legend를 숨겨
 // "(필수)"가 화면에서 사라져도 위반 0이었다
 import { mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";

@@ -25,7 +25,7 @@ export function registerListComponents(server: McpServer): void {
     },
     async () => {
       // 필수 입력 개수는 get_component가 변형 없이 부를 때 막는 기준과 같다 — 매핑 행 수를 그대로 세면
-      // 선택·변형 전용 행까지 들어가 get_component와 어긋났다 (실사용 5회 지적: button 3 vs 1)
+      // 선택·변형 전용 행까지 들어가 get_component와 어긋났다 (실사용 지적: button 3 vs 1)
       const lines = COMPONENT_MAPPINGS.map((c) => {
         const { required, variantOnly, optional } = classifyRequirements(c.conditional);
         const extra = [
@@ -139,7 +139,7 @@ export function registerGetComponent(server: McpServer): void {
       }
 
       // 렌더러가 있으면 입력값을 교정본 구조에 넣은 마크업을 준다 — 킷 원본을 받아 손으로 다시 쓰던
-      // 실사용 6세션 전원의 마찰. 없거나 만들지 못하면 지금처럼 킷 원본 + 채워 넣을 값
+      // 실사용에서 반복된 마찰. 없거나 만들지 못하면 지금처럼 킷 원본 + 채워 넣을 값
       const generated = renderComponent(id, inputs ?? {});
       let kitFile: string | undefined;
       if (generated?.ok) {
@@ -176,7 +176,7 @@ export function registerGetComponent(server: McpServer): void {
         );
 
         if (Object.keys(provided).length > 0) {
-          // 실사용 3세션 모두 "충족" 표기를 보고 값이 마크업에 들어간 줄 알았다가 손으로 다시 썼다
+          // 실사용에서 "충족" 표기를 보고 값이 마크업에 들어간 줄 알았다가 손으로 다시 썼다
           out.push(
             "## 채워 넣을 값 — 위 마크업은 킷 원본이다. 도구는 값을 치환하지 않으니 데모 텍스트·id·href를 이 값으로 직접 바꿔라",
             "",

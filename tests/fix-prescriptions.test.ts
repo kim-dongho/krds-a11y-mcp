@@ -22,7 +22,7 @@ describe("FIX_PRESCRIPTIONS", () => {
     }
   });
 
-  it("범위 15개 — 실사용에서 걸린 axe 규칙 5개 + 키보드 3개 + axe tabindex(RC 검증 추가) + 동적 위젯 6개", () => {
+  it("범위 15개 — 실사용에서 걸린 axe 규칙 5개 + 키보드 3개 + axe tabindex(추가) + 동적 위젯 6개", () => {
     expect(Object.keys(FIX_PRESCRIPTIONS).sort()).toEqual(
       [
         "heading-order", "image-alt", "kbd-focus-visible", "kbd-modal-escape", "kbd-modal-focus", "kbd-modal-return", "kbd-modal-trap",

@@ -48,7 +48,7 @@ export const FIX_PRESCRIPTIONS: Record<string, Prescription> = {
     fix: "클릭 동작은 div·span이 아니라 button·a로 만든다. 보이는 조작 요소에 tabindex=\"-1\"을 두지 않는다 (탭 목록처럼 화살표 키로 옮기는 위젯은 예외 — 그 경우 화살표 이동이 실제로 되는지 확인한다). 상한 도달로 검사하지 못한 경우라면 조작 요소가 300개를 넘는 화면이므로 화면을 나누거나 직접 Tab으로 확인한다",
     source: "KWCAG 6.1.1 (kwcag22-items.md:27)",
   },
-  // axe tabindex(양수 tabindex)는 키보드 검사보다 먼저 6.1.2 위반으로 잡힌다 — 같은 처방 (RC 검증 실측)
+  // axe tabindex(양수 tabindex)는 키보드 검사보다 먼저 6.1.2 위반으로 잡힌다 — 같은 처방 (실측)
   tabindex: {
     fix: "양수 tabindex를 지우고 DOM 순서로 Tab 순서를 맞춘다. 순서를 바꾸고 싶으면 마크업 순서를 옮긴다",
     source: "KWCAG 6.1.2 (kwcag22-items.md:28)",

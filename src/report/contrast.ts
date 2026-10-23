@@ -94,7 +94,7 @@ const UNCERTAIN_KEYS = new Set(["bgOverlap", "elmPartiallyObscured", "elmPartial
 /**
  * 실측으로 미달이 확실한 보류 노드를 color-contrast 위반으로 옮긴다.
  * 리포트가 "실측 3.08:1 미달 — 교정 필요"라고 적으면서 결론은 위반 0이던 모순 — Stop 훅이 막지 못했다
- * (실사용 재확인 3세션 모두 지적). 배경이 확실하지 않으면 지금처럼 확인필요로 둔다
+ * (실사용에서 지적). 배경이 확실하지 않으면 지금처럼 확인필요로 둔다
  */
 export function promoteCertainContrastFailures(findings: AxeFinding[]): AxeFinding[] {
   const inc = findings.find((f) => f.ruleId === "color-contrast" && f.outcome === "incomplete");

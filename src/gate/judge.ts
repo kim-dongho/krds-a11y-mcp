@@ -183,7 +183,7 @@ export function judge(opts?: { dir?: string; only?: string[] }): GateResult {
   const missing = screens.filter((s) => s.staleness === "missing");
   const broken = screens.filter((s) => s.broken);
   // 검사 무효 — 검사 기록은 위반 0이지만 검사 자체가 실패했다 (킷 CSS 미로드 등). 통과로 세면
-  // 킷 없는 화면이 gate를 통과한다 (배포판 실사용에서 실측)
+  // 킷 없는 화면이 gate를 통과한다 (실사용에서 실측)
   const invalid = screens.filter((s) => s.invalid);
   if (stale.length > 0 || broken.length > 0 || invalid.length > 0 || missing.length > 0) {
     const parts = [

@@ -46,7 +46,7 @@ describe("validate_page 입력 해석", () => {
   });
 });
 
-describe("RC 교정 재현 (rc-fixes) — F3 공통부 누락 안내", () => {
+describe("회귀 — 공통부 누락 안내", () => {
   it("공통부 누락이 있으면 결론 앞에 둘 차단 안내 블록을 만든다", async () => {
     const { chromeBanner } = await import("../src/server/validate.js");
     const b = chromeBanner(["사이트 공통부 누락(머리글·바닥글) — x"]);

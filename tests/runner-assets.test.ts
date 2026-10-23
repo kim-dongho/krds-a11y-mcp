@@ -212,7 +212,7 @@ describe("조립 지침이 처방한 CSS를 자기 CSS에 넣어도 경고하지
   }, 60_000);
 });
 
-describe("명도 대비 실측 미달 — 배경이 확실하면 위반으로 센다 (실사용 3세션: '미달 교정 필요'인데 위반 0)", () => {
+describe("명도 대비 실측 미달 — 배경이 확실하면 위반으로 센다 (실사용: '미달 교정 필요'인데 위반 0)", () => {
   const scan = async (body: string, css = "") => {
     const url = page(`<style>:root{--krds-box-shadow-outline:0 0 0 .4rem #256ef4}${css}</style></head><body data-krds-a11y="no-chrome"><main><h1>t</h1>${body}</main></body></html>`);
     const [r] = await scanTargets([{ id: "t", kind: "site", url }], { ruleSet: "baseline" });

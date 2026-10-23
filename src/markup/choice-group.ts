@@ -1,12 +1,12 @@
 // 라디오·체크박스 그룹 — 조립 지침의 그룹 교정본 구조
 // fieldset·legend(보조기술용) + 화면용 제목 form-tit(aria-hidden): 킷 common.css가 legend를 sr-only로 숨겨
-// legend만 두면 "(필수)"가 화면에서 사라진다 (실사용 2세션 실측). 오류는 fieldset aria-describedby + input aria-invalid
+// legend만 두면 "(필수)"가 화면에서 사라진다 (실사용 실측). 오류는 fieldset aria-describedby + input aria-invalid
 import type { ComponentInputs } from "../server/tools/inputs.js";
 import { escapeHtml as e } from "./escape.js";
 import { findItems, isTrue, withRequired, type Item } from "./items.js";
 import type { Renderer, RenderResult } from "./types.js";
 
-// name·value가 없으면 생성 마크업 그대로 폼을 제출해도 값이 전송되지 않는다 (실사용 3세션 모두 직접 덧붙임).
+// name·value가 없으면 생성 마크업 그대로 폼을 제출해도 값이 전송되지 않는다 (실사용에서 직접 덧붙임).
 // name은 그룹 이름(없으면 항목의 name, 그것도 없으면 inputId), value는 항목의 value(없으면 inputId)
 function input(type: "radio" | "checkbox", it: Item, name: string | undefined, invalid: boolean, required: boolean, describedby?: string): string[] {
   const id = String(it.inputId ?? "");

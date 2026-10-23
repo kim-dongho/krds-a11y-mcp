@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ASSEMBLY_NOTES } from "../src/server/tools/index.js";
 
-describe("RC 교정 재현 (rc-fixes) — F8 tab 조립 안내", () => {
+describe("회귀 — tab 조립 안내", () => {
   it("tab 조립 안내가 킷 결함(nested-interactive)과 교정본 위치를 알린다", async () => {
     const { ASSEMBLY_NOTES } = await import("../src/server/tools/index.js");
     const notes = (ASSEMBLY_NOTES["krds:tab"] ?? []).join(" ");
@@ -38,7 +38,7 @@ describe("필수 표시·오류 정정 조립 지침 (kwcag:7.3.1) — 킷 HTML�
     expect(ASSEMBLY_NOTES["krds:select"]!.join("\n")).toContain('<select id="receive-type" class="krds-form-select is-error"'); // 킷 데모처럼 select 자체에
     expect(ASSEMBLY_NOTES["krds:select"]!.join("\n")).not.toContain("신청자 이름"); // 입력란 예시 복사 흔적 제거
     expect(ASSEMBLY_NOTES["krds:checkbox"]!.join("\n")).toContain('<fieldset aria-describedby="agree-error">');
-    // 킷이 legend를 숨기므로 화면용 제목을 따로 둔다 (실사용 2세션 실측)
+    // 킷이 legend를 숨기므로 화면용 제목을 따로 둔다 (실사용 실측)
     expect(ASSEMBLY_NOTES["krds:checkbox"]!.join("\n")).toContain('<div class="form-tit" aria-hidden="true">약관 동의 (필수)</div>');
     expect(ASSEMBLY_NOTES["krds:radio_button"]!.join("\n")).toContain("legend를 sr-only로 숨기므로");
   });

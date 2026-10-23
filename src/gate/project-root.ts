@@ -1,5 +1,5 @@
 // 훅 기준 폴더 — Claude Code는 훅에 CLAUDE_PROJECT_DIR을 준다. 세션이 하위 폴더에서 시작되거나
-// 도중에 cwd가 바뀌어도 프로젝트 루트를 기준으로 판정해야 한다 (RC 검증에서 하위 폴더 통과 실측).
+// 도중에 cwd가 바뀌어도 프로젝트 루트를 기준으로 판정해야 한다 (하위 폴더에서 세션을 시작하면 통과하던 문제 실측).
 import { isAbsolute, relative, resolve } from "node:path";
 
 /** 훅 기준 폴더 — CLAUDE_PROJECT_DIR(비어 있지 않으면), 없으면 현재 폴더 */

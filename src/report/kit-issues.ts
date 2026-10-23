@@ -82,7 +82,7 @@ export async function collectKitIssues(page: Page): Promise<string[]> {
       );
     }
     // 1-3. 숨은 legend 안의 필수 표시 — 킷 common.css가 legend를 화면에서 숨겨 "(필수)"를 legend에만 두면
-    // 시각 사용자는 필수인지 모른다 (실사용 2세션 실측). 같은 묶음에 보이는 필수 표시가 있으면 괜찮다
+    // 시각 사용자는 필수인지 모른다 (실사용 실측). 같은 묶음에 보이는 필수 표시가 있으면 괜찮다
     const REQ = /필수|\*/;
     const hidden = (el: Element) => {
       const r = el.getBoundingClientRect();
@@ -102,7 +102,7 @@ export async function collectKitIssues(page: Page): Promise<string[]> {
       }
     }
     // 1-4. 모달 배치 — 킷은 모달을 열 때 #wrap에 inert를 건다 (ui-script.js L969). 안에 두면 모달 자신이 막히고
-    // #wrap이 없으면 배경이 막히지 않는다. 템플릿에 #wrap이 없어 요건과 어긋나던 문제(실사용 3세션)
+    // #wrap이 없으면 배경이 막히지 않는다. 템플릿에 #wrap이 없어 요건과 어긋나던 문제(실사용)
     const modals = [...document.querySelectorAll(".krds-modal")];
     if (modals.length > 0) {
       const wrap = document.getElementById("wrap");

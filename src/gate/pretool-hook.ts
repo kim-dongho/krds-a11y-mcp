@@ -57,7 +57,7 @@ export function judgeToolUse(
 
   const name = basename(filePath);
   // 임시 검사 스크립트는 프로젝트 폴더 안만 막는다 — 차단 문구가 "시스템 임시 디렉터리에 만들라"고
-  // 권하는데 그 경로까지 막던 모순 수정 (RC 검증 실측). 킷 원본·복사본 보호는 위치와 무관하다 (위)
+  // 권하는데 그 경로까지 막던 모순 수정 (실측). 킷 원본·복사본 보호는 위치와 무관하다 (위)
   const isTempScript = TEMP_SCRIPT.test(name) || (SCRIPT_EXT.test(name) && A11Y_WORD.test(name));
   if (isTempScript && isInside(root, filePath)) {
     return {

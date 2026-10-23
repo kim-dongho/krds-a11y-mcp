@@ -130,7 +130,7 @@ export function frameworkGuide(framework: string): string | undefined {
   return GUIDES[framework as Framework];
 }
 
-/** 프레임워크를 안 줬을 때 — 거부 대신 고를 목록을 준다 (인자 없이 불러 거부당하던 왕복, RC 검증 실측) */
+/** 프레임워크를 안 줬을 때 — 거부 대신 고를 목록을 준다 (인자 없이 불러 거부당하던 왕복, 실측) */
 export function frameworkGuideIndex(): string {
   return [
     "# SPA 프레임워크 × KRDS 킷 가이드 — 프레임워크를 골라 다시 부르라",

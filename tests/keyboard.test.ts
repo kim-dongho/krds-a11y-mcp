@@ -113,8 +113,8 @@ describe("정리", () => {
   });
 });
 
-describe("RC 교정 재현 (rc-fixes)", () => {
-  it("F1 — 검사 후 초점 링 잔상이 남지 않는다 (킷식 전환: 기본 0.4초, :focus 0초)", async () => {
+describe("회귀", () => {
+  it("검사 후 초점 링 잔상이 남지 않는다 (킷식 전환: 기본 0.4초, :focus 0초)", async () => {
     const page = await browser.newPage();
     await page.setContent(
       `<style>button{transition:box-shadow .4s ease-in-out} button:focus{outline:none;box-shadow:0 0 0 4px #256ef4;transition:box-shadow 0s}</style><button>A</button><button>B</button>`,
@@ -125,7 +125,7 @@ describe("RC 교정 재현 (rc-fixes)", () => {
     expect(shadows).toEqual(["none", "none"]);
   });
 
-  it("F2 — 순회 상한에 걸리면 도달성을 통과로 내지 않고 판정 보류", async () => {
+  it("순회 상한에 걸리면 도달성을 통과로 내지 않고 판정 보류", async () => {
     const page = await browser.newPage();
     await page.setContent(Array.from({ length: 30 }, (_, i) => `<a href="#l${i}">링크${i}</a>`).join(" "));
     const f = await runKeyboardChecks(page, { maxStops: 10 });
@@ -133,7 +133,7 @@ describe("RC 교정 재현 (rc-fixes)", () => {
     expect(outcome(f, "kbd-reachable")).toEqual(["incomplete"]);
   });
 
-  it("F2 — runKeyboard는 정지 횟수와 종료 사유를 돌려준다", async () => {
+  it("runKeyboard는 정지 횟수와 종료 사유를 돌려준다", async () => {
     const { runKeyboard } = await import("../src/report/keyboard.js");
     const page = await browser.newPage();
     await page.setContent(`<button>A</button><a href="#b">B</a>`);
@@ -143,18 +143,18 @@ describe("RC 교정 재현 (rc-fixes)", () => {
     expect(r.end).toBe("body");
   });
 
-  it("F9 — onclick을 단 div는 도달성 판정 보류", async () => {
+  it("onclick을 단 div는 도달성 판정 보류", async () => {
     const f = await check(`<button>정상</button><div onclick="void 0">메뉴 열기</div>`);
     expect(outcome(f, "kbd-reachable")).toEqual(["incomplete"]);
   });
 
-  it("F10 — 닫힌 details 안 링크는 도달 불가로 잡지 않는다", async () => {
+  it("닫힌 details 안 링크는 도달 불가로 잡지 않는다", async () => {
     const f = await check(`<details><summary>더보기</summary><a href="#a">숨은 링크</a></details>`);
     expect(outcome(f, "kbd-reachable")).toEqual(["pass"]);
   });
 });
 
-describe("RC 재검증 회귀 (rc-fixes F9 오탐)", () => {
+describe("회귀 — 오탐", () => {
   it("킷 정식 탭 — li[role=tab] 안의 button이 초점을 받으면 클릭 전용으로 잡지 않는다", async () => {
     const f = await check(
       `<ul role="tablist"><li role="tab" id="t1"><button>탭 1</button></li><li role="tab" id="t2"><button>탭 2</button></li></ul>`,
@@ -189,7 +189,7 @@ describe("화살표 이동 위젯(roving tabindex)", () => {
   });
 });
 
-describe("배포판 실사용 회귀 — 자동 초점 화면", () => {
+describe("실사용 회귀 — 자동 초점 화면", () => {
   it("페이지가 중간 요소에 자동 초점을 줘도 순회는 문서 처음부터 시작한다 (로그인 폼 오판)", async () => {
     const page = await browser.newPage();
     await page.setContent(

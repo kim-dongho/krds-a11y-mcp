@@ -17,7 +17,7 @@ describe("SERVER_INSTRUCTIONS — 스택별 실사용에서 수확한 지침이 
     expect(SERVER_INSTRUCTIONS).toContain("<link>로 로드"); // 번들러 inline 주입 대신
   });
 
-  it("공통부 기본 동봉(조건부)·시안 유형 확인 (실사용 수확, 격리 SE 검증 5시나리오 통과, 2026-10-12)", () => {
+  it("공통부 기본 동봉(조건부)·시안 유형 확인 (실사용 수확, 격리 환경 실사용 검증)", () => {
     expect(SERVER_INSTRUCTIONS).toContain("withSiteChrome: true를 기본으로");
     expect(SERVER_INSTRUCTIONS).toContain("공통부를 중복 조립하지 마라"); // SPA 레이아웃 중복 방지 조건
     expect(SERVER_INSTRUCTIONS).toContain("설명 자료(흐름도·도표·구조도)");

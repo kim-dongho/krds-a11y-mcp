@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { judgeToolUse } from "../src/gate/pretool-hook.js";
 
-// 픽스처 경로는 /proj 아래 — 프로젝트 루트를 /proj로 고정한다 (rc-fixes F6 이후 루트 인자 필요)
+// 픽스처 경로는 /proj 아래 — 프로젝트 루트를 /proj로 고정한다 (훅이 프로젝트 루트를 인자로 받는다)
 function blocked(tool: string, path: string): boolean {
   return !judgeToolUse(tool, path, "/proj").allow;
 }
@@ -76,7 +76,7 @@ describe("judgeToolUse — 오탐 방지", () => {
   });
 });
 
-describe("RC 교정 재현 (rc-fixes) — F6 프로젝트 밖 임시 스크립트", () => {
+describe("회귀 — 프로젝트 밖 임시 스크립트", () => {
   it("프로젝트 밖(시스템 임시 디렉터리)의 검사 스크립트는 허용 — 차단 문구가 권하는 길", () => {
     expect(judgeToolUse("Write", "/tmp/x/.axe-check.mjs", "/proj").allow).toBe(true);
     expect(judgeToolUse("Write", "/private/var/folders/ab/T/a11y-scan.mjs", "/proj").allow).toBe(true);

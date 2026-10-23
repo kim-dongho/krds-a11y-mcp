@@ -1,4 +1,4 @@
-// 생성 마크업 — 입력값을 교정본 구조에 넣는다. 실사용 6세션 전원이 킷 원본을 받아 손으로 다시 쓴 마찰의 흡수.
+// 생성 마크업 — 입력값을 교정본 구조에 넣는다. 실사용 전원이 킷 원본을 받아 손으로 다시 쓴 마찰의 흡수.
 // "실측 후 공급": 렌더러마다 킷 CSS·JS와 함께 렌더해 위반 0·킷 관례 경고 0·키보드 위반 0을 확인한다
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -87,7 +87,7 @@ describe("렌더러 출력", () => {
     expect(sel).toContain('<option value="visit">방문</option>');
   });
 
-  it("폼 제출용 name·value — 없으면 생성 마크업 그대로는 값이 전송되지 않는다 (실사용 3세션 지적)", () => {
+  it("폼 제출용 name·value — 없으면 생성 마크업 그대로는 값이 전송되지 않는다 (실사용 지적)", () => {
     expect(html("krds:text_input", { labelText: "이름", inputId: "nm" })).toContain('name="nm"');
     expect(html("krds:text_input", { labelText: "이름", inputId: "nm", name: "userName" })).toContain('name="userName"');
     expect(html("krds:select", { labelText: "지역", selectId: "area" })).toContain('name="area"');

@@ -1,5 +1,5 @@
 // validate_page 화면 이름(screen)·상호작용(actions) — 상태 화면을 임시 빌드 없이 검사하고, 이력을 이름으로 묶는다.
-// 실사용 3세션: 모달·오류 상태를 보려고 초기값을 바꾼 임시 빌드를 만들었고, ?open=modal 같은 변형과
+// 실사용: 모달·오류 상태를 보려고 초기값을 바꾼 임시 빌드를 만들었고, ?open=modal 같은 변형과
 // 호스트·포트 변경으로 이력이 섞이거나 갈라졌다
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
@@ -68,7 +68,7 @@ describe("actions — 상태 화면 검사", () => {
     const out = mkdtempSync(join(tmpdir(), "sa-out-"));
     const t = await call({ filePath: page(), outDir: out, screen: "실패", actions: [{ type: "click", selector: "#nope" }] });
     expect(t).toContain("상호작용 1번째(click #nope) 실패");
-    // 결론 줄이 "위반 0"으로 통과처럼 읽히지 않는다 (실사용 2세션 지적)
+    // 결론 줄이 "위반 0"으로 통과처럼 읽히지 않는다 (실사용 지적)
     expect(t).toContain("**검사 무효 — ");
     expect(t).not.toContain("자동 판정 범위에서 위반 0");
     expect(t).not.toContain("직전 검사(");

@@ -152,7 +152,7 @@ function evidenceLines(evidence: AxeFinding[]): string[] {
 
     if (!measurable) {
       // 일반 규칙 — 목록 표기
-      // 대표 문장은 위반 쪽 — 보류 문장이 대표로 찍혀 "판정할 수 없다"처럼 읽히던 문제 (RC 검증 실측)
+      // 대표 문장은 위반 쪽 — 보류 문장이 대표로 찍혀 "판정할 수 없다"처럼 읽히던 문제 (실측)
       const lead = findings.find((f) => f.outcome === "violation") ?? findings[0]!;
       lines.push(`- ${ruleLine(ruleId)} — ${summaryKo(lead)} (${totalLabel})`);
       const rx = prescriptionLine(ruleId);

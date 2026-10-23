@@ -249,7 +249,7 @@ export async function scanTargets(
         if (opts.screenshotDir) {
           // 촬영 동안 전환·애니메이션을 끈다. 전체 샷은 캡처 중 뷰포트가 바뀌어 미디어쿼리가 잠깐 적용되는데,
           // 킷 전환(0.4초)이 원래대로 돌아오기 전에 찍혀 페이지네이션 순서·고정 목차가 실제와 다르게 남았다.
-          // 키보드 검사 뒤 초점 링 잔상도 같은 원인이다 (RC 검증 2회 실측)
+          // 키보드 검사 뒤 초점 링 잔상도 같은 원인이다 (실측)
           const noMotion = await page.addStyleTag({
             content: "*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}",
           });

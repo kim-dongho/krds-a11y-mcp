@@ -107,7 +107,7 @@ export function iconFixCss(componentId: string, assetBase = "node_modules/krds-u
 /**
  * 킷 셀렉트 기본 글자색은 5.4.3 미달(3.08:1)이다 — text-subtle(8.68:1)로 교정한다 (component.css:9616).
  * 일부 패턴 템플릿에만 들어 있어, 생성 마크업·공통부 조립 페이지에서 셀렉트를 쓰면 미달이 그대로 남았다
- * (실사용 재확인 3세션 모두). 아이콘 교정 CSS와 같은 경로로 함께 준다
+ * (실사용). 아이콘 교정 CSS와 같은 경로로 함께 준다
  */
 export const SELECT_COLOR_FIX =
   "/* 킷 결함 교정: 셀렉트 기본 글자색 대비 3.08:1 → text-subtle 8.68:1 (5.4.3) */\n" +
@@ -151,7 +151,7 @@ function collectIconFixes(
         if (url) return `  ${prop}: url(${url.replace("../../img/img/", `${assetBase}/resources/img/`)});`;
         // 킷이 경로를 쓴 뒤 none으로 끈 속성은 none까지 다시 쓴다. 안 그러면 앞쪽 일반 규칙의 교정
         // (예: .form-group [class^=form-hint]::before의 mask)이 같은 우선순위로 뒤에서 다시 씌워져
-        // 오류 아이콘이 정보 아이콘 모양으로 잘린다 (실사용 재확인에서 실측, 초기부터 잠재)
+        // 오류 아이콘이 정보 아이콘 모양으로 잘린다 (실사용에서 실측, 초기부터 잠재)
         if (value === "none" && hadBrokenUrl.has(prop)) return `  ${prop}: none;`;
         return undefined;
       })

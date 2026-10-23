@@ -84,7 +84,7 @@ export async function runKeyboard(page: Page, opts: KeyboardOptions = {}): Promi
   const maxStops = opts.maxStops ?? 300;
   await page.evaluate(INSTALL_HELPERS);
   // 전환·애니메이션을 끄고 검사한다. 킷은 *:focus에 전환 0초를 줘 링을 즉시 띄우지만, 초점이 빠질 때는
-  // 기본 전환(0.4초)으로 천천히 지운다 — 그 사이 찍힌 스크린샷에 가짜 초점 링이 남았다 (RC 검증 실측).
+  // 기본 전환(0.4초)으로 천천히 지운다 — 그 사이 찍힌 스크린샷에 가짜 초점 링이 남았다 (실측).
   // 덤으로 소비자 CSS가 초점 링에 전환을 걸어도 전환 도중 값이 아니라 최종 상태로 판정한다
   const noMotion = await page.addStyleTag({
     content: "*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}",
@@ -103,7 +103,7 @@ export async function runKeyboard(page: Page, opts: KeyboardOptions = {}): Promi
     ].filter((el) => {
       if (el instanceof HTMLInputElement && el.type === "hidden") return false;
       if (el.matches(":disabled, [disabled]") || el.closest("[inert]")) return false;
-      // 닫힌 details 안(summary 제외)은 펼치기 전엔 보이지 않는다 — 크기로는 보이는 것처럼 잡힌다 (RC 검증 실측)
+      // 닫힌 details 안(summary 제외)은 펼치기 전엔 보이지 않는다 — 크기로는 보이는 것처럼 잡힌다 (실측)
       const closed = el.closest("details:not([open])");
       if (closed && !el.closest("summary")) return false;
       const r = el.getBoundingClientRect();
@@ -120,7 +120,7 @@ export async function runKeyboard(page: Page, opts: KeyboardOptions = {}): Promi
       // 초점 요소 안의 장식 요소(버튼 안 span 등)는 부모가 키보드로 동작한다
       if (el.parentElement?.closest('a[href], button, [tabindex]:not([tabindex="-1"])')) return false;
       // 초점 가능한 자식이 있으면 키보드로 같은 동작에 닿을 수 있다 — 킷 탭 li[role=tab] > button,
-      // 게시판 tr onclick > a[href], 이벤트 위임 래퍼가 그렇다 (RC 재검증에서 오탐 실측)
+      // 게시판 tr onclick > a[href], 이벤트 위임 래퍼가 그렇다 (오탐 실측)
       if (el.querySelector('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])')) return false;
       const r = el.getBoundingClientRect();
       const st = getComputedStyle(el);
@@ -129,7 +129,7 @@ export async function runKeyboard(page: Page, opts: KeyboardOptions = {}): Promi
     w.__kbd = { els, clickOnly, base: els.map((el) => h.snap(el)), stops: [] as number[], seen: new Set<Element>() };
     // Tab 출발점을 문서 처음으로 — 페이지가 중간 요소에 자동 초점을 주면(로그인 폼 등) blur해도 브라우저가
     // 다음 Tab 출발점을 그 요소로 기억해, 앞쪽 요소(건너뛰기 링크·로고)를 "못 닿음"으로 오판했다
-    // (배포판 실사용 실측). Tab 정지점이 아닌 표식(tabindex -1)에 초점을 두고 시작한다
+    // (실사용 실측). Tab 정지점이 아닌 표식(tabindex -1)에 초점을 두고 시작한다
     const start = document.createElement("span");
     start.tabIndex = -1;
     start.setAttribute("data-krds-a11y", "kbd-start");
@@ -198,7 +198,7 @@ export async function runKeyboard(page: Page, opts: KeyboardOptions = {}): Promi
     );
     const unreached: { selector: string; summary: string }[] = [];
     if (endReason === "cap") {
-      // 상한에서 멈추면 도달성을 판정할 수 없다 — 통과로 내면 거짓 보증이다 (RC 검증 실측)
+      // 상한에서 멈추면 도달성을 판정할 수 없다 — 통과로 내면 거짓 보증이다 (실측)
       unreached.push({ selector: "body", summary: "조작 요소가 많아 Tab 순회가 상한에서 멈춰 도달성을 검사하지 못했다" });
     } else {
       els.forEach((el, i) => {

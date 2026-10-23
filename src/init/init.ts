@@ -105,7 +105,7 @@ function initHooksFile(cwd: string, rel: string, pretoolMatcher: string, timeout
   const hooks = (parsed.data.hooks ??= {}) as Record<string, unknown[]>;
   // 등록 여부는 서브커맨드 이름으로 본다 — 버전 고정(krds-a11y-mcp@x.y.z stop-hook)이나
   // 로컬 경로(node …/dist/index.js stop-hook)로 등록돼 있으면 패키지명 문자열이 달라 중복 등록되던 문제
-  // (RC 검증 실측. Stop 훅이 둘이면 재시도 카운터가 두 번 올라 상한이 사실상 절반이 된다)
+  // (실측. Stop 훅이 둘이면 재시도 카운터가 두 번 올라 상한이 사실상 절반이 된다)
   const has = (event: string, sub: string): boolean =>
     (hooks[event] ?? []).some((entry) =>
       JSON.stringify(entry).match(new RegExp(`(krds-a11y|index\\.js)[^"]*\\s${sub}(\\s|")`)),

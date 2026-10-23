@@ -30,7 +30,7 @@ export const ASSEMBLY_NOTES: Record<string, string[]> = {
     '감싸는 요소를 <nav class="krds-pagination" aria-label="페이지 탐색">으로 하고 현재 페이지 링크에 aria-current="page"를 붙인다 — get_page_scaffold 템플릿(apply-list 등)의 교정본이 정본이다. 현재 페이지 알림은 aria-current와 킷 원본의 sr-only "현재페이지" 중 하나는 반드시 있어야 하고, 둘을 함께 두면 두 번 읽힌다.',
   ],
   // 매핑표 components/tab.md:34 — 8.2.1 위반 확정(킷 결함, 운영팀 수정 예고). 교정본은 login-tabs 템플릿
-  // (templates/login-tabs.meta.json 교정 기록). 이 경고가 부품 공급까지 안 오던 공백을 RC 검증에서 실측
+  // (templates/login-tabs.meta.json 교정 기록). 이 경고가 부품 공급까지 안 오던 공백을 실측
   "krds:tab": [
     "**위 킷 데모 마크업을 그대로 쓰면 axe nested-interactive(KWCAG 8.2.1) 위반이다** — 킷 결함(li에 role=\"tab\"·aria-selected, " +
       "그 안에 button 중첩. KRDS 운영팀 수정 예고). **위 마크업 대신 아래 교정본을 써라.**",
@@ -145,7 +145,7 @@ function formNotes(kind: "input" | "select" | "textarea" | "group"): string[] {
   return [
     "필수 표시: 레이블 안에 텍스트로 \"(필수)\"를 넣는다(KRDS 입력폼 지침 — 텍스트 또는 별표). 별표(*)만 쓰면 스크린리더가 \"별\"로 읽으니 sr-only로 \"필수\"를 함께 둔다. 한 사이트에서 한 방식만 쓴다. " +
       (kind === "group"
-        ? "그룹은 legend에 표시하되, 킷 common.css가 legend를 sr-only로 숨기므로(`.blind, hr, .sr-only, legend, caption` 규칙) 화면에 보이는 제목(form-tit, aria-hidden)을 따로 둔다 — legend만 두면 \"(필수)\"가 화면에서 사라진다(실사용 2세션 실측)."
+        ? "그룹은 legend에 표시하되, 킷 common.css가 legend를 sr-only로 숨기므로(`.blind, hr, .sr-only, legend, caption` 규칙) 화면에 보이는 제목(form-tit, aria-hidden)을 따로 둔다 — legend만 두면 \"(필수)\"가 화면에서 사라진다(실사용 실측)."
         : "컨트롤에 required 속성도 준다."),
     "오류 정정: 오류 상태에서 메시지 `p.form-hint-invalid`에 id를 주고 " +
       (kind === "group"

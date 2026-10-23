@@ -1,5 +1,5 @@
 // 킷 ui-script.js가 컴포넌트마다 붙이는 동작 — 상태 클래스, 바꾸는 aria, 초기화 선택자.
-// 소비자가 이 정보를 얻으려고 킷 JS를 직접 grep하던 마찰(실사용 2회)을 흡수한다.
+// 소비자가 이 정보를 얻으려고 킷 JS를 직접 grep하던 마찰(실사용)을 흡수한다.
 // SPA에서 상태를 직접 다룰 때도 같은 클래스를 써야 킷 CSS가 먹는다.
 //
 // 근거: krds-uiux v1.1.0 resources/js/component/ui-script.js. module은 그 파일의 객체 이름이다.
