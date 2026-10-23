@@ -1,6 +1,7 @@
 {
   "name": "krds-a11y-mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
+  "mcpName": "io.github.kim-dongho/krds-a11y-mcp",
   "description": "KRDS 컴포넌트 공급 + KWCAG 2.2 접근성 자가진단 MCP 서버",
   "type": "module",
   "bin": {
@@ -10,7 +11,8 @@
     "dist",
     "templates",
     "!templates/*.preview.html",
-    "NOTICE"
+    "NOTICE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -44,6 +46,18 @@
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "playwright": "^1.63.0"
+  },
+  "peerDependenciesMeta": {
+    "@axe-core/playwright": {
+      "optional": true
+    },
+    "playwright": {
+      "optional": true
+    }
   },
   "license": "MIT",
   "engines": {
