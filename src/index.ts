@@ -14,9 +14,16 @@ if (command === "gate") {
 } else if (command === "init") {
   const { runInitCli } = await import("./init/index.js");
   process.exit(runInitCli(rest));
+} else if (command === "doctor") {
+  const { runDoctorCli } = await import("./init/index.js");
+  process.exit(runDoctorCli(rest));
+} else if (command === "--version" || command === "-v") {
+  const { default: pkg } = await import("../package.json");
+  console.log(pkg.version);
+  process.exit(0);
 } else if (command !== undefined) {
   // 모르는 서브커맨드가 조용히 서버 모드(stdin 대기)로 빠지지 않게 명시 거부
-  console.error(`모르는 명령: ${command}\n\n사용법: krds-a11y-mcp [init | gate | stop-hook | pretool-hook] [옵션]\n인자 없이 실행하면 MCP 서버(stdio)로 기동한다.`);
+  console.error(`모르는 명령: ${command}\n\n사용법: krds-a11y-mcp [init | doctor | gate | stop-hook | pretool-hook | --version] [옵션]\n인자 없이 실행하면 MCP 서버(stdio)로 기동한다.`);
   process.exit(64);
 } else {
   // stdio 전송 모드: stdout은 MCP 프로토콜 전용이므로 로그는 stderr로만 쓴다

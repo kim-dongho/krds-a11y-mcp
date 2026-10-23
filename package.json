@@ -46,6 +46,9 @@
     "vitest": "^5.0.0"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kim-dongho/krds-a11y-mcp.git"

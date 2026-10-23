@@ -111,13 +111,17 @@ describe("judge — 4분기 판정", () => {
     expect(result.screens[0]!.staleness).toBe("fresh");
   });
 
-  it("대상 파일 삭제 → stale (결과가 현재를 대변 못 함)", () => {
+  it("대상 파일 삭제 → missing, exit 2 — 재검사가 아니라 기록 정리를 안내한다 (재검사할 수 없는 지시가 Stop을 반복 차단했다)", () => {
     const root = freshDir();
     seedRun(root, "page", {
       violations: 0,
       target: { label: join(root, "지워진.html"), kind: "file" },
     });
-    expect(judge({ dir: root }).exitCode).toBe(2);
+    const r = judge({ dir: root });
+    expect(r.exitCode).toBe(2);
+    expect(r.screens[0]!.staleness).toBe("missing");
+    expect(r.reason).toContain("reports/<화면> 폴더를 지우고");
+    expect(r.reason).not.toContain("validate_page로 재검사하라");
   });
 
   it("url 대상 → staleness unknown, 종료 코드 영향 없음 — 단 통과 사유가 '검사 최신'을 사칭하지 않는다", () => {

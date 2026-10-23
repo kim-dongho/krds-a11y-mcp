@@ -3,7 +3,10 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { runInit } from "../src/init/init.js";
+import pkg from "../package.json";
+import { runInit, serverCommand } from "../src/init/init.js";
+
+const SPEC = `krds-a11y-mcp@${pkg.version}`;
 
 let tmp: string;
 function freshDir(): string {
@@ -100,7 +103,7 @@ describe("runInit — 기존 설정 보존", () => {
 });
 
 describe("훅 중복 등록", () => {
-  it("버전 고정·로컬 경로로 등록된 훅이 있으면 init 재실행이 훅을 또 붙이지 않는다", () => {
+  it("다른 버전·로컬 경로로 등록된 훅이 있으면 훅을 또 붙이지 않고, npx 등록은 이번 버전으로 고정한다", () => {
     const cwd = freshDir();
     mkdirSync(join(cwd, ".claude"), { recursive: true });
     writeFileSync(
@@ -113,10 +116,43 @@ describe("훅 중복 등록", () => {
       }),
     );
     const item = runInit(cwd)[1]!;
-    expect(item.action).toBe("unchanged");
+    expect(item.action).toBe("updated");
     const d = json(join(cwd, ".claude", "settings.json")) as { hooks: { Stop: unknown[]; PreToolUse: unknown[] } };
     expect(d.hooks.Stop).toHaveLength(1);
     expect(d.hooks.PreToolUse).toHaveLength(1);
+    expect(JSON.stringify(d.hooks.Stop)).toContain(`${SPEC} stop-hook`);
+    expect(JSON.stringify(d.hooks.PreToolUse)).toContain("node /x/dist/index.js pretool-hook"); // 로컬 경로는 그대로
+    expect(runInit(cwd)[1]!.action).toBe("unchanged");
+  });
+});
+
+describe("버전 고정·Windows·훅 시간 제한", () => {
+  it("서버·훅을 이번 버전으로 고정하고, Claude Code 훅에만 timeout을 둔다", () => {
+    const cwd = freshDir();
+    runInit(cwd);
+    expect(JSON.stringify(json(join(cwd, ".mcp.json")))).toContain(SPEC);
+    const claude = JSON.stringify(json(join(cwd, ".claude", "settings.json")));
+    expect(claude).toContain(`npx -y ${SPEC} stop-hook`);
+    expect(claude).toContain('"timeout":30');
+    expect(JSON.stringify(json(join(cwd, ".codex", "hooks.json")))).not.toContain("timeout");
+  });
+
+  it("예전 버전으로 등록된 .mcp.json은 고정을 갱신하고, 다른 패키지 등록은 건드리지 않는다", () => {
+    const cwd = freshDir();
+    writeFileSync(join(cwd, ".mcp.json"), JSON.stringify({ mcpServers: { "krds-a11y": { command: "npx", args: ["-y", "krds-a11y-mcp@0.0.1"] } } }));
+    expect(runInit(cwd)[0]!.action).toBe("updated");
+    expect(JSON.stringify(json(join(cwd, ".mcp.json")))).toContain(SPEC);
+
+    const other = freshDir();
+    writeFileSync(join(other, ".mcp.json"), JSON.stringify({ mcpServers: { "krds-a11y": { command: "npx", args: ["-y", "@corp/krds-a11y-mcp"] } } }));
+    const item = runInit(other)[0]!;
+    expect(item.action).toBe("unchanged");
+    expect(item.note).toContain("다른 설정");
+  });
+
+  it("Windows는 cmd /c npx로 서버를 띄운다", () => {
+    expect(serverCommand("win32")).toEqual({ command: "cmd", args: ["/c", "npx", "-y", SPEC] });
+    expect(serverCommand("darwin")).toEqual({ command: "npx", args: ["-y", SPEC] });
   });
 });
 
@@ -128,7 +164,7 @@ describe("Codex 설정 (codex-support)", () => {
     expect(items.map((i) => i.path)).toContain(".codex/hooks.json");
     const toml = readFileSync(join(cwd, ".codex", "config.toml"), "utf8");
     expect(toml).toContain("[mcp_servers.krds-a11y]");
-    expect(toml).toContain('args = ["-y", "krds-a11y-mcp"]');
+    expect(toml).toContain(`args = ["-y", "${SPEC}"]`);
     const hooks = json(join(cwd, ".codex", "hooks.json")) as { hooks: { Stop: unknown[]; PreToolUse: { matcher: string }[] } };
     expect(JSON.stringify(hooks.hooks.Stop)).toContain("stop-hook");
     expect(hooks.hooks.PreToolUse[0]!.matcher).toContain("apply_patch");

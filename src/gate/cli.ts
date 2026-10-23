@@ -42,6 +42,7 @@ const STALE_LABEL: Record<Staleness, string> = {
   fresh: "최신",
   stale: "**낡음**",
   unknown: "판정 불가",
+  missing: "**파일 없음**",
 };
 
 /** 사람용 출력 — 화면별 표 + 결론 + 다음 행동 지시 */

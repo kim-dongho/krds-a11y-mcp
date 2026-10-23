@@ -4,8 +4,19 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import pkg from "../../package.json";
+import { checkClaudeConflicts, checkGitRoot, checkNode, checkProjectKit, formatChecks, packageManager } from "./env-check.js";
 
 const PKG_NAME = pkg.name;
+/**
+ * 설치하는 설정은 이 버전으로 고정한다 — 서버·Stop 훅·PreToolUse 훅이 각자 "최신"을 받으면 세션 중 릴리스로
+ * 판정 로직이 어긋나고, 매 훅마다 레지스트리 조회가 끼어 느려진다. 올릴 때는 새 버전으로 init을 다시 실행한다
+ */
+const PKG_SPEC = `${PKG_NAME}@${pkg.version}`;
+/** 우리 패키지를 버전 무관하게 가리키는 npx 인자 — 재실행 시 고정 버전을 갱신할 대상 */
+const OUR_SPEC = new RegExp(`^${PKG_NAME.replace(/[-]/g, "\\-")}(@[^\\s"]+)?$`);
+const OUR_CMD = new RegExp(`npx -y ${PKG_NAME.replace(/[-]/g, "\\-")}(@[^\\s"]+)? (stop-hook|pretool-hook)`, "g");
+/** Claude Code 훅 시간 제한(초) — npm이 느리거나 오프라인이면 기본 60초를 Edit마다 기다렸다 */
+const HOOK_TIMEOUT = 30;
 
 export type InitAction = "created" | "updated" | "unchanged" | "skipped";
 export type InitItem = { path: string; action: InitAction; note?: string };
@@ -26,10 +37,19 @@ function writeJson(path: string, data: unknown): void {
   writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
 }
 
-/** .mcp.json — mcpServers에 krds-a11y 추가 (다른 서버 보존) */
+/**
+ * MCP 서버 실행 명령 — 네이티브 Windows는 셸 없이 spawn하면 npx.cmd를 찾지 못해 cmd /c로 감싼다
+ */
+export function serverCommand(platform: NodeJS.Platform = process.platform): { command: string; args: string[] } {
+  return platform === "win32"
+    ? { command: "cmd", args: ["/c", "npx", "-y", PKG_SPEC] }
+    : { command: "npx", args: ["-y", PKG_SPEC] };
+}
+
+/** .mcp.json — mcpServers에 krds-a11y 추가 (다른 서버 보존). 우리 패키지면 고정 버전을 갱신한다 */
 function initMcpJson(cwd: string): InitItem {
   const path = join(cwd, ".mcp.json");
-  const entry = { command: "npx", args: ["-y", PKG_NAME] };
+  const entry = serverCommand();
   if (!existsSync(path)) {
     writeJson(path, { mcpServers: { "krds-a11y": entry } });
     return { path: ".mcp.json", action: "created" };
@@ -39,21 +59,32 @@ function initMcpJson(cwd: string): InitItem {
     return { path: ".mcp.json", action: "skipped", note: "JSON 파싱 실패 — 직접 krds-a11y 서버를 추가하라" };
   }
   const servers = (parsed.data.mcpServers ??= {}) as Record<string, unknown>;
-  if (servers["krds-a11y"]) {
-    return { path: ".mcp.json", action: "unchanged", note: "krds-a11y 서버가 이미 등록돼 있다" };
+  const existing = servers["krds-a11y"] as { command?: unknown; args?: unknown } | undefined;
+  if (existing) {
+    if (JSON.stringify(existing) === JSON.stringify(entry)) {
+      return { path: ".mcp.json", action: "unchanged", note: "krds-a11y 서버가 이미 등록돼 있다" };
+    }
+    const ours = Array.isArray(existing.args) && existing.args.some((a) => typeof a === "string" && OUR_SPEC.test(a));
+    if (!ours) {
+      return { path: ".mcp.json", action: "unchanged", note: "krds-a11y 이름으로 다른 설정이 등록돼 있다 — 이 패키지를 쓰려면 그 항목을 지우고 다시 실행하라" };
+    }
+    servers["krds-a11y"] = entry;
+    writeJson(path, parsed.data);
+    return { path: ".mcp.json", action: "updated", note: `${PKG_SPEC}로 고정` };
   }
   servers["krds-a11y"] = entry;
   writeJson(path, parsed.data);
   return { path: ".mcp.json", action: "updated" };
 }
 
-const STOP_ENTRY = {
-  hooks: [{ type: "command", command: `npx -y ${PKG_NAME} stop-hook` }],
-};
-const pretoolEntry = (matcher: string) => ({
-  matcher,
-  hooks: [{ type: "command", command: `npx -y ${PKG_NAME} pretool-hook` }],
+/** 훅 항목 — timeout은 Claude Code만 넣는다(Codex 훅 형식에 없는 키를 넣지 않는다) */
+const hookCmd = (sub: string, timeout: boolean) => ({
+  type: "command",
+  command: `npx -y ${PKG_SPEC} ${sub}`,
+  ...(timeout ? { timeout: HOOK_TIMEOUT } : {}),
 });
+const stopEntry = (timeout: boolean) => ({ hooks: [hookCmd("stop-hook", timeout)] });
+const pretoolEntry = (matcher: string, timeout: boolean) => ({ matcher, hooks: [hookCmd("pretool-hook", timeout)] });
 
 /**
  * 훅 파일에 Stop·PreToolUse 훅 추가 (기존 훅 보존). Claude Code(.claude/settings.json)와
@@ -61,10 +92,10 @@ const pretoolEntry = (matcher: string) => ({
  * (Codex의 파일 쓰기는 apply_patch).
  * 주의: 훅 command에 stderr 리다이렉트(2>)를 쓰면 차단 사유가 모델에 전달되지 않는다 — 실측 확인.
  */
-function initHooksFile(cwd: string, rel: string, pretoolMatcher: string): InitItem {
+function initHooksFile(cwd: string, rel: string, pretoolMatcher: string, timeout: boolean): InitItem {
   const path = join(cwd, ...rel.split("/"));
   if (!existsSync(path)) {
-    writeJson(path, { hooks: { Stop: [STOP_ENTRY], PreToolUse: [pretoolEntry(pretoolMatcher)] } });
+    writeJson(path, { hooks: { Stop: [stopEntry(timeout)], PreToolUse: [pretoolEntry(pretoolMatcher, timeout)] } });
     return { path: rel, action: "created" };
   }
   const parsed = readJson(path);
@@ -80,18 +111,30 @@ function initHooksFile(cwd: string, rel: string, pretoolMatcher: string): InitIt
       JSON.stringify(entry).match(new RegExp(`(krds-a11y|index\\.js)[^"]*\\s${sub}(\\s|")`)),
     );
 
-  let changed = false;
+  // npx로 등록한 우리 훅은 고정 버전을 이번 버전으로 맞춘다(로컬 경로 등록은 개발 설정이라 건드리지 않는다)
+  const before = JSON.stringify(parsed.data);
+  for (const event of ["Stop", "PreToolUse"]) {
+    for (const entry of (hooks[event] ?? []) as { hooks?: { command?: string; timeout?: number }[] }[]) {
+      for (const h of entry.hooks ?? []) {
+        if (typeof h.command !== "string" || !h.command.match(OUR_CMD)) continue;
+        h.command = h.command.replace(OUR_CMD, (_m, _v, sub: string) => `npx -y ${PKG_SPEC} ${sub}`);
+        if (timeout && h.timeout === undefined) h.timeout = HOOK_TIMEOUT;
+      }
+    }
+  }
+  let changed = JSON.stringify(parsed.data) !== before;
+  const pinned = changed;
   if (!has("Stop", "stop-hook")) {
-    (hooks.Stop ??= []).push(STOP_ENTRY);
+    (hooks.Stop ??= []).push(stopEntry(timeout));
     changed = true;
   }
   if (!has("PreToolUse", "pretool-hook")) {
-    (hooks.PreToolUse ??= []).push(pretoolEntry(pretoolMatcher));
+    (hooks.PreToolUse ??= []).push(pretoolEntry(pretoolMatcher, timeout));
     changed = true;
   }
   if (!changed) return { path: rel, action: "unchanged", note: "훅이 이미 등록돼 있다" };
   writeJson(path, parsed.data);
-  return { path: rel, action: "updated" };
+  return { path: rel, action: "updated", ...(pinned ? { note: `${PKG_SPEC}로 고정` } : {}) };
 }
 
 /**
@@ -102,7 +145,8 @@ function initHooksFile(cwd: string, rel: string, pretoolMatcher: string): InitIt
 function initCodexConfig(cwd: string): InitItem {
   const rel = ".codex/config.toml";
   const path = join(cwd, ".codex", "config.toml");
-  const block = `[mcp_servers.krds-a11y]\ncommand = "npx"\nargs = ["-y", "${PKG_NAME}"]\n`;
+  const cmd = serverCommand();
+  const block = `[mcp_servers.krds-a11y]\ncommand = "${cmd.command}"\nargs = [${cmd.args.map((a) => `"${a}"`).join(", ")}]\n`;
   if (!existsSync(path)) {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, block);
@@ -112,7 +156,14 @@ function initCodexConfig(cwd: string): InitItem {
   const registered =
     /^\s*\[\s*mcp_servers\.(krds-a11y|"krds-a11y")\s*\]/m.test(body) ||
     /^\s*mcp_servers\.(krds-a11y|"krds-a11y")\./m.test(body);
-  if (registered) return { path: rel, action: "unchanged", note: "krds-a11y 서버가 이미 등록돼 있다" };
+  if (registered) {
+    // npx로 등록한 우리 패키지면 고정 버전만 맞춘다 — "krds-a11y-mcp" 또는 "krds-a11y-mcp@x.y.z"
+    const pinRe = new RegExp(`"${PKG_NAME.replace(/[-]/g, "\\-")}(@[^"]+)?"`, "g");
+    const next = body.replace(pinRe, `"${PKG_SPEC}"`);
+    if (next === body) return { path: rel, action: "unchanged", note: "krds-a11y 서버가 이미 등록돼 있다" };
+    writeFileSync(path, next);
+    return { path: rel, action: "updated", note: `${PKG_SPEC}로 고정` };
+  }
   writeFileSync(path, body.replace(/\n*$/, "\n\n") + block);
   return { path: rel, action: "updated" };
 }
@@ -158,12 +209,12 @@ function initInstructionFile(cwd: string, name: string): InitItem {
 export function runInit(cwd: string): InitItem[] {
   return [
     initMcpJson(cwd),
-    initHooksFile(cwd, ".claude/settings.json", "Write|Edit|MultiEdit"),
+    initHooksFile(cwd, ".claude/settings.json", "Write|Edit|MultiEdit|NotebookEdit", true),
     initInstructionFile(cwd, "CLAUDE.md"),
     initInstructionFile(cwd, "AGENTS.md"),
     // Codex — Claude Code 항목 뒤에 붙인다 (결과 순서를 쓰는 기존 사용처 보호)
     initCodexConfig(cwd),
-    initHooksFile(cwd, ".codex/hooks.json", "apply_patch|Edit|Write"),
+    initHooksFile(cwd, ".codex/hooks.json", "apply_patch|Edit|Write", false),
   ];
 }
 
@@ -202,15 +253,23 @@ export function runInitCli(argv: string[]): number {
     console.log(`- ${i.path}: ${ACTION_KO[i.action]}${i.note ? ` (${i.note})` : ""}`);
   }
   const skipped = items.filter((i) => i.action === "skipped");
+  const cwd = process.cwd();
+  const warnings = [checkNode(), checkGitRoot(cwd), ...checkClaudeConflicts(cwd), checkProjectKit(cwd)].filter((c) => c.level !== "ok");
+  const pm = packageManager(cwd);
   console.log(
     [
+      ...(warnings.length > 0 ? ["", "확인할 것:", formatChecks(warnings)] : []),
       "",
       "다음 단계:",
-      "1. 검사 도구(validate_page·inspect_page)까지 쓰려면 한 번만:",
-      "   pnpm add -D playwright @axe-core/playwright && npx playwright install chromium",
-      "2. Claude Code를 재시작하면 MCP 서버와 훅이 적용된다",
-      "3. Codex를 쓴다면 처음 한 번: 이 프로젝트를 신뢰(trust)하고, Codex에서 /hooks로 krds-a11y 훅 2개를 승인하라.",
+      `1. 페이지가 불러올 KRDS 킷: ${pm.add} krds-uiux@1.1.0 (킷을 직접 서빙하면 그 경로를 get_page_scaffold의 assetBase로)`,
+      "2. 검사 도구(validate_page·inspect_page)까지 쓰려면 한 번만:",
+      `   ${pm.addDev} playwright @axe-core/playwright && npx playwright install chromium`,
+      "3. Claude Code를 재시작하고, 프로젝트 MCP 서버(krds-a11y) 사용을 승인하면 서버와 훅이 적용된다",
+      "4. Codex를 쓴다면 처음 한 번: 이 프로젝트를 신뢰(trust)하고, Codex에서 /hooks로 krds-a11y 훅 2개를 승인하라.",
       "   승인 전에는 훅이 돌지 않는다. 훅 내용이 바뀌면(init 재실행으로 갱신 등) 다시 승인해야 한다.",
+      "",
+      `설정은 ${pkg.name}@${pkg.version}로 고정됐다. 새 버전으로 올릴 때는 \`npx -y ${pkg.name}@latest init\`을 다시 실행한다.`,
+      "설치 상태와 환경은 언제든 `npx -y krds-a11y-mcp doctor`로 점검한다.",
       ...(skipped.length > 0
         ? ["", `⚠️ 건너뛴 파일 ${skipped.length}개는 손으로 반영해야 한다 (위 표기 참조)`]
         : []),

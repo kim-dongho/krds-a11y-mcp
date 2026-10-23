@@ -4,7 +4,8 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { listRuns, readRunStats, readRunTarget, stampToDate } from "../runs/index.js";
 
-export type Staleness = "fresh" | "stale" | "unknown";
+/** missing — 검사한 파일이 지금은 없다(지웠거나 이름을 바꿨다). 재검사할 수 없으니 기록 정리를 안내한다 */
+export type Staleness = "fresh" | "stale" | "unknown" | "missing";
 
 export type ScreenVerdict = {
   slug: string;
@@ -73,11 +74,12 @@ function judgeStaleness(jsonPath: string, stamp: string): Staleness {
     const latest = latestMtime(target.sources);
     return latest === undefined ? "unknown" : latest > ranAt.getTime() ? "stale" : "fresh";
   }
+  // 파일이 없으면 missing — "재검사하라"는 수행할 수 없는 지시라 Stop 훅이 같은 차단을 반복했다
+  if (!existsSync(target.label)) return "missing";
   try {
-    // 파일이 삭제됐거나 stat 실패면 stale — 검사 결과가 현재를 대변하지 못한다
     return statSync(target.label).mtime.getTime() > ranAt.getTime() ? "stale" : "fresh";
   } catch {
-    return "stale";
+    return "stale"; // stat 실패 — 검사 결과가 현재를 대변하지 못한다
   }
 }
 
@@ -178,11 +180,12 @@ export function judge(opts?: { dir?: string; only?: string[] }): GateResult {
   }
 
   const stale = screens.filter((s) => s.staleness === "stale");
+  const missing = screens.filter((s) => s.staleness === "missing");
   const broken = screens.filter((s) => s.broken);
   // 검사 무효 — 검사 기록은 위반 0이지만 검사 자체가 실패했다 (킷 CSS 미로드 등). 통과로 세면
   // 킷 없는 화면이 gate를 통과한다 (배포판 실사용에서 실측)
   const invalid = screens.filter((s) => s.invalid);
-  if (stale.length > 0 || broken.length > 0 || invalid.length > 0) {
+  if (stale.length > 0 || broken.length > 0 || invalid.length > 0 || missing.length > 0) {
     const parts = [
       ...(invalid.length > 0
         ? [`검사 무효: ${invalid.map((s) => `${s.slug}(${s.invalid!.split(" — ")[0]})`).join(", ")}. 결과를 믿을 수 없으니 킷 설치·자산 경로 등 원인부터 고칠 것`]
@@ -194,10 +197,14 @@ export function judge(opts?: { dir?: string; only?: string[] }): GateResult {
         ? [`기록 불량(json 파싱 실패): ${broken.map((s) => s.slug).join(", ")}`]
         : []),
     ];
+    const missingNote =
+      missing.length > 0
+        ? `검사한 파일이 없어짐: ${missing.map((s) => s.slug).join(", ")} — 화면을 지웠으면 reports/<화면> 폴더를 지우고, 이름을 바꿨으면 새 파일을 validate_page로 검사하라`
+        : "";
     return {
       screens,
       exitCode: 2,
-      reason: `${parts.join(" / ")} — validate_page로 재검사하라`,
+      reason: [parts.length > 0 ? `${parts.join(" / ")} — validate_page로 재검사하라` : "", missingNote].filter(Boolean).join(" / "),
     };
   }
 
