@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, appendFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 const severities = ['critical', 'high', 'moderate', 'low', 'info'];
@@ -24,7 +24,21 @@ export function fallbackOverrides(audit) {
   return overrides;
 }
 
-export function renderReport(audit, date = new Date(), before) {
+export function packageVersions(projects) {
+  const versions = {};
+  function visit(node) {
+    for (const group of ['dependencies', 'devDependencies', 'optionalDependencies']) {
+      for (const [name, dependency] of Object.entries(node[group] ?? {})) {
+        (versions[name] ??= new Set()).add(dependency.version);
+        visit(dependency);
+      }
+    }
+  }
+  projects.forEach(visit);
+  return Object.fromEntries(Object.entries(versions).map(([name, values]) => [name, [...values].sort()]));
+}
+
+export function renderReport(audit, date = new Date(), before, changes) {
   const counts = audit.metadata?.vulnerabilities;
   if (audit.error || !counts || !audit.advisories ||
       severities.some((severity) => !Number.isInteger(counts[severity]) || counts[severity] < 0)) {
@@ -41,6 +55,16 @@ export function renderReport(audit, date = new Date(), before) {
     `검사일: ${day} ${time} (Asia/Seoul)`, '',
     '검사 대상: pnpm-lock.yaml의 전체 의존성(개발 및 선택적 의존성 포함).',
     '알려진 보안 권고와 버전 일치 여부를 검사하며, 실제 악용 가능성이나 소스 코드 전체의 안전성을 보증하지 않는다.', '',
+    ...(changes ? [
+      '## 이 PR에서 변경한 내용', '',
+      '**변경 파일**', '',
+      ...changes.files.map((file) => `- ${cell(file)}`), '',
+      '**패키지 버전 변경** (잠금 파일 기준, 하위 의존성 포함)', '',
+      '| 패키지 | 기본 브랜치 버전 | PR 브랜치 버전 |', '| --- | --- | --- |',
+      ...[...new Set([...Object.keys(changes.before), ...Object.keys(changes.after)])].sort()
+        .filter((name) => JSON.stringify(changes.before[name]) !== JSON.stringify(changes.after[name]))
+        .map((name) => `| ${cell(name)} | ${cell(changes.before[name]?.join(', ') ?? '없음')} | ${cell(changes.after[name]?.join(', ') ?? '제거됨')} |`), '',
+    ] : []),
     ...(before ? [
       '## 기본 브랜치 검사 결과 (PR 변경 적용 전)', '',
       '| Critical | High | Moderate | Low | Info |',
@@ -54,7 +78,14 @@ export function renderReport(audit, date = new Date(), before) {
     `| ${severities.map((severity) => counts[severity]).join(' | ')} |`, '',
   ];
   if (before) {
+    const id = (advisory) => advisory.github_advisory_id ?? advisory.url;
+    const remaining = new Set(rows.map(id));
+    const resolved = Object.values(before.advisories).filter((advisory) => !remaining.has(id(advisory)));
     lines.push(
+      '## 이 PR에서 해소된 보안 권고', '',
+      '| 심각도 | 패키지 | 보안 권고 |', '| --- | --- | --- |',
+      ...resolved.map((advisory) => `| ${cell(advisory.severity)} | ${cell(advisory.module_name)} | ${cell(id(advisory))}: ${cell(advisory.title)} |`),
+      ...(resolved.length ? [] : ['해소된 보안 권고 없음.']), '',
       '## PR 변경 효과', '',
       'Critical・High・Moderate(중간) 보안 권고에 대해 의존성 갱신과 pnpm overrides로 자동 수정을 시도했다.',
       '이하 취약점 목록은 PR 변경 적용 후 재검사 결과이며, 남은 항목은 수동 검토가 필요하다.', '',
@@ -92,8 +123,20 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     return data;
   }
   let before;
+  let beforePackages;
+  let beforeFiles;
+  const changeFiles = ['package.json', 'pnpm-workspace.yaml', 'pnpm-lock.yaml'];
+  function snapshotPackages() {
+    const result = spawnSync('pnpm', ['list', '--lockfile-only', '--depth=Infinity', '--json'], {
+      encoding: 'utf8', timeout: 60_000, maxBuffer: 32 * 1024 * 1024,
+    });
+    if (result.error || result.status !== 0) throw new Error('잠금 파일의 패키지 버전 조회 실패');
+    return packageVersions(JSON.parse(result.stdout));
+  }
   if (process.argv.includes('--fix')) {
     before = audit();
+    beforePackages = snapshotPackages();
+    beforeFiles = Object.fromEntries(changeFiles.map((file) => [file, readFileSync(file, 'utf8')]));
     if (['critical', 'high', 'moderate'].some((severity) => before.metadata.vulnerabilities[severity] > 0)) {
       for (const args of [
         ['audit', '--fix=override', '--audit-level=moderate'],
@@ -115,7 +158,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       }
     }
   }
-  const report = renderReport(audit(), new Date(), before);
+  const changes = before ? {
+    before: beforePackages,
+    after: snapshotPackages(),
+    files: [...changeFiles.filter((file) => beforeFiles[file] !== readFileSync(file, 'utf8')), 'docs/security/dependency-report.md'],
+  } : undefined;
+  const report = renderReport(audit(), new Date(), before, changes);
   mkdirSync('docs/security', { recursive: true });
   writeFileSync('docs/security/dependency-report.md', report);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, report);

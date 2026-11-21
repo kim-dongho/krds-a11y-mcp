@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport, fallbackOverrides } from './security-report.mjs';
+import { renderReport, fallbackOverrides, packageVersions } from './security-report.mjs';
 
 const clean = () => ({
   metadata: { vulnerabilities: { critical: 0, high: 0, moderate: 0, low: 0, info: 0 } },
@@ -66,4 +66,32 @@ test('남은 Vite peer 취약점은 가장 높은 수정 버전으로 제한한�
     other: advisory('high', '>=2.0.0', 'other'),
     unknown: advisory('high', '<0.0.0'),
   } }), { vite: '^8.2.10' });
+});
+
+test('하위 의존성의 여러 설치 버전과 선택적 의존성을 집계한다', () => {
+  assert.deepEqual(packageVersions([{ dependencies: {
+    sdk: { version: '1.0.0', dependencies: { shared: { version: '2.0.0' } } },
+  }, devDependencies: { shared: { version: '1.0.0' } }, optionalDependencies: {
+    optional: { version: '3.0.0' },
+  } }]), { sdk: ['1.0.0'], shared: ['1.0.0', '2.0.0'], optional: ['3.0.0'] });
+});
+
+test('PR 본문에 실제 버전 변경과 해소된 권고를 표시하고 남은 권고는 해소로 표시하지 않는다', () => {
+  const before = clean();
+  const after = clean();
+  const resolved = { github_advisory_id: 'GHSA-resolved', module_name: 'proxy-addr', severity: 'critical', title: 'IP spoofing' };
+  const remaining = { github_advisory_id: 'GHSA-remaining', module_name: 'other', severity: 'low', title: 'Other issue' };
+  before.advisories = { resolved, remaining };
+  after.advisories = { remaining };
+  const report = renderReport(after, new Date(), before, {
+    before: { 'proxy-addr': ['2.0.7'], unchanged: ['1.0.0'] },
+    after: { 'proxy-addr': ['2.0.8'], unchanged: ['1.0.0'] },
+    files: ['pnpm-lock.yaml'],
+  });
+  assert.match(report, /\| proxy-addr \| 2.0.7 \| 2.0.8 \|/);
+  assert.doesNotMatch(report, /\| unchanged \|/);
+  assert.match(report, /- pnpm-lock.yaml/);
+  const resolvedSection = report.split('## 이 PR에서 해소된 보안 권고')[1].split('## PR 변경 효과')[0];
+  assert.match(resolvedSection, /GHSA-resolved/);
+  assert.doesNotMatch(resolvedSection, /GHSA-remaining/);
 });
