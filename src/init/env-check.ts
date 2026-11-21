@@ -33,10 +33,18 @@ export function packageManager(cwd: string): { name: "pnpm" | "yarn" | "bun" | "
 }
 
 export function checkNode(version: string = process.versions.node): Check {
-  const major = Number(version.split(".")[0]);
-  return major >= 20
+  const parsed = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
+  const supported = parsed && pkg.engines.node.split(" || ").some((range) => {
+    const minimum = /^(\^|>=)(\d+)\.(\d+)\.(\d+)$/.exec(range);
+    if (!minimum) return false;
+    const [major, minor, patch] = parsed.slice(1).map(Number) as [number, number, number];
+    const [minMajor, minMinor, minPatch] = minimum.slice(2).map(Number) as [number, number, number];
+    if (minimum[1] === "^" && major !== minMajor) return false;
+    return major > minMajor || (major === minMajor && (minor > minMinor || (minor === minMinor && patch >= minPatch)));
+  });
+  return supported
     ? { level: "ok", title: `Node ${version}` }
-    : { level: "error", title: `Node ${version} — 20 이상이 필요하다`, detail: "Node 20 LTS 이상으로 올린 뒤 다시 실행하라" };
+    : { level: "error", title: `Node ${version} — 보안 업데이트가 필요하다`, detail: `지원 버전: ${pkg.engines.node}. Node를 업데이트한 뒤 다시 실행하라` };
 }
 
 export function checkGitRoot(cwd: string): Check {

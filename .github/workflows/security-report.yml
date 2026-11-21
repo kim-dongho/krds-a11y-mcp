@@ -25,7 +25,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - name: Fix moderate and higher vulnerabilities and generate report
         run: node scripts/security-report.mjs --fix
       - name: Install dependencies for validation

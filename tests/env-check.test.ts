@@ -74,8 +74,11 @@ describe("프로젝트 킷·패키지 매니저", () => {
     expect(c.detail).toContain("yarn add krds-uiux@1.1.0");
   });
 
-  it("Node 20 미만은 오류", () => {
-    expect(checkNode("18.19.0").level).toBe("error");
-    expect(checkNode("22.1.0").level).toBe("ok");
+  it.each(["18.19.0", "20.20.0", "22.18.0", "22.23.4", "23.11.0", "24.22.2", "25.0.0", "26.13.0", "22.23.5-rc.1", "invalid"])("보안 기준 미달 Node %s는 오류", (version) => {
+    expect(checkNode(version).level).toBe("error");
+  });
+
+  it.each(["22.23.5", "22.24.0", "24.22.3", "24.23.0", "26.13.1", "26.14.0", "27.0.0"])("지원 Node %s는 통과", (version) => {
+    expect(checkNode(version).level).toBe("ok");
   });
 });
