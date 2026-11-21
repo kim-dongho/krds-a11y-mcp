@@ -271,6 +271,8 @@ Renovate 설정은 [`.github/renovate.json`](.github/renovate.json)에 있다.
 Critical·High·Moderate(중간) 취약점에 `pnpm audit --fix=override --audit-level=moderate`로
 수정 버전을 적용하고, 수정 전후 집계를 담은 `docs/security/dependency-report.md`와
 `pnpm-workspace.yaml`·`pnpm-lock.yaml` 변경을 함께 PR로 올린다.
+Vitest의 자동 설치 peer인 Vite 취약점이 남으면 안전한 버전을 개발 의존성에 명시하고
+`package.json` 변경도 PR에 포함한다.
 열린 보고서 PR은 같은 브랜치에서 갱신하며, 취약점이 0건이거나 같은 날 다시 실행해도 검사 시각을 기록한다.
 통신 오류나 잘못된 응답은 실행 실패로 처리하고 정상 보고서를 만들지 않는다.
 GitHub 예약 실행은 지연될 수 있으며, Actions의 `Run workflow`로 수동 실행할 수도 있다.

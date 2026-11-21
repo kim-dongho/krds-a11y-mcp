@@ -5,6 +5,25 @@ import { pathToFileURL } from 'node:url';
 const severities = ['critical', 'high', 'moderate', 'low', 'info'];
 const cell = (value) => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('|', '&#124;').replace(/[\r\n]+/g, ' ');
 
+export function fallbackOverrides(audit) {
+  const overrides = {};
+  for (const advisory of Object.values(audit.advisories)) {
+    if (!['critical', 'high', 'moderate'].includes(advisory.severity)) continue;
+    const version = /^>=(\d+\.\d+\.\d+)$/.exec(advisory.patched_versions)?.[1];
+    const name = advisory.module_name;
+    // Vitest의 자동 설치 peer인 Vite는 명시적 개발 의존성으로 버전을 제한해야 한다.
+    if (!version || name !== 'vite') continue;
+    const previous = overrides[name]?.slice(1);
+    const compare = (a, b) => {
+      const parts = a.split('.').map(Number);
+      const other = b.split('.').map(Number);
+      return parts[0] - other[0] || parts[1] - other[1] || parts[2] - other[2];
+    };
+    if (!previous || compare(version, previous) > 0) overrides[name] = `^${version}`;
+  }
+  return overrides;
+}
+
 export function renderReport(audit, date = new Date(), before) {
   const counts = audit.metadata?.vulnerabilities;
   if (audit.error || !counts || !audit.advisories ||
@@ -78,6 +97,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         if (result.error || (result.status !== 0 && !(args.includes('--fix=update') && result.status === 1))) {
           throw new Error(`pnpm ${args.join(' ')} 실패`);
         }
+      }
+      // 자동 설치 peer는 기존 잠금 버전이 유지될 수 있으므로 명시적으로 버전을 제한한다.
+      const fallback = fallbackOverrides(audit());
+      if (Object.keys(fallback).length) {
+        const args = ['add', '--save-dev', ...Object.entries(fallback).map(([name, version]) => `${name}@${version}`)];
+        const result = spawnSync('pnpm', args, { stdio: 'inherit', timeout: 300_000 });
+        if (result.error || result.status !== 0) throw new Error('남은 취약점 수정 버전 적용 실패');
       }
     }
   }

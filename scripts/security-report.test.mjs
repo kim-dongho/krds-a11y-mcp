@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport } from './security-report.mjs';
+import { renderReport, fallbackOverrides } from './security-report.mjs';
 
 const clean = () => ({
   metadata: { vulnerabilities: { critical: 0, high: 0, moderate: 0, low: 0, info: 0 } },
@@ -52,4 +52,15 @@ test('자동 수정 보고서는 수정 전후 집계와 남은 취약점을 구
   assert.match(report, /\| critical \| 1 \| 0 \|/);
   assert.match(report, /\| moderate \| 2 \| 0 \|/);
   assert.match(report, /수정 후 재검사 결과/);
+});
+
+test('남은 Vite peer 취약점은 가장 높은 수정 버전으로 제한한다', () => {
+  const advisory = (severity, patched_versions, module_name = 'vite') => ({ severity, patched_versions, module_name });
+  assert.deepEqual(fallbackOverrides({ advisories: {
+    one: advisory('high', '>=8.2.4'),
+    two: advisory('moderate', '>=8.2.10'),
+    low: advisory('low', '>=9.0.0'),
+    other: advisory('high', '>=2.0.0', 'other'),
+    unknown: advisory('high', '<0.0.0'),
+  } }), { vite: '^8.2.10' });
 });
