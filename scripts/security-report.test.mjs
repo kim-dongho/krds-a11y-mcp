@@ -51,7 +51,10 @@ test('자동 수정 보고서는 수정 전후 집계와 남은 취약점을 구
   const report = renderReport(clean(), new Date('2026-11-21T00:00:00Z'), before);
   assert.match(report, /\| critical \| 1 \| 0 \|/);
   assert.match(report, /\| moderate \| 2 \| 0 \|/);
-  assert.match(report, /수정 후 재검사 결과/);
+  assert.match(report, /PR 변경 적용 후 재검사 결과/);
+  assert.match(report, /기본 브랜치 검사 결과 \(PR 변경 적용 전\)/);
+  assert.match(report, /PR 변경 적용 후 검사 결과 \(기본 브랜치 미반영\)/);
+  assert.match(report, /사용자가 PR을 머지할 때 반영된다/);
 });
 
 test('남은 Vite peer 취약점은 가장 높은 수정 버전으로 제한한다', () => {

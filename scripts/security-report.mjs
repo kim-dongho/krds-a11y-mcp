@@ -41,16 +41,24 @@ export function renderReport(audit, date = new Date(), before) {
     `검사일: ${day} ${time} (Asia/Seoul)`, '',
     '검사 대상: pnpm-lock.yaml의 전체 의존성(개발 및 선택적 의존성 포함).',
     '알려진 보안 권고와 버전 일치 여부를 검사하며, 실제 악용 가능성이나 소스 코드 전체의 안전성을 보증하지 않는다.', '',
+    ...(before ? [
+      '## 기본 브랜치 검사 결과 (PR 변경 적용 전)', '',
+      '| Critical | High | Moderate | Low | Info |',
+      '| --- | --- | --- | --- | --- |',
+      `| ${severities.map((severity) => before.metadata.vulnerabilities[severity]).join(' | ')} |`, '',
+      '## PR 변경 적용 후 검사 결과 (기본 브랜치 미반영)', '',
+      '아래 수치는 PR 브랜치에 수정 내용을 적용한 결과다. 기본 브랜치에는 사용자가 PR을 머지할 때 반영된다.', '',
+    ] : ['## 현재 잠금 파일 검사 결과', '']),
     '| Critical | High | Moderate | Low | Info |',
     '| --- | --- | --- | --- | --- |',
     `| ${severities.map((severity) => counts[severity]).join(' | ')} |`, '',
   ];
   if (before) {
     lines.push(
-      '## 자동 수정 결과', '',
-      'Critical・High・Moderate(중간) 보안 권고에 대해 pnpm overrides로 수정 버전을 적용했다.',
-      '이하 취약점 목록은 수정 후 재검사 결과이며, 남은 항목은 수동 검토가 필요하다.', '',
-      '| 심각도 | 수정 전 | 수정 후 |', '| --- | --- | --- |',
+      '## PR 변경 효과', '',
+      'Critical・High・Moderate(중간) 보안 권고에 대해 의존성 갱신과 pnpm overrides로 자동 수정을 시도했다.',
+      '이하 취약점 목록은 PR 변경 적용 후 재검사 결과이며, 남은 항목은 수동 검토가 필요하다.', '',
+      '| 심각도 | 기본 브랜치 (적용 전) | PR 브랜치 (적용 후) |', '| --- | --- | --- |',
       ...severities.map((severity) => `| ${severity} | ${before.metadata.vulnerabilities[severity]} | ${counts[severity]} |`), '',
     );
   }
