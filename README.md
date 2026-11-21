@@ -258,38 +258,42 @@ pnpm verify:a11y      # 키보드 전수·접근성 트리 검증
 
 ### 의존성 보안 및 업데이트
 
-`pnpm audit`로 잠금 파일의 알려진 취약점을 확인한다.
-Renovate 설정은 [`.github/renovate.json`](.github/renovate.json)에 있다.
-일반 npm 업데이트는 출시 후 3일이 지나면 PR로 제안하며, 잠금 파일은 매주 갱신한다.
-동시 PR은 최대 3개이고 자동 병합은 하지 않는다. 보안 업데이트 PR은 대기 시간과 일반 PR 개수 제한의 예외다.
+**보안 수정은 PR로 제안하며, 직접 머지해야 기본 브랜치에 반영된다.**
 
-활성화하려면 [Renovate GitHub App](https://github.com/apps/renovate)을 설치하고 이 저장소를 선택한 뒤 설정을 기본 브랜치에 반영한다.
-저장소 Settings에서 Dependency graph와 Dependabot alerts도 활성화해야 Renovate가 GitHub 보안 경고를 읽어 수정 PR을 만들 수 있다.
-설정 파일만 추가한 상태에서는 봇이 실행되지 않는다.
+| 자동화 | 실행 시점 | PR 내용 |
+| --- | --- | --- |
+| [보안 점검](.github/workflows/security-report.yml) | 매일 오전 9시(KST) | Critical·High·Moderate 취약점 수정 + 검사 보고서 |
+| [Renovate](.github/renovate.json) | 일반 npm 업데이트는 출시 3일 후, 잠금 파일은 매주 | 의존성 버전 업데이트 |
 
-매일 한국 시간 오전 9시에 [Daily security report](.github/workflows/security-report.yml)가
-Critical·High·Moderate(중간) 취약점에 `pnpm audit --fix=override --audit-level=moderate`로
-수정 버전을 적용하고, 수정 전후 집계를 담은 `docs/security/dependency-report.md`와
-`pnpm-workspace.yaml`·`pnpm-lock.yaml` 변경을 함께 PR로 올린다.
-Vitest의 자동 설치 peer인 Vite 취약점이 남으면 안전한 버전을 개발 의존성에 명시하고
-`package.json` 변경도 PR에 포함한다.
-열린 보고서 PR은 같은 브랜치에서 갱신하며, 취약점이 0건이거나 같은 날 다시 실행해도 검사 시각을 기록한다.
-통신 오류나 잘못된 응답은 실행 실패로 처리하고 정상 보고서를 만들지 않는다.
-GitHub 예약 실행은 지연될 수 있으며, Actions의 `Run workflow`로 수동 실행할 수도 있다.
-워크플로를 기본 브랜치에 반영하고 Settings → Actions → General → Workflow permissions에서
-`Allow GitHub Actions to create and approve pull requests`를 활성화해야 한다.
-기본 `GITHUB_TOKEN`으로 만든 보고서 PR은 다른 CI 워크플로를 자동 실행하지 않는다.
-PR 생성 전에 타입 검사·테스트·빌드·접근성 검사를 실행하며 실패하면 PR을 만들지 않는다.
-수정은 Actions 작업 공간에서 수행하고 `automation/security-report` 브랜치로만 올린다.
-기본 브랜치에는 사용자가 PR을 머지할 때 반영한다. 자동 병합은 하지 않는다.
-보고서는 기본 브랜치의 적용 전 결과와 PR 브랜치의 적용 후 결과를 별도 표로 구분한다.
-자동 수정 후에도 남은 취약점은 보고서에서 수동 검토한다.
-Low는 자동 수정 대상에서 제외하지만 같은 패키지를 수정하면서 함께 해소될 수 있다.
-일반 버전 업데이트는 Renovate가 별도로 제안한다.
+#### 보안 점검 PR
 
-로컬 실행: `node scripts/security-report.mjs`.
-자동 수정 포함: `node scripts/security-report.mjs --fix`.
-보고서 생성기 검증: `node --test scripts/security-report.test.mjs`.
+- 수정 전 **기본 브랜치**와 수정 후 **PR 브랜치**의 검사 결과를 별도 표로 보여준다.
+- 의존성 설정·잠금 파일·보고서를 함께 올리고, 열린 PR이 있으면 갱신한다.
+- 타입 검사·테스트·빌드·접근성 검사를 통과해야 PR을 만든다. 통신 오류는 검사 실패로 처리한다.
+- 자동 수정 후 남은 취약점은 수동 검토한다. Low는 자동 수정 대상에서 제외한다.
+
+Actions의 **Run workflow**로 수동 실행할 수 있다. 예약 실행은 GitHub 상황에 따라 지연될 수 있다.
+기본 `GITHUB_TOKEN`으로 만든 PR은 다른 CI를 자동 실행하지 않으므로, PR 생성 전에 위 검사를 수행한다.
+
+#### 최초 설정
+
+1. 워크플로와 Renovate 설정을 기본 브랜치에 반영한다.
+2. **Settings → Actions → General → Workflow permissions**에서
+   **Allow GitHub Actions to create and approve pull requests**를 켠다.
+3. [Renovate GitHub App](https://github.com/apps/renovate)을 설치하고 이 저장소를 선택한다.
+4. Renovate가 보안 경고를 읽을 수 있도록 **Dependency graph**와 **Dependabot alerts**를 켠다.
+
+Renovate의 일반 PR은 동시에 최대 3개이며 자동 병합하지 않는다.
+보안 업데이트 PR은 3일 대기와 일반 PR 개수 제한의 예외다.
+
+#### 로컬 실행
+
+```sh
+pnpm audit                                     # 알려진 취약점 확인
+node scripts/security-report.mjs               # 보고서 생성
+node scripts/security-report.mjs --fix         # 의존성 수정 + 보고서 생성
+node --test scripts/security-report.test.mjs   # 보고서 생성기 테스트
+```
 
 ## 라이선스
 
