@@ -268,16 +268,24 @@ Renovate 설정은 [`.github/renovate.json`](.github/renovate.json)에 있다.
 설정 파일만 추가한 상태에서는 봇이 실행되지 않는다.
 
 매일 한국 시간 오전 9시에 [Daily security report](.github/workflows/security-report.yml)가
-`pnpm audit --json`을 실행하고 `docs/security/dependency-report.md`를 갱신하는 PR을 만든다.
-열린 보고서 PR은 같은 브랜치에서 갱신하며, 취약점이 0건이어도 검사일을 기록한다.
+Critical·High·Moderate(중간) 취약점에 `pnpm audit --fix=override --audit-level=moderate`로
+수정 버전을 적용하고, 수정 전후 집계를 담은 `docs/security/dependency-report.md`와
+`pnpm-workspace.yaml`·`pnpm-lock.yaml` 변경을 함께 PR로 올린다.
+열린 보고서 PR은 같은 브랜치에서 갱신하며, 취약점이 0건이거나 같은 날 다시 실행해도 검사 시각을 기록한다.
 통신 오류나 잘못된 응답은 실행 실패로 처리하고 정상 보고서를 만들지 않는다.
 GitHub 예약 실행은 지연될 수 있으며, Actions의 `Run workflow`로 수동 실행할 수도 있다.
 워크플로를 기본 브랜치에 반영하고 Settings → Actions → General → Workflow permissions에서
 `Allow GitHub Actions to create and approve pull requests`를 활성화해야 한다.
 기본 `GITHUB_TOKEN`으로 만든 보고서 PR은 다른 CI 워크플로를 자동 실행하지 않는다.
-보고서는 의존성을 수정하지 않으며, 업데이트 PR은 Renovate가 별도로 제안한다.
+PR 생성 전에 타입 검사·테스트·빌드·접근성 검사를 실행하며 실패하면 PR을 만들지 않는다.
+수정은 Actions 작업 공간에서 수행하고 `automation/security-report` 브랜치로만 올린다.
+기본 브랜치에는 사용자가 PR을 머지할 때 반영한다. 자동 병합은 하지 않는다.
+자동 수정 후에도 남은 취약점은 보고서에서 수동 검토한다.
+Low는 자동 수정 대상에서 제외하지만 같은 패키지를 수정하면서 함께 해소될 수 있다.
+일반 버전 업데이트는 Renovate가 별도로 제안한다.
 
 로컬 실행: `node scripts/security-report.mjs`.
+자동 수정 포함: `node scripts/security-report.mjs --fix`.
 보고서 생성기 검증: `node --test scripts/security-report.test.mjs`.
 
 ## 라이선스

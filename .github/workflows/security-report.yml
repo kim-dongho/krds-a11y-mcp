@@ -17,7 +17,7 @@ concurrency:
 jobs:
   report:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,14 +26,30 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # audit는 잠금 파일만 사용한다. 의존성 설치 및 lifecycle script 실행은 불필요하다.
-      - name: Generate vulnerability report
-        run: node scripts/security-report.mjs
+      - name: Fix moderate and higher vulnerabilities and generate report
+        run: node scripts/security-report.mjs --fix
+      - name: Install dependencies for validation
+        run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Validate security fixes
+        run: |
+          node --test scripts/security-report.test.mjs
+          pnpm typecheck
+          pnpm build:previews
+          pnpm test
+          pnpm build
+          pnpm scan:axe
+          pnpm verify:a11y
       - name: Create or update report PR
+        # 변경은 이 브랜치에만 커밋한다. 기본 브랜치 반영은 사용자의 PR 머지로 진행한다.
         uses: peter-evans/create-pull-request@v8
         with:
           branch: automation/security-report
-          add-paths: docs/security/dependency-report.md
-          commit-message: 'docs: update dependency security report'
-          title: 'docs: 일일 의존성 보안 보고서'
+          add-paths: |
+            docs/security/dependency-report.md
+            package.json
+            pnpm-workspace.yaml
+            pnpm-lock.yaml
+          commit-message: 'fix: 의존성 보안 취약점 수정 및 보고서 갱신'
+          title: 'fix: 일일 의존성 보안 점검 및 취약점 수정'
           body-path: docs/security/dependency-report.md

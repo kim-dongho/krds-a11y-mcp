@@ -35,3 +35,21 @@ test('통신 실패와 잘못된 결과를 취약점 0건으로 보고하지 않
     assert.throws(() => renderReport(audit), /유효한 pnpm audit 결과가 아닙니다/);
   }
 });
+
+test('같은 날 같은 결과로 다시 실행해도 검사 시각을 갱신한다', () => {
+  const first = renderReport(clean(), new Date('2026-11-21T00:00:00Z'));
+  const second = renderReport(clean(), new Date('2026-11-21T01:00:00Z'));
+  assert.match(first, /2026-11-21 09:00:00/);
+  assert.match(second, /2026-11-21 10:00:00/);
+  assert.notEqual(first, second);
+});
+
+test('자동 수정 보고서는 수정 전후 집계와 남은 취약점을 구분한다', () => {
+  const before = clean();
+  before.metadata.vulnerabilities.critical = 1;
+  before.metadata.vulnerabilities.moderate = 2;
+  const report = renderReport(clean(), new Date('2026-11-21T00:00:00Z'), before);
+  assert.match(report, /\| critical \| 1 \| 0 \|/);
+  assert.match(report, /\| moderate \| 2 \| 0 \|/);
+  assert.match(report, /수정 후 재검사 결과/);
+});
