@@ -1,0 +1,39 @@
+name: Daily security report
+
+on:
+  schedule:
+    # UTC 00:00 = 한국 시간 오전 09:00
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: daily-security-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # audit는 잠금 파일만 사용한다. 의존성 설치 및 lifecycle script 실행은 불필요하다.
+      - name: Generate vulnerability report
+        run: node scripts/security-report.mjs
+      - name: Create or update report PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: automation/security-report
+          add-paths: docs/security/dependency-report.md
+          commit-message: 'docs: update dependency security report'
+          title: 'docs: 일일 의존성 보안 보고서'
+          body-path: docs/security/dependency-report.md

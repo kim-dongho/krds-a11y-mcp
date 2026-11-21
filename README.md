@@ -256,6 +256,30 @@ pnpm verify:a11y      # 키보드 전수·접근성 트리 검증
 
 검사 기능 테스트에는 Chromium이 필요하다(`pnpm exec playwright install chromium`).
 
+### 의존성 보안 및 업데이트
+
+`pnpm audit`로 잠금 파일의 알려진 취약점을 확인한다.
+Renovate 설정은 [`.github/renovate.json`](.github/renovate.json)에 있다.
+일반 npm 업데이트는 출시 후 3일이 지나면 PR로 제안하며, 잠금 파일은 매주 갱신한다.
+동시 PR은 최대 3개이고 자동 병합은 하지 않는다. 보안 업데이트 PR은 대기 시간과 일반 PR 개수 제한의 예외다.
+
+활성화하려면 [Renovate GitHub App](https://github.com/apps/renovate)을 설치하고 이 저장소를 선택한 뒤 설정을 기본 브랜치에 반영한다.
+저장소 Settings에서 Dependency graph와 Dependabot alerts도 활성화해야 Renovate가 GitHub 보안 경고를 읽어 수정 PR을 만들 수 있다.
+설정 파일만 추가한 상태에서는 봇이 실행되지 않는다.
+
+매일 한국 시간 오전 9시에 [Daily security report](.github/workflows/security-report.yml)가
+`pnpm audit --json`을 실행하고 `docs/security/dependency-report.md`를 갱신하는 PR을 만든다.
+열린 보고서 PR은 같은 브랜치에서 갱신하며, 취약점이 0건이어도 검사일을 기록한다.
+통신 오류나 잘못된 응답은 실행 실패로 처리하고 정상 보고서를 만들지 않는다.
+GitHub 예약 실행은 지연될 수 있으며, Actions의 `Run workflow`로 수동 실행할 수도 있다.
+워크플로를 기본 브랜치에 반영하고 Settings → Actions → General → Workflow permissions에서
+`Allow GitHub Actions to create and approve pull requests`를 활성화해야 한다.
+기본 `GITHUB_TOKEN`으로 만든 보고서 PR은 다른 CI 워크플로를 자동 실행하지 않는다.
+보고서는 의존성을 수정하지 않으며, 업데이트 PR은 Renovate가 별도로 제안한다.
+
+로컬 실행: `node scripts/security-report.mjs`.
+보고서 생성기 검증: `node --test scripts/security-report.test.mjs`.
+
 ## 라이선스
 
 - 이 저장소의 코드: [MIT](LICENSE)

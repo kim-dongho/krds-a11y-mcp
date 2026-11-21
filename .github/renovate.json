@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":enableVulnerabilityAlerts"],
+  "timezone": "Asia/Seoul",
+  "automerge": false,
+  "prConcurrentLimit": 3,
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "3 days"
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": null,
+    "schedule": [],
+    "automerge": false
+  }
+}
